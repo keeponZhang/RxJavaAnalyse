@@ -56,6 +56,7 @@ public final class DisposableLambdaObserver<T> implements Observer<T>, Disposabl
 
     @Override
     public void onNext(T t) {
+        System.out.println("------DisposableLambdaObserver onNext-----------"+t);
         actual.onNext(t);
     }
 

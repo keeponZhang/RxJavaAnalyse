@@ -43,6 +43,7 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
 
     @Override
     public void call(final Subscriber<? super T> o) {
+        System.out.println("------------OnSubscribeFromIterable call---------------");
         final Iterator<? extends T> it = is.iterator();
         o.setProducer(new IterableProducer<T>(o, it));
     }

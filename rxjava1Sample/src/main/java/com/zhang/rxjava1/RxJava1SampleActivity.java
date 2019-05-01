@@ -1,5 +1,6 @@
 package com.zhang.rxjava1;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.zhang.rxjava1.bean.School;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
@@ -62,7 +64,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 
 		@Override
 		public void onNext(String s) {
-			Log.d(tag, "Item: " + s);
+			Log.d(tag, "subscriber onNext Item: " + s + " " + Thread.currentThread().getName());
 		}
 
 		@Override
@@ -105,6 +107,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 		//		observable.subscribe(observer);
 
 		// 自动创建 Subscriber ，并使用 onNextAction 来定义 onNext()
+		//会触发observable调用OnSubscribe.call(subscriber)
 		observable.subscribe(onNextAction);
 		// 自动创建 Subscriber ，并使用 onNextAction 和 onErrorAction 来定义 onNext() 和 onError()
 		observable.subscribe(onNextAction, onErrorAction);
@@ -138,6 +141,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 		Observable observable = Observable.create(new Observable.OnSubscribe<String>() {
 			@Override
 			public void call(Subscriber<? super String> subscriber) {
+				Log.d(TAG, "getObservableCreat call:" + Thread.currentThread().getName());
 				subscriber.onNext("Hello");
 				subscriber.onNext("Hi");
 				subscriber.onNext("Aloha");
@@ -220,7 +224,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 	}
 
 	public void flatMap(View view) {
-		//
+		//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
 		Observable.from(new School().getClasses())
 				//输入是Class类型，输出是ObservableSource<Group>类型
 				.flatMap(new Func1<Class, Observable<Group>>() {
@@ -246,23 +250,120 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 			}
 		});
 	}
+
+	//有序事件
 	public void flatMap2(View view) {
 		ArrayList<Integer> datas = new ArrayList<>();
 		datas.add(1);
 		datas.add(2);
 		datas.add(3);
-		//一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
+//		Observable.from(datas)
 		Observable.just(1)
-				//输入是Class类型，输出是ObservableSource<Group>类型
+				//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的(flatMap经过两次lift,先map后merge)
+				//相当于先做map变换，生成Observable，再由生成的Observable作为soure，（要发送的事件也是Observable类型的），做merge操作，merge通过lift再生成一个Observable
 				.flatMap(new Func1<Integer, Observable<String>>() {
 					@Override
 					public Observable<String> call(Integer integer) {
-						Log.d(TAG, "flatMap call:" + integer);
+						Log.d(TAG, "flatMap2 call:" + integer);
 						final List<String> list = new ArrayList<>();
 						for (int i = 0; i < 3; i++) {
-							list.add("I am value " + integer);
+							list.add("I am value  " + integer);
 						}
 						return Observable.from(list);
+					}
+				}).subscribe(new Subscriber<String>() {
+			@Override
+			public void onCompleted() {
+
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e(TAG, "flatMap2 onNext:" + s);
+			}
+		});
+	}
+
+	public void doOnSubscribe(View view) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				getObservableCreat()
+						.subscribeOn(Schedulers.io())
+						//下层的onSubscribe.call比上层先执行
+						.doOnSubscribe(new Action0() {
+							@Override
+							public void call() {
+								Log.e(TAG, "doOnSubscribe call:" + Thread.currentThread().getName());
+							}
+						})
+						//subscribeOn把订阅放在runable中，即onSubscribe.call，这里会调到action0.call
+						.subscribeOn(AndroidSchedulers.mainThread())
+						.subscribe(subscriber);
+			}
+		}).start();
+
+	}
+
+	//无序事件，使用delay
+	public void flatMap3(View view) {
+		ArrayList<Integer> datas = new ArrayList<>();
+		datas.add(1);
+		datas.add(2);
+		datas.add(3);
+		//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
+		Observable.from(datas)
+				.flatMap(new Func1<Integer, Observable<String>>() {
+					@Override
+					public Observable<String> call(Integer integer) {
+						Log.d(TAG, "flatMap3 call:" + integer);
+						final List<String> list = new ArrayList<>();
+						for (int i = 0; i < 3; i++) {
+							list.add("I am value  " + integer);
+						}
+						return Observable.from(list).delay((int) (Math.random() * 1000), TimeUnit.MILLISECONDS);
+					}
+				}).subscribe(new Subscriber<String>() {
+			@Override
+			public void onCompleted() {
+
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e(TAG, "flatMap3 onNext:" + s);
+			}
+		});
+	}
+
+
+	public void concatMap(View view) {
+		ArrayList<Integer> datas = new ArrayList<>();
+		datas.add(1);
+		datas.add(2);
+		datas.add(3);
+		//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
+		Observable.from(datas)
+				//输入是Class类型，输出是ObservableSource<Group>类型
+				.concatMap(new Func1<Integer, Observable<String>>() {
+					@Override
+					public Observable<String> call(Integer integer) {
+						Log.d(TAG, "concatMap call:" + integer);
+						final List<String> list = new ArrayList<>();
+						for (int i = 0; i < 3; i++) {
+							list.add("I am value  " + integer);
+						}
+						return Observable.from(list).delay((int) (Math.random() * 1000), TimeUnit.MILLISECONDS);
 					}
 				}).subscribe(new Subscriber<String>() {
 			@Override
@@ -281,4 +382,11 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 			}
 		});
 	}
+
+	public void jumpSample2(View view) {
+		Intent intent = new Intent(this, RxJava1Sample2Activity.class);
+		startActivity(intent);
+	}
+
+
 }

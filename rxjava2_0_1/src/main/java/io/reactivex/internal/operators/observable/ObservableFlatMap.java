@@ -170,6 +170,7 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
                     addInner(inner);
                     //使用flatmap,上游发送一个事件，经过flatmap，转化成ObservableSource后，还需要进行订阅（因为下游订阅的事件是具体的，而不是数组或集合）
                     //这里订阅后，假如上游只发送一个事件，转化后的事件会先发给InnerObserver。
+                    //p,flatmap转换后的ObservableSource,这里是个ObservableFromIterable，subscribe调用后，会给InnerObserver发送事件
                     p.subscribe(inner);
                     break;
                 }

@@ -86,12 +86,16 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
 
     @Override
     public Subscriber<Observable<? extends T>> call(final Subscriber<? super T> child) {
+        System.out.println("------------OperatorMerge call---------------");
+        //这个child是merge下层的订阅者
+        //merge创建的中间Subscriber是Observable类型的
         return new MergeSubscriber<T>(child, delayErrors);
 
     }
 
     private static final class MergeSubscriber<T> extends Subscriber<Observable<? extends T>> {
         final NotificationLite<T> on = NotificationLite.instance();
+//        这个actual是merge下层的订阅者
         final Subscriber<? super T> actual;
         private final MergeProducer<T> mergeProducer;
         private int wip;
@@ -143,7 +147,9 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
          * This is expected to be executed sequentially as per the Rx contract or it will not work.
          */
         @Override
+        //MergeSubscriber接收到的是Observable
         public void onNext(Observable<? extends T> t) {
+            System.out.println("------------OperatorMerge.MergeSubscriber onNext ---------------"+t);
             if (t instanceof ScalarSynchronousObservable) {
                 ScalarSynchronousObservable<? extends T> t2 = (ScalarSynchronousObservable<? extends T>)t;
                 handleScalarSynchronousObservable(t2);
@@ -155,11 +161,13 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
                     // synchronized here because `wip` can be concurrently changed by children Observables
                     wip++;
                 }
+
                 handleNewSource(t);
             }
         }
 
         private void handleNewSource(Observable<? extends T> t) {
+
             if (childrenSubscribers == null) {
                 // lazily create this only if we receive Observables we need to subscribe to
                 childrenSubscribers = new SubscriptionIndexedRingBuffer<InnerSubscriber<T>>();
@@ -210,6 +218,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
              * } </pre>
              * 
              */
+            //默认是true
             if (mergeProducer.requested == Long.MAX_VALUE) {
                 handleScalarSynchronousObservableWithoutRequestLimits(t);
             } else {
@@ -222,6 +231,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
             if (getEmitLock()) {
                 boolean moreToDrain;
                 try {
+                    //        这个actual是merge下层的订阅者，这里就把事件分发个下层的订阅者
                     actual.onNext(value);
                 } finally {
                     moreToDrain = releaseEmitLock();

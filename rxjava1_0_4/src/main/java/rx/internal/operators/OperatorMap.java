@@ -37,6 +37,7 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
     //map的变换可见只是一个简单的静态代理模式
     @Override
     public Subscriber<? super T> call(final Subscriber<? super R> o) {
+        //这里也是代理模式,这个subscriber会发送给上层，订阅后会调用该subscriber的onNext方法，把事件往下传递
         return new Subscriber<T>(o) {
 
             @Override
@@ -53,6 +54,8 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
             public void onNext(T t) {
                 try {
                     //接收到事件时，会用func1函数进行下转换
+                    //把上层的T转换成R在发送给下层订阅者
+                    System.out.println("-------OperatorMap  Subscriber onNext ---------"+t);
                     o.onNext(transformer.call(t));
                 } catch (Throwable e) {
                     Exceptions.throwIfFatal(e);

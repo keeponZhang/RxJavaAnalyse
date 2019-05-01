@@ -6,47 +6,56 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	>
+	tools:context=".RxJava1SampleActivity">
+
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="observer"
-		android:text="ovserver"
-		android:textAllCaps="false"/>
+		android:onClick="flatMap4"
+		android:textAllCaps="false"
+		android:text="flatMap4"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="merge"
+		android:textAllCaps="false"
+		android:text="merge"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="subscribeOnAndObserveOn"
+		android:textAllCaps="false"
+		android:text="subscribeOnAndObserveOn"
+		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:onClick="map"
+		android:textAllCaps="false"
 		android:text="map"
-		android:textAllCaps="false"/>
+		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:onClick="flatMap"
+		android:textAllCaps="false"
 		android:text="flatMap"
-		android:textAllCaps="false"/>
+		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:onClick="flatMap2"
+		android:textAllCaps="false"
 		android:text="flatMap2"
-		android:textAllCaps="false"/>
+		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="flatMap3"
-		android:text="flatMap3"
-		android:textAllCaps="false"/>
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:onClick="flatMap3"
-		android:text="flatMap3"
-		android:textAllCaps="false"/>
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:onClick="concatMap"
-		android:text="concatMap"
-		android:textAllCaps="false"/>
+		android:onClick="doOnSubscribe"
+		android:textAllCaps="false"
+		android:text="doOnSubscribe"
+		/>
+
 </LinearLayout>

@@ -50,6 +50,34 @@
 		android:textAllCaps="false"
 		android:text="flatMap2"
 		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="flatMap3"
+		android:textAllCaps="false"
+		android:text="flatMap3"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="jumpSample2"
+		android:textAllCaps="false"
+		android:text="jumpSample2"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="concatMap"
+		android:textAllCaps="false"
+		android:text="concatMap"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="doOnSubscribe"
+		android:textAllCaps="false"
+		android:text="doOnSubscribe"
+		/>
 	<ImageView
 		android:layout_width="150dp"
 		android:layout_height="120dp"

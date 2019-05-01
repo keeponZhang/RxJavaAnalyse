@@ -36,7 +36,7 @@ public final class ObservableCreate<T> extends Observable<T> {
     @Override
     protected void subscribeActual(Observer<? super T> observer) {
         CreateEmitter<T> parent = new CreateEmitter<T>(observer);
-        //表示订阅开始
+        //表示订阅开始（这里会调用下一个observer.onSubsribe）
         observer.onSubscribe(parent);
 
         try {
@@ -69,6 +69,7 @@ public final class ObservableCreate<T> extends Observable<T> {
                 return;
             }
             if (!isDisposed()) {
+                System.out.println("-------ObservableCreate onNext----------"+t);
                 observer.onNext(t);
             }
         }

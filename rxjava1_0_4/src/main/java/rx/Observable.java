@@ -180,8 +180,9 @@ public class Observable<T> {
      * @param f
      *            {@link OnSubscribe} to be executed when {@link #subscribe(Subscriber)} is called
      */
+    //Observable通过构造函数持有一个onSubscribe
     protected Observable(OnSubscribe<T> f) {
-     System.out.println( "Observable 创建 :"+f);
+     System.out.println( "Observable 构造方法调用,创建 :"+this+"  OnSubscribe="+f);
         this.onSubscribe = f;
     }
 
@@ -257,13 +258,17 @@ public class Observable<T> {
      * @return an Observable that is the result of applying the lifted Operator to the source Observable
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Implementing-Your-Own-Operators">RxJava wiki: Implementing Your Own Operators</a>
      */
-    //lift会创造一个Observable
+    //lift会创造一个Observable，使用lift操作符的，下一层Subscriber订阅的Observable是该Observable，最后subscribe触发订阅后,会调用上层Observable的OnSubscribe的call方法，传入Subscriber
+    //一般来说，lift中不但会创建Observable，还会创建一个Subscriber，然后调用上一层的Observable的OnSubscribe的call方法，把新创建的Subscriber传入
     public final <R> Observable<R> lift(final Operator<? extends R, ? super T> lift) {
+        System.out.println("------Observable lift    -------"+lift);
         return new Observable<R>(new OnSubscribe<R>() {
             @Override
             //调用map后subscribe，此时map的Observable就是刚new出来这个，然后会调到这个call方法
             public void call(Subscriber<? super R> o) {
                 try {
+                	//map的话，看OperatorMap的call
+                    //merge操作生成的是Subscriber<Observable<? extends T>>，对
                     Subscriber<? super T> st = hook.onLift(lift).call(o);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
@@ -1746,7 +1751,9 @@ public class Observable<T> {
      *         {@code source} Observable
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Combining-Observables#merge">RxJava wiki: merge</a>
      */
+    //merge里面的Observable做上层
     public final static <T> Observable<T> merge(Observable<? extends Observable<? extends T>> source) {
+        System.out.println("-------------------Observable merge source-------------"+source);
         return source.lift(new OperatorMerge<T>());
     }
 
@@ -4605,6 +4612,7 @@ public class Observable<T> {
      *         transformation
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmap-concatmap-and-flatmapiterable">RxJava wiki: flatMap</a>
      */
+    //flatMap lift两次
     public final <R> Observable<R> flatMap(Func1<? super T, ? extends Observable<? extends R>> func) {
         return merge(map(func));
     }
@@ -5074,6 +5082,7 @@ public class Observable<T> {
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#map">RxJava wiki: map</a>
      */
     public final <R> Observable<R> map(Func1<? super T, ? extends R> func) {
+        System.out.println("-------------------Observable map func-------------"+func);
         return lift(new OperatorMap<T, R>(func));
     }
     
