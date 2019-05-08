@@ -326,7 +326,8 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 						for (int i = 0; i < 3; i++) {
 							list.add("I am value  " + integer);
 						}
-						return Observable.from(list).delay((int) (Math.random() * 1000), TimeUnit.MILLISECONDS);
+//						return Observable.from(list).delay((int) (Math.random() * 1000), TimeUnit.MILLISECONDS);
+						return Observable.from(list).delay(50, TimeUnit.MILLISECONDS);
 					}
 				}).subscribe(new Subscriber<String>() {
 			@Override

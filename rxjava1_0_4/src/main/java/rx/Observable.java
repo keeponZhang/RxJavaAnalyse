@@ -1292,11 +1292,11 @@ public class Observable<T> {
      *  <dd>{@code from} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
      * 
-     * @param iterable
-     *            the source {@link Iterable} sequence
      * @param <T>
      *            the type of items in the {@link Iterable} sequence and the type of items to be emitted by the
      *            resulting Observable
+     * @param iterable
+     *            the source {@link Iterable} sequence
      * @return an Observable that emits each item in the source {@link Iterable} sequence
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Creating-Observables#from">RxJava wiki: from</a>
      */

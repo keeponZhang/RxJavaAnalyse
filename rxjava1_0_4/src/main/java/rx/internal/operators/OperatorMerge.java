@@ -88,6 +88,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
     public Subscriber<Observable<? extends T>> call(final Subscriber<? super T> child) {
         System.out.println("------------OperatorMerge call---------------");
         //这个child是merge下层的订阅者
+        //如果merge下面只有观察者了，child就是最原始的观察者，此时的Observable是lift中new出来的，会调用其OnSubscribe.call方法，从而调用Operator.call方法，就是这个方法，把最原始的subscriber传进来
         //merge创建的中间Subscriber是Observable类型的
         return new MergeSubscriber<T>(child, delayErrors);
 
@@ -193,6 +194,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
             }
             InnerSubscriber<T> i = new InnerSubscriber<T>(this, producerIfNeeded);
             i.sindex = childrenSubscribers.add(i);
+            //其他类型的Observabale,生成一个InnerSubscriber订阅它，因为可知的是ObservabaleJust数据才一开始知道，可以用get获取，其他不知道
             t.unsafeSubscribe(i);
             if (!isUnsubscribed()) {
                 request(1);
@@ -227,6 +229,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         }
 
         private void handleScalarSynchronousObservableWithoutRequestLimits(ScalarSynchronousObservable<? extends T> t) {
+            //获取ScalarSynchronousObservable要发送的数据
             T value = t.get();
             if (getEmitLock()) {
                 boolean moreToDrain;
@@ -552,6 +555,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
 
         @Override
         public void onNext(T t) {
+            //收到要发送的数据，也是merge里面的每个Observable要发送的事件类型
             emit(t, false);
         }
 
@@ -627,6 +631,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
                             parentSubscriber.completeInner(this);
                         } else {
                             try {
+                                // parentSubscriber.actual是原始的订阅者
                                 parentSubscriber.actual.onNext(t);
                             } catch (Throwable e) {
                                 // special error handling due to complexity of merge

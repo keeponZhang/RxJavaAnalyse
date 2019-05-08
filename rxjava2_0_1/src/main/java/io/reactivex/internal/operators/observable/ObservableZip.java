@@ -13,15 +13,19 @@
 
 package io.reactivex.internal.operators.observable;
 
-import io.reactivex.internal.functions.ObjectHelper;
 import java.util.Arrays;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
-import io.reactivex.*;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.functions.Function;
-import io.reactivex.internal.disposables.*;
+import io.reactivex.internal.disposables.DisposableHelper;
+import io.reactivex.internal.disposables.EmptyDisposable;
+import io.reactivex.internal.functions.ObjectHelper;
 import io.reactivex.internal.queue.SpscLinkedArrayQueue;
 
 public final class ObservableZip<T, R> extends Observable<R> {
@@ -82,7 +86,8 @@ public final class ObservableZip<T, R> extends Observable<R> {
         final boolean delayError;
 
         volatile boolean cancelled;
-
+//        构造函数中初始化了一个和上游 ObservableSource 一样数量大小（在本案例中是2） 的 ZipObserver 数组
+//        和 T 类型(Observable的类型)的数组。
         @SuppressWarnings("unchecked")
         ZipCoordinator(Observer<? super R> actual,
                 Function<? super Object[], ? extends R> zipper,
@@ -93,7 +98,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
             this.row = (T[])new Object[count];
             this.delayError = delayError;
         }
-
+//        初始化了 ZipObserver 数组并让上游 ObservableSource 分别订阅了对应的 ZipObserver。
         public void subscribe(ObservableSource<? extends T>[] sources, int bufferSize) {
             ZipObserver<T, R>[] s = observers;
             int len = s.length;
@@ -107,6 +112,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
                 if (cancelled) {
                     return;
                 }
+//                让上游 ObservableSource 分别订阅了对应的 ZipObserver。
                 sources[i].subscribe(s[i]);
             }
         }
@@ -258,7 +264,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
         public void onSubscribe(Disposable s) {
             DisposableHelper.setOnce(this.s, s);
         }
-
+//        一是入队，二是调用 ZipCoordinator#drain() 方法
         @Override
         public void onNext(T t) {
             queue.offer(t);

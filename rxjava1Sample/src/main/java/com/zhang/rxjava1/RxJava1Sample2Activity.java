@@ -1,18 +1,24 @@
 package com.zhang.rxjava1;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.zhang.rxjava1.bean.Student;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subjects.AsyncSubject;
 
 public class RxJava1Sample2Activity extends AppCompatActivity {
 	private static final String tag = "RxJava1Sample2Activity";
@@ -87,8 +93,20 @@ public class RxJava1Sample2Activity extends AppCompatActivity {
 
 	private Observable<Student> getDataFromLocal(){
 		return Observable.just(new Student("zhangsan"));
-
-
+	}
+	private Observable <Student> getDataFromLocal2(){
+		ArrayList<Student> students = new ArrayList<>();
+		students.add(new Student("zhangsan"));
+		students.add(new Student("keepon"));
+		Observable<Student> from = Observable.from(students);
+		return  from;
+	}
+	private Observable <Student> getDataFromNet2(){
+		ArrayList<Student> students = new ArrayList<>();
+		students.add(new Student("zhangsan2"));
+		students.add(new Student("keepon2"));
+		Observable<Student> from = Observable.from(students);
+		return  from;
 	}
 
 	//从网络拿数据
@@ -118,4 +136,28 @@ public class RxJava1Sample2Activity extends AppCompatActivity {
 					}
 				});
 	}
+	public void merge2(View view) {
+		//merge 合并多个Observable的发射物
+		//merge括号里是一个Observable(OnSubscribeFromIterable)，merge会用到lift，又会new一个Observable,
+		//merge里面的元素会通过from，变成要发射的Observable
+		Observable.merge(getDataFromLocal2(),getDataFromLocal2())
+				.subscribe(new Observer<Student>() {
+					@Override
+					public void onCompleted() {
+
+					}
+
+					@Override
+					public void onError(Throwable e) {
+
+					}
+
+					@Override
+					public void onNext(Student student) {
+						Log.e(TAG, " merge onNext:" + student);
+					}
+				});
+	}
+
+
 }

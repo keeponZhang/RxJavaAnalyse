@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+<LinearLayout
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -40,8 +43,8 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="flatMap3"
-		android:text="flatMap3"
+		android:onClick="flatMap4"
+		android:text="flatMap4"
 		android:textAllCaps="false"/>
 	<Button
 		android:layout_width="wrap_content"
@@ -49,4 +52,47 @@
 		android:onClick="concatMap"
 		android:text="concatMap"
 		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="concatMap2"
+		android:text="concatMap2"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="doOnNext"
+		android:text="doOnNext"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="zip"
+		android:text="zip"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="asyncSubject"
+		android:text="asyncSubject"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="behaviorSubject"
+		android:text="behaviorSubject"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="replaySubject"
+		android:text="replaySubject"
+		android:textAllCaps="false"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="publishSubject"
+		android:text="publishSubject"
+		android:textAllCaps="false"/>
 </LinearLayout>
+</ScrollView>

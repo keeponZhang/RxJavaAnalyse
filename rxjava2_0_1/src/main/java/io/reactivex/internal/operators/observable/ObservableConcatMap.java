@@ -124,7 +124,9 @@ public final class ObservableConcatMap<T, U> extends AbstractObservableWithUpstr
             if (done) {
                 return;
             }
+            System.out.println("-----------ObservableConcatMap  SourceObserver  onNext-------------"+t);
             if (fusionMode == QueueDisposable.NONE) {
+                //将数据放入队列中
                 queue.offer(t);
             }
             drain();
@@ -149,6 +151,7 @@ public final class ObservableConcatMap<T, U> extends AbstractObservableWithUpstr
         }
 
         void innerComplete() {
+        	// active 设为false，同时调用了 drain 方法，循环获取队列中的数据，然后发射,所以concatMap只能一个一个发射，并且是由顺序的
             active = false;
             drain();
         }
@@ -183,6 +186,7 @@ public final class ObservableConcatMap<T, U> extends AbstractObservableWithUpstr
                     queue.clear();
                     return;
                 }
+//	            active字段，表示当前是否还有Observable在发射
                 if (!active) {
 
                     boolean d = done;
@@ -211,6 +215,7 @@ public final class ObservableConcatMap<T, U> extends AbstractObservableWithUpstr
 
                         try {
                             o = ObjectHelper.requireNonNull(mapper.apply(t), "The mapper returned a null ObservableSource");
+	                        System.out.println("-----------ObservableConcatMap  SourceObserver  drain  mapper.apply(t)-------------"+t+"  o="+o);
                         } catch (Throwable ex) {
                             Exceptions.throwIfFatal(ex);
                             dispose();
@@ -255,6 +260,7 @@ public final class ObservableConcatMap<T, U> extends AbstractObservableWithUpstr
             }
             @Override
             public void onComplete() {
+            	//
                 parent.innerComplete();
             }
         }
