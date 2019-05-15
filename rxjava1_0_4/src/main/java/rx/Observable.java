@@ -12,6 +12,8 @@
  */
 package rx;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -267,9 +269,11 @@ public class Observable<T> {
             //调用map后subscribe，此时map的Observable就是刚new出来这个，然后会调到这个call方法
             public void call(Subscriber<? super R> o) {
                 try {
-                	//map的话，看OperatorMap的call
+                    Type[] types = analysisClazzInfo(o);
+                    //map的话，看OperatorMap的call
                     //merge操作生成的是Subscriber<Observable<? extends T>>，对
-                    Subscriber<? super T> st = hook.onLift(lift).call(o);
+	                System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》");
+	                Subscriber<? super T> st = hook.onLift(lift).call(o);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
                         st.onStart();
@@ -296,7 +300,22 @@ public class Observable<T> {
             }
         });
     }
-    
+    public static Type[]  analysisClazzInfo(Object object) {
+        Type[] params=null;
+        Type genType = object.getClass().getGenericSuperclass();
+        if(genType instanceof Object){
+            Type[] genericInterfaces = object.getClass().getGenericInterfaces();
+            if(genericInterfaces!=null&&genericInterfaces.length>0){
+                genType = genericInterfaces[0];
+            }
+        }
+        if(genType instanceof ParameterizedType){
+            params = ((ParameterizedType) genType).getActualTypeArguments();
+        }else{
+            return null;
+        }
+        return params;
+    }
     
     /**
      * Transform an Observable by applying a particular Transformer function to it.
@@ -1278,7 +1297,7 @@ public class Observable<T> {
      * @return an Observable that emits the item from the source {@link Future}
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Creating-Observables#from">RxJava wiki: from</a>
      */
-    public final static <T > Observable<T> from(Future<? extends T> future, Scheduler scheduler) {
+    public final static <T> Observable<T> from(Future<? extends T> future, Scheduler scheduler) {
         // TODO in a future revision the Scheduler will become important because we'll start polling instead of blocking on the Future
         return create(OnSubscribeToObservableFuture.toObservableFuture(future)).subscribeOn(scheduler);
     }
@@ -7397,6 +7416,7 @@ public class Observable<T> {
      * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Observable#onnext-oncompleted-and-onerror">RxJava wiki: onNext, onCompleted, and onError</a>
      */
     public final Subscription subscribe(final Observer<? super T> observer) {
+        Type[] types = analysisClazzInfo(observer);
         return subscribe(new Subscriber<T>() {
 
             @Override

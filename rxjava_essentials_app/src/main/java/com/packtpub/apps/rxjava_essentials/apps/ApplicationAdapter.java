@@ -1,7 +1,5 @@
 package com.packtpub.apps.rxjava_essentials.apps;
 
-import com.packtpub.apps.rxjava_essentials.R;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.packtpub.apps.rxjava_essentials.R;
 
 import java.util.List;
 
@@ -31,6 +31,10 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     public void addApplications(List<AppInfo> applications) {
         mApplications.clear();
         mApplications.addAll(applications);
+        notifyDataSetChanged();
+    }
+    public void clearData(){
+        mApplications.clear();
         notifyDataSetChanged();
     }
 

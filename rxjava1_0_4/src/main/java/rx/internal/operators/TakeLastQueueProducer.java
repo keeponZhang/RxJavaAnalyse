@@ -16,11 +16,11 @@
 package rx.internal.operators;
 
 
-import rx.Producer;
-import rx.Subscriber;
-
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
+
+import rx.Producer;
+import rx.Subscriber;
 
 final class TakeLastQueueProducer<T> implements Producer {
 
@@ -95,6 +95,7 @@ final class TakeLastQueueProducer<T> implements Producer {
                         if (subscriber.isUnsubscribed()) {
                             return;
                         }
+                        //notification会调用subscriber.onNext
                         if (notification.accept(subscriber, o)) {
                             // terminal event
                             return;

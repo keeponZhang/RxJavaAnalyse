@@ -39,6 +39,7 @@ public final class OnSubscribeTimerOnce implements OnSubscribe<Long> {
 
     @Override
     public void call(final Subscriber<? super Long> child) {
+        //EventLoopsScheduler里的EventLoopWorker，Worker实现了Subscription
         Worker worker = scheduler.createWorker();
         child.add(worker);
         worker.schedule(new Action0() {

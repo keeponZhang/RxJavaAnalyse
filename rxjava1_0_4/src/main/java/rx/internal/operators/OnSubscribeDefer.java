@@ -36,7 +36,7 @@ public final class OnSubscribeDefer<T> implements OnSubscribe<T> {
     public OnSubscribeDefer(Func0<? extends Observable<? extends T>> observableFactory) {
         this.observableFactory = observableFactory;
     }
-
+//  defer  当产生订阅关系时，将会调用1中的OnSubscribeDefer实例的call方法，再call方法中调用func0的call方法,再用call方法返回的Observable订阅Subscriber
     @Override
     public void call(Subscriber<? super T> s) {
         Observable<? extends T> o;

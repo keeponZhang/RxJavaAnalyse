@@ -71,12 +71,15 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
      * @return
      */
     public ScheduledAction scheduleActual(final Action0 action, long delayTime, TimeUnit unit) {
+        //留了个hook的入口，这里直接返回了action
         Action0 decoratedAction = schedulersHook.onSchedule(action);
+        //把action用ScheduledAction封装，ScheduledAction实现了runnable接口，run方法里会调用action的call方法
         ScheduledAction run = new ScheduledAction(decoratedAction);
         Future<?> f;
         if (delayTime <= 0) {
             f = executor.submit(run);
         } else {
+            //这里直接用线程池延迟执行
             f = executor.schedule(run, delayTime, unit);
         }
         run.add(f);

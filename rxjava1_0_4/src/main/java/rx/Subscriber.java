@@ -114,11 +114,14 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
      * @param producer
      */
     public void setProducer(Producer producer) {
+
         long toRequest;
         boolean setProducer = false;
         synchronized (this) {
+            //toRequest表示下游请求接收的数量，默认Long.MIN_VALUE
             toRequest = requested;
             p = producer;
+//  op是否为null，跟使用哪个Subscriber构造函数有关
             if (op != null) {
                 // middle operator ... we pass thru unless a request has been made
                 if (toRequest == Long.MIN_VALUE) {

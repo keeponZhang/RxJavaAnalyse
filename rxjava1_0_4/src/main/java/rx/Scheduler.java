@@ -112,6 +112,7 @@ public abstract class Scheduler {
             final long startInNanos = TimeUnit.MILLISECONDS.toNanos(now()) + unit.toNanos(initialDelay);
 
             final MultipleAssignmentSubscription mas = new MultipleAssignmentSubscription();
+            //类似使用handler处理后又发一次
             final Action0 recursiveAction = new Action0() {
                 long count = 0;
                 @Override

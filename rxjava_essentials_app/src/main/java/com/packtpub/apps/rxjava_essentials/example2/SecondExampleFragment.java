@@ -64,7 +64,7 @@ public class SecondExampleFragment extends Fragment {
         mSwipeRefreshLayout.setEnabled(false);
         mSwipeRefreshLayout.setRefreshing(true);
         mRecyclerView.setVisibility(View.GONE);
-
+        //从内存缓存拿数据
         List<AppInfo> apps = ApplicationsList.getInstance().getList();
 
         loadList(apps);

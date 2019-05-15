@@ -62,6 +62,7 @@ public final class OperatorToObservableSortedList<T> implements Operator<List<T>
                 try {
 
                     // sort the list before delivery
+                    //在这进行排序
                     Collections.sort(list, new Comparator<T>() {
 
                         @Override

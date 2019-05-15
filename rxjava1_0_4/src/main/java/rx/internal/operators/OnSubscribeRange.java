@@ -62,6 +62,7 @@ public final class OnSubscribeRange implements OnSubscribe<Integer> {
             if (n == Long.MAX_VALUE) {
                 REQUESTED_UPDATER.set(this, n);
                 // fast-path without backpressure
+                //range 实现原理
                 for (long i = index; i <= end; i++) {
                     if (o.isUnsubscribed()) {
                         return;

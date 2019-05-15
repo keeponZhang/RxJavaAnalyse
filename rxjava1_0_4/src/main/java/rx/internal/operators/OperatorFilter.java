@@ -50,11 +50,12 @@ public final class OperatorFilter<T> implements Operator<T, T> {
             @Override
             public void onNext(T t) {
                 try {
+                    System.out.println("OperatorFilter call"+t+"  "+System.currentTimeMillis());
                     if (predicate.call(t)) {
                         child.onNext(t);
                     } else {
                         // TODO consider a more complicated version that batches these
-                        request(1);
+                      request(1);
                     }
                 } catch (Throwable e) {
                     child.onError(OnErrorThrowable.addValueAsLastCause(e, t));

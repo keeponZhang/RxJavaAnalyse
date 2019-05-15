@@ -56,6 +56,7 @@ public final class OperatorTakeLast<T> implements Operator<T, T> {
             @Override
             public void onCompleted() {
                 deque.offer(notification.completed());
+                //真正发射在这里，TakeLastQueueProducer也持有真正的subscriber
                 producer.startEmitting();
             }
 
@@ -67,16 +68,40 @@ public final class OperatorTakeLast<T> implements Operator<T, T> {
 
             @Override
             public void onNext(T value) {
+                System.out.println("OperatorTakeLast onNext"+value+"  "+System.currentTimeMillis());
                 if (count == 0) {
                     // If count == 0, we do not need to put value into deque and
                     // remove it at once. We can ignore the value directly.
                     return;
                 }
                 if (deque.size() == count) {
-                    deque.removeFirst();
+                    //移除前面的，因为这里是目标是要保存后面的，takeLast
+                    Object o = deque.removeFirst();
+                    System.out.println("-------------OperatorTakeLast  deque.removeFirst()"+o+"  --------------count="+count);
                 }
+                //往队列里插入数据,value不为空的话，还是value，空的话返回ON_NEXT_NULL_SENTINEL，因为deque不支持插入空值
                 deque.offerLast(notification.next(value));
             }
         };
     }
+
+//    插入	add()	offer()
+//    删除	remove()	poll()
+//    查询	element()	peek()
+//    public interface Deque<E> extends Queue<E> {
+//        void addFirst(E e);//插入头部，异常会报错
+//        boolean offerFirst(E e);//插入头部，异常返回false
+//        E getFirst();//获取头部，异常会报错
+//        E peekFirst();//获取头部，异常不报错
+//        E removeFirst();//移除头部，异常会报错
+//        E pollFirst();//移除头部，异常不报错
+//
+//        void addLast(E e);//插入尾部，异常会报错
+//        boolean offerLast(E e);//插入尾部，异常返回false
+//        E getLast();//获取尾部，异常会报错
+//        E peekLast();//获取尾部，异常不报错
+//        E removeLast();//移除尾部，异常会报错
+//        E pollLast();//移除尾部，异常不报错
+//    }
+
 }

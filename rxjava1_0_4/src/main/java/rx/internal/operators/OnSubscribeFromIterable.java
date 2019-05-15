@@ -45,6 +45,7 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
     public void call(final Subscriber<? super T> o) {
         System.out.println("------------OnSubscribeFromIterable call---------------");
         final Iterator<? extends T> it = is.iterator();
+        //Subscriber的setProducer方法里面会触发IterableProducer的request方法
         o.setProducer(new IterableProducer<T>(o, it));
     }
 
@@ -65,6 +66,7 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
         @Override
         public void request(long n) {
             if (REQUESTED_UPDATER.get(this) == Long.MAX_VALUE) {
+                //已经在发射数据了，这里注解返回
                 // already started with fast-path
                 return;
             }

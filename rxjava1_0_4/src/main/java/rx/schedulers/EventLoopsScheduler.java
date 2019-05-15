@@ -15,6 +15,9 @@
  */
 package rx.schedulers;
 
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+
 import rx.Scheduler;
 import rx.Subscription;
 import rx.functions.Action0;
@@ -23,9 +26,6 @@ import rx.internal.schedulers.ScheduledAction;
 import rx.internal.util.RxThreadFactory;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
-
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 /* package */class EventLoopsScheduler extends Scheduler {
     /** Manages a fixed number of workers. */
@@ -65,6 +65,7 @@ import java.util.concurrent.TimeUnit;
     
     @Override
     public Worker createWorker() {
+        //真正执行的还不是EventLoopWorker，而是FixedSchedulerPool里面eventLoops池（PoolWorker继承了NewThreadWorker）
         return new EventLoopWorker(pool.getEventLoop());
     }
 

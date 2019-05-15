@@ -31,8 +31,6 @@ package rx.internal.operators;
  * limitations under the License.
  */
 
-import static rx.Observable.create;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,11 +49,14 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.SerialSubscription;
 
+import static rx.Observable.create;
+
 public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
     static final Func1<Observable<? extends Notification<?>>, Observable<?>> REDO_INIFINITE = new Func1<Observable<? extends Notification<?>>, Observable<?>>() {
         @Override
         public Observable<?> call(Observable<? extends Notification<?>> ts) {
+            System.out.println("OnSubscribeRedo  1.1--------- REDO_INIFINITE  call------------》》》》》");
             return ts.map(new Func1<Notification<?>, Notification<?>>() {
                 @Override
                 public Notification<?> call(Notification<?> terminal) {
@@ -74,25 +75,29 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
         @Override
         public Observable<?> call(Observable<? extends Notification<?>> ts) {
-            return ts.map(new Func1<Notification<?>, Notification<?>>() {
+            System.out.println("OnSubscribeRedo  1.1--------- RedoFinite  call------------》》》》》ts="+ts);
+            Observable<?> dematerialize = ts.map(new Func1<Notification<?>, Notification<?>>() {
 
-                int num=0;
-                
+                int num = 0;
+
                 @Override
                 public Notification<?> call(Notification<?> terminalNotification) {
-                    if(count == 0) {
+                    System.out.println("OnSubscribeRedo  1.1--------- RedoFinite Func1 call------------》》》》》terminalNotification=" + terminalNotification);
+                    if (count == 0) {
                         return terminalNotification;
                     }
-                    
+
                     num++;
-                    if(num <= count) {
+                    if (num <= count) {
                         return Notification.createOnNext(num);
                     } else {
                         return terminalNotification;
                     }
                 }
-                
+
             }).dematerialize();
+            System.out.println("OnSubscribeRedo  1.1--------- RedoFinite  return------------》》》》》dematerialize="+dematerialize);
+            return dematerialize;
         }
     }
 
@@ -181,6 +186,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
     private OnSubscribeRedo(Observable<T> source, Func1<? super Observable<? extends Notification<?>>, ? extends Observable<?>> f, boolean stopOnComplete, boolean stopOnError,
             Scheduler scheduler) {
         this.source = source;
+        //OnSubscribeRedo.RedoFinite 次数有限的话
         this.controlHandlerFunction = f;
         this.stopOnComplete = stopOnComplete;
         this.stopOnError = stopOnError;
@@ -194,7 +200,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         // incremented when requests are made, decremented when requests are fulfilled
         final AtomicLong consumerCapacity = new AtomicLong(0l);
         final AtomicReference<Producer> currentProducer = new AtomicReference<Producer>();
-
+        //TrampolineScheduler
         final Scheduler.Worker worker = scheduler.createWorker();
         child.add(worker);
 
@@ -228,6 +234,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         if (consumerCapacity.get() != Long.MAX_VALUE) {
                             consumerCapacity.decrementAndGet();
                         }
+                        System.out.println("OnSubscribeRedo terminalDelegatingSubscriber onNext="+v);
                         child.onNext(v);
                     }
 
@@ -243,6 +250,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 // new subscription each time so if it unsubscribes itself it does not prevent retries
                 // by unsubscribing the child subscription
                 sourceSubscriptions.set(terminalDelegatingSubscriber);
+                System.out.println("OnSubscribeRedo  subscribeToSource ---source.unsafeSubscribe(terminalDelegatingSubscriber)"+terminalDelegatingSubscriber);
                 source.unsafeSubscribe(terminalDelegatingSubscriber);
             }
         };
@@ -254,6 +262,8 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 terminals.lift(new Operator<Notification<?>, Notification<?>>() {
                     @Override
                     public Subscriber<? super Notification<?>> call(final Subscriber<? super Notification<?>> filteredTerminals) {
+                        //
+                        System.out.println("OnSubscribeRedo  2--------- restarts Operator call------------》》》》》"+filteredTerminals);
                         return new Subscriber<Notification<?>>(filteredTerminals) {
                             @Override
                             public void onCompleted() {
@@ -286,10 +296,14 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 }));
 
         // subscribe to the restarts observable to know when to schedule the next redo.
+        //worker经过一系列调用会调到call方法
         worker.schedule(new Action0() {
             @Override
             public void call() {
-                restarts.unsafeSubscribe(new Subscriber<Object>(child) {
+                //1.call方法通过worker调用，restarts作为Obesrvable订阅,workerSubscriber作为参数传到lift
+                // Observable的OnSubscribe的call方法中，restarts的call方法中,再调到上面2中Operator的call方法中
+                System.out.println("OnSubscribeRedo  1--------- worker.schedule call------------》》》》》");
+                Subscriber<Object> workerSubscriber = new Subscriber<Object>(child) {
                     @Override
                     public void onCompleted() {
                         child.onCompleted();
@@ -302,6 +316,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onNext(Object t) {
+                        System.out.println("OnSubscribeRedo  ---------  worker.schedule  restarts onNext==" + t + " ---------");
                         if (!isLocked.get() && !child.isUnsubscribed()) {
                             if (consumerCapacity.get() > 0) {
                                 worker.schedule(subscribeToSource);
@@ -315,7 +330,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     public void setProducer(Producer producer) {
                         producer.request(Long.MAX_VALUE);
                     }
-                });
+                };
+                System.out.println("OnSubscribeRedo  ---------  restarts.unsafeSubscribe(workerSubscriber) restarts==" + restarts + " ---------");
+                restarts.unsafeSubscribe(workerSubscriber);
             }
         });
 

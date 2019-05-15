@@ -57,7 +57,7 @@ public final class OperatorTake<T> implements Operator<T, T> {
                     child.onError(e);
                 }
             }
-
+            //take中实现很简单，记录发送的个数，到了之后发送onCompleted
             @Override
             public void onNext(T i) {
                 if (!isUnsubscribed()) {

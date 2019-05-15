@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,13 +56,19 @@ public class FirstExampleFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_example, container, false);
+        return inflater.inflate(R.layout.fragment_example_1, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        view.findViewById(R.id.refreshTheList).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshTheList();
+            }
+        });
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
@@ -88,6 +95,7 @@ public class FirstExampleFragment extends Fragment {
 
     private Observable<File> getFileDir() {
         return Observable.create(subscriber -> {
+            //一开始是空的
             subscriber.onNext(App.instance.getFilesDir());
             subscriber.onCompleted();
         });
@@ -95,6 +103,7 @@ public class FirstExampleFragment extends Fragment {
 
     private void refreshTheList() {
         getApps()
+                //toSortedList也是自带的一个操作符
                 .toSortedList()
                 .subscribe(new Observer<List<AppInfo>>() {
                     @Override
@@ -119,6 +128,7 @@ public class FirstExampleFragment extends Fragment {
     }
 
     private void storeList(List<AppInfo> appInfos) {
+        //内存保留一份
         ApplicationsList.getInstance().setList(appInfos);
 
         Schedulers.io().createWorker().schedule(() -> {
@@ -146,7 +156,7 @@ public class FirstExampleFragment extends Fragment {
                 String name = appInfo.getName();
                 String iconPath = mFilesDir + "/" + name;
                 Utils.storeBitmap(App.instance, icon, name);
-
+                Log.d("TAG", "FirstExampleFragment getApps:" + Thread.currentThread().getName());
                 if (subscriber.isUnsubscribed()) {
                     return;
                 }

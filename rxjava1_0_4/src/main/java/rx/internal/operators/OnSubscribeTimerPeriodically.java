@@ -41,13 +41,16 @@ public final class OnSubscribeTimerPeriodically implements OnSubscribe<Long> {
 
     @Override
     public void call(final Subscriber<? super Long> child) {
+        //scheduler：EventLoopsScheduler，该类没有重写schedulePeriodically方法
         final Worker worker = scheduler.createWorker();
         child.add(worker);
         worker.schedulePeriodically(new Action0() {
+            //从这里可以看出，还是从0开始
             long counter;
             @Override
             public void call() {
                 try {
+                    System.out.println("counter==" + counter + "  " + System.currentTimeMillis());
                     child.onNext(counter++);
                 } catch (Throwable e) {
                     try {
