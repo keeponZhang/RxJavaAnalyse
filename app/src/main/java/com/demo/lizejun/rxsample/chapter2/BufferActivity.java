@@ -1,15 +1,17 @@
 package com.demo.lizejun.rxsample.chapter2;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
 import com.demo.lizejun.rxsample.R;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.PublishSubject;
@@ -20,7 +22,7 @@ public class BufferActivity extends AppCompatActivity {
     private CompositeDisposable mCompositeDisposable;
     private TextView mTv;
     private SourceHandler mSourceHandler;
-
+    Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,16 +31,22 @@ public class BufferActivity extends AppCompatActivity {
         mPublishSubject = PublishSubject.create();
         DisposableObserver<List<Double>> disposableObserver = new DisposableObserver<List<Double>>() {
             @Override
-            public void onNext(List<Double> o) {
-                double result = 0;
+            public void onNext(final List<Double> o) {
+                 double result = 0;
                 if (o.size() > 0) {
                     for (Double d : o) {
                         result += d;
                     }
                     result = result / o.size();
                 }
-                Log.d("BufferActivity", "更新平均温度：" + result);
-                mTv.setText("过去3秒收到了" + o.size() + "个数据， 平均温度为：" + result);
+                Log.e("BufferActivity", "更新平均温度：" + result);
+                final double finalResult = result;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTv.setText("过去3秒收到了" + o.size() + "个数据， 平均温度为：" + finalResult);
+                    }
+                });
             }
 
             @Override
@@ -51,7 +59,9 @@ public class BufferActivity extends AppCompatActivity {
 
             }
         };
-        mPublishSubject.buffer(3000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(disposableObserver);
+        mPublishSubject.buffer(3000, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(disposableObserver);
         mCompositeDisposable = new CompositeDisposable();
         mCompositeDisposable.add(disposableObserver);
         //开始测量温度。
@@ -60,7 +70,7 @@ public class BufferActivity extends AppCompatActivity {
     }
 
     public void updateTemperature(double temperature) {
-        Log.d("BufferActivity", "温度测量结果：" + temperature);
+        Log.e("BufferActivity", "温度测量结果：" + temperature);
         mPublishSubject.onNext(temperature);
     }
 

@@ -5,5 +5,9 @@
 /.idea/libraries
 .DS_Store
 /build
+rxandroid1_0_1/build
+rxandroid2_0_1/build
+rxjava_essentials_app/build
 /captures
 .externalNativeBuild
+rxandroid2_0_1/build/

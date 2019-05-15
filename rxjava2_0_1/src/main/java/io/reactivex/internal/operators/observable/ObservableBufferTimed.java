@@ -13,16 +13,24 @@
 
 package io.reactivex.internal.operators.observable;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.reactivex.*;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.Scheduler.Worker;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
-import io.reactivex.internal.disposables.*;
+import io.reactivex.internal.disposables.DisposableHelper;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.internal.functions.ObjectHelper;
 import io.reactivex.internal.observers.QueueDrainObserver;
 import io.reactivex.internal.queue.MpscLinkedQueue;
@@ -51,9 +59,28 @@ extends AbstractObservableWithUpstream<T, U> {
         this.maxSize = maxSize;
         this.restartTimerOnMaxSize = restartTimerOnMaxSize;
     }
-
+//    只能获取到类型为T,U
+//((ParameterizedType)(ObservableBufferTimed.this.getClass().getGenericSuperclass())).getActualTypeArguments()
+    /**
+     * 解析一个类上面的class信息
+     */
+    public Type[]  analysisClazzInfo(Object object) {
+        //这里也是拿不到，因为该类实例化的时候new ObservableBufferTimed<T, U>
+        Type genType = object.getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        if(params!=null){
+            for (Type param : params) {
+                System.out.println("param ="+param);
+            }
+        }else{
+            System.out.println("param.size =0");
+        }
+        return params;
+    }
     @Override
     protected void subscribeActual(Observer<? super U> t) {
+         Type[] types = analysisClazzInfo(t);
+        analysisClazzInfo(this);
         if (timespan == timeskip && maxSize == Integer.MAX_VALUE) {
             source.subscribe(new BufferExactUnboundedObserver<T, U>(
                     new SerializedObserver<U>(t),

@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly project( ':rxjava1_0_4')
+}
+
+sourceCompatibility =rootProject.ext.sourceCompatibility
+targetCompatibility =rootProject.ext.sourceCompatibility

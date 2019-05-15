@@ -16,6 +16,6 @@
     package="io.reactivex.android"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <uses-sdk android:minSdkVersion="13" />
+    <uses-sdk android:minSdkVersion="16" />
 
 </manifest>

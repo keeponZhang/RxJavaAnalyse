@@ -8,5 +8,7 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+//sourceCompatibility = "8"
+//targetCompatibility = "8"
+sourceCompatibility =rootProject.ext.sourceCompatibility
+targetCompatibility =rootProject.ext.sourceCompatibility

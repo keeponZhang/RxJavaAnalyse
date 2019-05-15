@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.jakewharton.butterknife'
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.packtpub.apps.rxjava_essentials"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetVersion
+        versionCode 1
+        versionName "1.0"
+//        添加如下配置 开启annotation processor
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.sourceCompatibility
+        targetCompatibility rootProject.ext.sourceCompatibility
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+        abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+    compile "com.android.support.constraint:constraint-layout:${rootProject.ext.CONTRANT_LAYOUT_VERSION}"
+    compile "com.android.support:support-v4:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+    compile "com.android.support:recyclerview-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+    compile "com.android.support:cardview-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+
+    compile 'com.jakewharton.timber:timber:4.1.0'
+
+//    compile 'org.projectlombok:lombok:1.14.8'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'org.projectlombok:lombok:1.16.6'
+    compile ('com.jakewharton:butterknife:8.4.0'){
+        exclude module:'support-v4'
+    }
+  annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
+//    compile 'io.reactivex:rxandroid:1.1.0'
+//    compile 'io.reactivex:rxjava:1.1.0'
+    compile project(':rxjava1_0_4')
+    compile project(':rxandroid1_0_1')
+    compile project(':rxJavaJoins_22')
+
+//    compile 'io.reactivex:rxjava-joins:0.22.0'
+
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.google.code.gson:gson:2.4'
+
+    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
+    compile 'com.github.rey5137:material:1.0.0'
+
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+
+}
