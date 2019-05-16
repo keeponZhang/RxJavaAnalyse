@@ -6,33 +6,35 @@
              tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
 
     <Button
-        android:id="@+id/takeLast"
+        android:id="@+id/distinct"
         android:textAllCaps="false"
-        android:onClick="takeLast"
-        android:text="takeLast"
+        android:onClick="distinct"
+        android:text="distinct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/repeat"
+        android:id="@+id/distinctFun"
         android:textAllCaps="false"
-        android:onClick="repeat"
-        android:text="repeat"
+        android:onClick="distinctFun"
+        android:text="distinctFun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/range"
+        android:id="@+id/distinctUntilChanged"
         android:textAllCaps="false"
-        android:onClick="range"
-        android:text="range"
+        android:onClick="distinctUntilChanged"
+        android:text="distinctUntilChanged"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <Button
-        android:id="@+id/defer"
+        android:id="@+id/distinctUntilChangedfun"
         android:textAllCaps="false"
-        android:onClick="defer"
-        android:text="defer"
+        android:onClick="distinctUntilChangedfun"
+        android:text="distinctUntilChangedfun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

@@ -21,6 +21,7 @@ import com.packtpub.apps.rxjava_essentials.apps.ApplicationsList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +30,7 @@ import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Func0;
 
 
@@ -48,6 +50,8 @@ public class TakeExampleFragment extends Fragment {
 	Button mRange;
 	@BindView(R.id.defer)
 	Button mDefer;
+	@BindView(R.id.interval)
+	Button mInterval;
 
 	private ApplicationAdapter mAdapter;
 
@@ -142,7 +146,7 @@ public class TakeExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.takeLast, R.id.repeat, R.id.range})
+	@OnClick({R.id.takeLast, R.id.repeat, R.id.range,R.id.interval})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.takeLast:
@@ -154,7 +158,32 @@ public class TakeExampleFragment extends Fragment {
 			case R.id.range:
 				range();
 				break;
+			case R.id.interval:
+				interval();
+				break;
 		}
+	}
+
+	private void interval() {
+		//interval就是timer 延迟时间和周期时间一样，最终调用的是同一个方法
+		Subscription stopMePlease = Observable.interval(3,TimeUnit.SECONDS)
+				.subscribe(new Observer<Long>() {
+					@Override
+					public void onCompleted() {
+						Toast.makeText(getActivity(), "Yeaaah!", Toast.LENGTH_LONG).show();
+					}
+					@Override
+					public void onError(Throwable e) {
+						Toast.makeText(getActivity(), "Something went wrong!"
+								, Toast.LENGTH_SHORT).show();
+					}
+					@Override
+					public void onNext(Long number) {
+						//这里不是主线程，RxComputationThreadPool-3
+						Log.e("TAG", "TakeExampleFragment onNext:" + Thread.currentThread().getName()+" number=="+number);
+//						Toast.makeText(getActivity(), "I say " + number, Toast.LENGTH_SHORT).show();
+					}
+				});
 	}
 
 	private void repeat() {
@@ -234,8 +263,6 @@ public class TakeExampleFragment extends Fragment {
 		};
 
 
-
-
 	}
 
 	@OnClick(R.id.defer)
@@ -258,4 +285,6 @@ public class TakeExampleFragment extends Fragment {
 		});
 
 	}
+
+
 }
