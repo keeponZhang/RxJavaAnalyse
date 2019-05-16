@@ -1,7 +1,5 @@
 package com.packtpub.apps.rxjava_essentials.navigation_drawer;
 
-import com.packtpub.apps.rxjava_essentials.R;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -17,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.packtpub.apps.rxjava_essentials.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,18 +166,18 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         List<NavigationItem> items = new ArrayList<>();
         items.add(new NavigationItem("Example 1", getResources().getDrawable(R.drawable.ic_action_android)));
         items.add(new NavigationItem("Example 2", getResources().getDrawable(R.drawable.ic_action_android)));
-        items.add(new NavigationItem("Example 3", getResources().getDrawable(R.drawable.ic_action_android)));
+        items.add(new NavigationItem("JustTimer", getResources().getDrawable(R.drawable.ic_action_android)));
 
-        items.add(new NavigationItem("Filter", getResources().getDrawable(R.drawable.ic_action_filter)));
-        items.add(new NavigationItem("Take and TakeLast", getResources().getDrawable(R.drawable.ic_action_filter)));
+        items.add(new NavigationItem("FilterFirstSingle", getResources().getDrawable(R.drawable.ic_action_filter)));
+        items.add(new NavigationItem("Take and TakeLast RepeatRangeDefer", getResources().getDrawable(R.drawable.ic_action_filter)));
         items.add(new NavigationItem("Distinct abd DistinctUntilChanged", getResources().getDrawable(R.drawable.ic_action_filter)));
 
         items.add(new NavigationItem("Map", getResources().getDrawable(R.drawable.ic_action_wizard)));
         items.add(new NavigationItem("Scan", getResources().getDrawable(R.drawable.ic_action_wizard)));
-        items.add(new NavigationItem("GroupBy", getResources().getDrawable(R.drawable.ic_action_wizard)));
+        items.add(new NavigationItem("GroupBy Concat", getResources().getDrawable(R.drawable.ic_action_wizard)));
 
         items.add(new NavigationItem("Merge", getResources().getDrawable(R.drawable.ic_action_process_save)));
-        items.add(new NavigationItem("Zip", getResources().getDrawable(R.drawable.ic_action_process_save)));
+        items.add(new NavigationItem("ZipBufferWindow", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("Join", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("CombineLatest", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("And Then When", getResources().getDrawable(R.drawable.ic_action_process_save)));

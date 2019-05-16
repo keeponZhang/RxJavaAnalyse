@@ -34,7 +34,7 @@ import rx.Subscription;
 import rx.functions.Func0;
 
 
-public class TakeExampleFragment extends Fragment {
+public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -58,12 +58,12 @@ public class TakeExampleFragment extends Fragment {
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 	private List<AppInfo>      mApps;
 
-	public TakeExampleFragment() {
+	public TakeRepeatRangeDeferExampleFragment() {
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_example_takelast, container, false);
+		View view = inflater.inflate(R.layout.fragment_example_takelast_repeat_range, container, false);
 		unbinder = ButterKnife.bind(this, view);
 		return view;
 	}
@@ -133,7 +133,7 @@ public class TakeExampleFragment extends Fragment {
 
 					@Override
 					public void onNext(AppInfo appInfo) {
-						Log.e("TAG", "TakeExampleFragment onNext:" + appInfo.getName());
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
 						mAddedApps.add(appInfo);
 						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
 					}
@@ -180,7 +180,7 @@ public class TakeExampleFragment extends Fragment {
 					@Override
 					public void onNext(Long number) {
 						//这里不是主线程，RxComputationThreadPool-3
-						Log.e("TAG", "TakeExampleFragment onNext:" + Thread.currentThread().getName()+" number=="+number);
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + Thread.currentThread().getName()+" number=="+number);
 //						Toast.makeText(getActivity(), "I say " + number, Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -210,7 +210,7 @@ public class TakeExampleFragment extends Fragment {
 
 					@Override
 					public void onNext(AppInfo appInfo) {
-						Log.e("TAG", "TakeExampleFragment onNext:" + appInfo.getName());
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
 						mAddedApps.add(appInfo);
 						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
 					}
@@ -223,18 +223,18 @@ public class TakeExampleFragment extends Fragment {
 				.subscribe(new Observer<Integer>() {
 					@Override
 					public void onCompleted() {
-						Log.e("TAG", "TakeExampleFragment onCompleted:");
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onCompleted:");
 
 					}
 
 					@Override
 					public void onError(Throwable e) {
-						Log.e("TAG", "TakeExampleFragment onError:");
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onError:");
 					}
 
 					@Override
 					public void onNext(Integer number) {
-						Log.e("TAG", "TakeExampleFragment onNext:" + number);
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + number);
 
 					}
 				});
@@ -249,7 +249,7 @@ public class TakeExampleFragment extends Fragment {
 				if (subscriber.isUnsubscribed()) {
 					return;
 				}
-				Log.e("TAG", "TakeExampleFragment getInt:");
+				Log.e("TAG", "TakeRepeatRangeDeferExampleFragment getInt:");
 				subscriber.onNext(42);
 				subscriber.onCompleted();
 			}
@@ -280,7 +280,7 @@ public class TakeExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(Integer integer) {
-				Log.e("TAG", "TakeExampleFragment onViewClicked number:" + integer);
+				Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onViewClicked number:" + integer);
 			}
 		});
 

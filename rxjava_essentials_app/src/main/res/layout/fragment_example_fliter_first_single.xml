@@ -19,7 +19,13 @@
         android:text="distinctFun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
+    <Button
+        android:id="@+id/single"
+        android:textAllCaps="false"
+        android:onClick="single"
+        android:text="single"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"

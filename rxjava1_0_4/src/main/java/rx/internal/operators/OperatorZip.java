@@ -144,7 +144,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
         public void onError(Throwable e) {
             child.onError(e);
         }
-
+    //OperatorZip中的ZipSubscriber的onNext方法接收的是Observable数组类型
         @Override
         public void onNext(Observable[] observables) {
             if (observables == null || observables.length == 0) {
@@ -191,6 +191,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
         private AtomicLong requested;
 
         public Zip(final Subscriber<? super R> child, FuncN<? extends R> zipFunction) {
+
             this.child = child;
             this.zipFunction = zipFunction;
             child.add(childSubscription);
@@ -200,13 +201,16 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
         public void start(@SuppressWarnings("rawtypes") Observable[] os, AtomicLong requested) {
             observers = new Object[os.length];
             this.requested = requested;
+            //几个Observable就创建几个Observer
             for (int i = 0; i < os.length; i++) {
                 InnerSubscriber io = new InnerSubscriber();
+                System.out.println(" OperatorZip  InnerSubscriber 构造函数 ==== "+io);
                 observers[i] = io;
                 childSubscription.add(io);
             }
-
+            //类似merge,分别订阅
             for (int i = 0; i < os.length; i++) {
+                System.out.println(" OperatorZip  InnerSubscriber  Observable"+ os[i]+" unsafeSubscribe ==== "+  observers[i]);
                 os[i].unsafeSubscribe((InnerSubscriber) observers[i]);
             }
         }
@@ -252,6 +256,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
                         if (allHaveValues) {
                             try {
                                 // all have something so emit
+                                //调用zipFuntion
                                 child.onNext(zipFunction.call(vs));
                                 // we emitted so decrement the requested counter
                                 requested.decrementAndGet();
@@ -292,6 +297,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
         // it collects all items in an internal queue
         @SuppressWarnings("rawtypes")
         final class InnerSubscriber extends Subscriber {
+
             // Concurrent* since we need to read it from across threads
             final RxRingBuffer items = RxRingBuffer.getSpmcInstance();
 
@@ -318,6 +324,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
 
             @Override
             public void onNext(Object t) {
+                System.out.println(" OperatorZip  InnerSubscriber onNext ==== "+t+ "  "+InnerSubscriber.this);
                 try {
                     items.onNext(t);
                 } catch (MissingBackpressureException e) {

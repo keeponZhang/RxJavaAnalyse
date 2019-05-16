@@ -93,6 +93,7 @@ public final class OperatorBufferWithSize<T> implements Operator<List<T>, T> {
 
                 @Override
                 public void onNext(T t) {
+                    //buffer实现很简单，用list集合装起来，到了指定的数量是，list集合发送出去，list清空
                     if (buffer == null) {
                         buffer = new ArrayList<T>(count);
                     }

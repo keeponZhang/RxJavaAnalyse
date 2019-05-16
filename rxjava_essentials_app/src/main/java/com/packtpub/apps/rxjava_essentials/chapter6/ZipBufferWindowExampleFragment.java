@@ -34,7 +34,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 
 
-public class ZipExampleFragment extends Fragment {
+public class ZipBufferWindowExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -54,7 +54,7 @@ public class ZipExampleFragment extends Fragment {
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 	private List<AppInfo>      mApps;
 
-	public ZipExampleFragment() {
+	public ZipBufferWindowExampleFragment() {
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class ZipExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(Observable<AppInfo> appInfoObservable) {
-				Log.e("TAG", "ZipExampleFragment buffer window:" + appInfoObservable);
+				Log.e("TAG", "ZipBufferWindowExampleFragment buffer window:" + appInfoObservable);
 
 			}
 		});
@@ -191,7 +191,7 @@ public class ZipExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(List<AppInfo> appInfos) {
-				Log.e("TAG", "ZipExampleFragment buffer onNext:" + appInfos);
+				Log.e("TAG", "ZipBufferWindowExampleFragment buffer onNext:" + appInfos);
 			}
 		});
 	}
@@ -217,7 +217,7 @@ public class ZipExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(String s) {
-				Log.e("TAG", "ZipExampleFragment onNext:"+s);
+				Log.e("TAG", "ZipBufferWindowExampleFragment onNext:"+s);
 			}
 		});
 	}

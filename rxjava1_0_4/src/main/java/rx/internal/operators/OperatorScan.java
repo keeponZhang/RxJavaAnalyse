@@ -23,7 +23,6 @@ import rx.Subscriber;
 import rx.exceptions.OnErrorThrowable;
 import rx.functions.Func0;
 import rx.functions.Func2;
-import rx.internal.util.UtilityFunctions;
 
 /**
  * Returns an Observable that applies a function to the first item emitted by a source Observable, then feeds
@@ -99,6 +98,7 @@ public final class OperatorScan<R, T> implements Operator<R, T> {
 
                 if (this.value == NO_INITIAL_VALUE) {
                     // if there is NO_INITIAL_VALUE then we know it is type T for both so cast T to R
+                    //发送第一个数据时，会走这里，第一个数据会直接发送，不会走accumulator.call
                     this.value = (R) currentValue;
                 } else {
                     try {

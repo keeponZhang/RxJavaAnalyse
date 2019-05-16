@@ -10,23 +10,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
 import com.packtpub.apps.rxjava_essentials.chapter4.DistinctExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter4.FilterExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter4.TakeExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter5.GroupByExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter4.TakeRepeatRangeDeferExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter5.GroupByConcatExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.MapExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.ScanExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.AndThenWhenExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.CombineLatestExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.JoinExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.MergeExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter6.ZipExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter6.ZipBufferWindowExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.LongTaskFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.NetworkTaskFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.SharedPreferencesListFragment;
 import com.packtpub.apps.rxjava_essentials.chapter8.SoActivity;
 import com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment;
 import com.packtpub.apps.rxjava_essentials.example2.SecondExampleFragment;
-import com.packtpub.apps.rxjava_essentials.example3.ThirdExampleFragment;
+import com.packtpub.apps.rxjava_essentials.example3.JustTimerExampleFragment;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerCallbacks;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerFragment;
 
@@ -90,17 +90,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new ThirdExampleFragment())
+                    .replace(R.id.container, new JustTimerExampleFragment())
                     .commit();
                 break;
             case 3:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new FilterExampleFragment())
+                    .replace(R.id.container, new FilterFirstSingleExampleFragment())
                     .commit();
                 break;
             case 4:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new TakeExampleFragment())
+                    .replace(R.id.container, new TakeRepeatRangeDeferExampleFragment())
                     .commit();
                 break;
             case 5:
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 8:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new GroupByExampleFragment())
+                    .replace(R.id.container, new GroupByConcatExampleFragment())
                     .commit();
                 break;
             case 9:
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 10:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new ZipExampleFragment())
+                    .replace(R.id.container, new ZipBufferWindowExampleFragment())
                     .commit();
                 break;
             case 11:

@@ -31,7 +31,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 
-public class ThirdExampleFragment extends Fragment {
+public class JustTimerExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -56,7 +56,7 @@ public class ThirdExampleFragment extends Fragment {
 	private AppInfo       mAppTwo;
 	private AppInfo       mAppThree;
 
-	public ThirdExampleFragment() {
+	public JustTimerExampleFragment() {
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class ThirdExampleFragment extends Fragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		if (!mTimeSubscription.isUnsubscribed()) {
+		if (mTimeSubscription!=null&&!mTimeSubscription.isUnsubscribed()) {
 			mTimeSubscription.unsubscribe();
 		}
 		unbinder.unbind();

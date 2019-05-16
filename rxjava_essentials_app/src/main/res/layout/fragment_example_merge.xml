@@ -6,35 +6,20 @@
              tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
 
     <Button
-        android:id="@+id/distinct"
+        android:id="@+id/merge"
         android:textAllCaps="false"
-        android:onClick="distinct"
-        android:text="distinct"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/distinctFun"
-        android:textAllCaps="false"
-        android:onClick="distinctFun"
-        android:text="distinctFun"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/distinctUntilChanged"
-        android:textAllCaps="false"
-        android:onClick="distinctUntilChanged"
-        android:text="distinctUntilChanged"
+        android:onClick="merge"
+        android:text="merge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/distinctUntilChangedfun"
+        android:id="@+id/mergeAsyn"
         android:textAllCaps="false"
-        android:onClick="distinctUntilChangedfun"
-        android:text="distinctUntilChangedfun"
+        android:onClick="mergeAsyn"
+        android:text="mergeAsyn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

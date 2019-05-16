@@ -151,6 +151,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         //MergeSubscriber接收到的是Observable
         public void onNext(Observable<? extends T> t) {
             System.out.println("------------OperatorMerge.MergeSubscriber onNext ---------------"+t);
+            //just操作符创建的Observable
             if (t instanceof ScalarSynchronousObservable) {
                 ScalarSynchronousObservable<? extends T> t2 = (ScalarSynchronousObservable<? extends T>)t;
                 handleScalarSynchronousObservable(t2);
@@ -195,6 +196,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
             InnerSubscriber<T> i = new InnerSubscriber<T>(this, producerIfNeeded);
             i.sindex = childrenSubscribers.add(i);
             //其他类型的Observabale,生成一个InnerSubscriber订阅它，因为可知的是ObservabaleJust数据才一开始知道，可以用get获取，其他不知道
+            //如果发来的Observable是在同一个线程的，或者最后面的才切换了线程，这里订阅后，前面的Observable会先发送完事件
             t.unsafeSubscribe(i);
             if (!isUnsubscribed()) {
                 request(1);
@@ -547,6 +549,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         private final RxRingBuffer q = RxRingBuffer.getSpmcInstance();
 
         public InnerSubscriber(MergeSubscriber<T> parent, MergeProducer<T> producer) {
+            System.out.println("OperatorMerge  构造函数-----InnerSubscriber "+InnerSubscriber.this);
             this.parentSubscriber = parent;
             this.producer = producer;
             add(q);
@@ -556,7 +559,9 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         @Override
         public void onNext(T t) {
             //收到要发送的数据，也是merge里面的每个Observable要发送的事件类型
+            System.out.println("OperatorMerge  InnerSubscriber"+InnerSubscriber.this+" onNext="+t);
             emit(t, false);
+
         }
 
         @Override

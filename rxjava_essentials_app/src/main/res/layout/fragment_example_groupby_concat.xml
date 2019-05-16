@@ -6,34 +6,22 @@
              tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
 
     <Button
-        android:id="@+id/distinct"
+        android:id="@+id/concat"
         android:textAllCaps="false"
-        android:onClick="distinct"
-        android:text="distinct"
+        android:onClick="concat"
+        android:text="concat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/distinctFun"
+        android:id="@+id/concatMap"
         android:textAllCaps="false"
-        android:onClick="distinctFun"
-        android:text="distinctFun"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/distinctUntilChanged"
-        android:textAllCaps="false"
-        android:onClick="distinctUntilChanged"
-        android:text="distinctUntilChanged"
+        android:onClick="concatMap"
+        android:text="concatMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/distinctUntilChangedfun"
-        android:textAllCaps="false"
-        android:onClick="distinctUntilChangedfun"
-        android:text="distinctUntilChangedfun"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
+
 
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"

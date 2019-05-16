@@ -37,12 +37,16 @@ public final class OperatorDistinct<T, U> implements Operator<T, T> {
     @Override
     public Subscriber<? super T> call(final Subscriber<? super T> child) {
         return new Subscriber<T>(child) {
+            //distinct实现很简单，用HashSet去重
             Set<U> keyMemory = new HashSet<U>();
 
             @Override
             public void onNext(T t) {
+                //有传fun，增加一个装换功能
                 U key = keySelector.call(t);
-                if (keyMemory.add(key)) {
+                boolean add = keyMemory.add(key);
+               System.out.println("OperatorDistinct onNext key:"+key+"  add="+add);
+                if (add) {
                     child.onNext(t);
                 } else {
                     request(1);

@@ -31,7 +31,7 @@ import rx.Observer;
 import rx.functions.Func1;
 
 
-public class FilterExampleFragment extends Fragment {
+public class FilterFirstSingleExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -43,18 +43,20 @@ public class FilterExampleFragment extends Fragment {
 	@BindView(R.id.firstFun)
 	Button             mFirstFun;
 	Unbinder unbinder;
+	@BindView(R.id.single)
+	Button mSingle;
 
 	private ApplicationAdapter mAdapter;
 
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
-	private List<AppInfo> mApps;
+	private List<AppInfo>      mApps;
 
-	public FilterExampleFragment() {
+	public FilterFirstSingleExampleFragment() {
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_example_fliter_first, container, false);
+		View view = inflater.inflate(R.layout.fragment_example_fliter_first_single, container, false);
 		unbinder = ButterKnife.bind(this, view);
 		return view;
 	}
@@ -114,7 +116,7 @@ public class FilterExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.first, R.id.firstFun})
+	@OnClick({R.id.first, R.id.firstFun,R.id.single})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.first:
@@ -123,7 +125,34 @@ public class FilterExampleFragment extends Fragment {
 			case R.id.firstFun:
 				firstFun();
 				break;
+			case R.id.single:
+				single();
+				break;
 		}
+	}
+
+	private void single() {
+		Observable.from(mApps)
+				.single()
+				.subscribe(new Observer<AppInfo>() {
+					@Override
+					public void onCompleted() {
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+
+					@Override
+					public void onError(Throwable e) {
+						Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+
+					@Override
+					public void onNext(AppInfo appInfo) {
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+						mAddedApps.add(appInfo);
+						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+					}
+				});
 	}
 
 	private void firstFun() {
@@ -180,4 +209,6 @@ public class FilterExampleFragment extends Fragment {
 					}
 				});
 	}
+
+
 }

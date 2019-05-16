@@ -34,6 +34,7 @@ public final class OperatorDistinctUntilChanged<T, U> implements Operator<T, T> 
     @Override
     public Subscriber<? super T> call(final Subscriber<? super T> child) {
         return new Subscriber<T>(child) {
+            //实现很简单，记录上次发送的key，跟要发送的key对比，不同的话才发送
             U previousKey;
             boolean hasPrevious;
             @Override

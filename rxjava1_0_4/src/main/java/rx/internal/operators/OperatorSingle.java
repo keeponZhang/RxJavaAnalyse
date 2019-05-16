@@ -53,6 +53,7 @@ public final class OperatorSingle<T> implements Operator<T, T> {
 
             @Override
             public void onNext(T value) {
+                //single 如果发送多个的话，一个也收不到，会收到onError
                 if (isNonEmpty) {
                     hasTooManyElements = true;
                     subscriber.onError(new IllegalArgumentException("Sequence contains too many elements"));

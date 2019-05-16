@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
+import rx.functions.Func2;
 
 public class ScanExampleFragment extends Fragment {
 
@@ -70,13 +73,16 @@ public class ScanExampleFragment extends Fragment {
 
     private void loadList(List<AppInfo> apps) {
         mRecyclerView.setVisibility(View.VISIBLE);
-
         Observable.from(apps)
-                .scan((appInfo, appInfo2) -> {
-                    if (appInfo.getName().length() > appInfo2.getName().length()) {
-                        return appInfo;
-                    } else {
-                        return appInfo2;
+                .scan(new Func2<AppInfo, AppInfo, AppInfo>() {
+                    @Override
+                    public AppInfo call(AppInfo appInfo, AppInfo appInfo2) {
+                        Log.e("TAG", "ScanExampleFragment call appInfo:"+appInfo.getName()+"  appInfo2="+appInfo2.getName());
+                        if (appInfo.getName().length() > appInfo2.getName().length()) {
+                            return appInfo;
+                        } else {
+                            return appInfo2;
+                        }
                     }
                 })
                 .distinct()
@@ -98,5 +104,40 @@ public class ScanExampleFragment extends Fragment {
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
                 });
+
+        scan();
+    }
+
+    private void scan() {
+        Observable.just(1,2,3,4,5)
+                .scan(new Func2<Integer, Integer, Integer>() {
+                    @Override
+                    public Integer call(Integer sum, Integer item) {
+                        Log.e("TAG", "ScanExampleFragment call sum:"+sum);
+                        return sum + item;
+                    }
+                })
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d("RXJAVA", "Sequence completed.");
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("RXJAVA", "Something went south!");
+                    }
+                    @Override
+                    public void onNext(Integer item) {
+                        Log.e("TAG", "ScanExampleFragment onNext    :"+item);
+                        Log.d("RXJAVA", "item is: " + item);
+                    }
+                });
+
+//        RXJAVA: item is: 1
+//        RXJAVA: item is: 3
+//        RXJAVA: item is: 6
+//        RXJAVA: item is: 10
+//        RXJAVA: item is: 15
+//        RXJAVA: Sequence completed.
     }
 }
