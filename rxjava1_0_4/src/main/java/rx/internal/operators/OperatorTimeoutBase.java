@@ -127,8 +127,8 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
                 serializedSubscriber.onNext(value);
                 //这里会最终回调
 //                System.out.println("<<<<<<<<<<<<OperatorTimeoutBase TimeoutSubscriber onNext  timeoutStub.call >>>>>>>>>>>>>");
-//                timeoutStub.call(this, actual, value, inner);
-                //serial.set会把上一个action取消掉
+//               timeoutStub.call(this, actual, value, inner);
+                //timeoutStub.call(this, actual, value, inner)会生成一个Subscription，serial.set会把上一个Subscription unSubscribe掉
               serial.set(timeoutStub.call(this, actual, value, inner));
             }
         }

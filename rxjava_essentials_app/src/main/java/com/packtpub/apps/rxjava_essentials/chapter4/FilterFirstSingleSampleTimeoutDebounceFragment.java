@@ -260,7 +260,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 				subscriber.onCompleted();
 			}
 		}).subscribeOn(Schedulers.io())
-				.timeout(1,TimeUnit.SECONDS)
+				.timeout(600,TimeUnit.MILLISECONDS)
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new Observer<AppInfo>() {
 					@Override
