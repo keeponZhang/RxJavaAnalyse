@@ -48,9 +48,10 @@ public final class OperatorWindowWithSize<T> implements Operator<Observable<T>, 
         this.size = size;
         this.skip = skip;
     }
-
+//OperatorWindowWithSize window 订阅类型是Observable
     @Override
     public Subscriber<? super T> call(Subscriber<? super Observable<T>> child) {
+        System.out.println("OperatorWindowWithSize call onNext "+"  child:"+child);
         if (skip == size) {
             return new ExactSubscriber(child);
         }
@@ -94,12 +95,17 @@ public final class OperatorWindowWithSize<T> implements Operator<Observable<T>, 
         
         @Override
         public void onNext(T t) {
+            System.out.println("OperatorWindowWithSize ExactSubscriber onNext "+t+"  child:"+child);
+            //window 是一个subject，可充当Observabel和Observer
             if (window == null) {
                 noWindow = false;
                 window = BufferUntilSubscriber.create();
+                //child是下一个subcriber,只有一个,每次创建window时，调用下一层observer的onNext方法，此时window充当observable
                 child.onNext(window);                
             }
+            //此时window充当observer
             window.onNext(t);
+            //到达数量后，window清空，当该Subscriber接收到下个事件时，会重新创建
             if (++count % size == 0) {
                 window.onCompleted();
                 window = null;

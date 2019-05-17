@@ -100,8 +100,8 @@ import rx.subscriptions.Subscriptions;
             }
             
             ScheduledAction s = poolWorker.scheduleActual(action, delayTime, unit);
-            innerSubscription.add(s);
-            s.addParent(innerSubscription);
+           innerSubscription.add(s);
+           s.addParent(innerSubscription);
             return s;
         }
     }

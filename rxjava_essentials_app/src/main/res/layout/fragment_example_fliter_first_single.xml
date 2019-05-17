@@ -26,7 +26,48 @@
         android:text="single"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
+    <Button
+        android:id="@+id/elementAt"
+        android:textAllCaps="false"
+        android:onClick="elementAt"
+        android:text="elementAt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/sample"
+        android:textAllCaps="false"
+        android:onClick="sample"
+        android:text="sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/throttleFirst"
+        android:textAllCaps="false"
+        android:onClick="throttleFirst"
+        android:text="throttleFirst"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/debounce"
+        android:textAllCaps="false"
+        android:onClick="debounce"
+        android:text="debounce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/timeout"
+        android:textAllCaps="false"
+        android:onClick="timeout"
+        android:text="timeout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/skip"
+        android:textAllCaps="false"
+        android:onClick="skip"
+        android:text="skip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

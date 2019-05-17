@@ -52,6 +52,7 @@ public final class OperatorElementAt<T> implements Operator<T, T> {
 
             @Override
             public void onNext(T value) {
+                //实现很简单，到了指定索引才发送数据，接着发送onCompleted
                 if (currentIndex == index) {
                     subscriber.onNext(value);
                     subscriber.onCompleted();

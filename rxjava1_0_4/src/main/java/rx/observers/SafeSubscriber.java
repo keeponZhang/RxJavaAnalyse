@@ -65,6 +65,7 @@ public class SafeSubscriber<T> extends Subscriber<T> {
 
     public SafeSubscriber(Subscriber<? super T> actual) {
         super(actual);
+        System.out.println("SafeSubscriber 构造函数 --actual="+actual+"   SafeSubscriber=="+SafeSubscriber.this);
         this.actual = actual;
     }
 

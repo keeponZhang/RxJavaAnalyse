@@ -75,7 +75,7 @@ public final class OperatorTakeLast<T> implements Operator<T, T> {
                     return;
                 }
                 if (deque.size() == count) {
-                    //移除前面的，因为这里是目标是要保存后面的，takeLast
+                    //移除前面的，因为这里是目标是要保存后面的，takeLast(因为要发送的数量是一定的，如果还有数据过来，说明队列里头的数据时可以不要的)
                     Object o = deque.removeFirst();
                     System.out.println("-------------OperatorTakeLast  deque.removeFirst()"+o+"  --------------count="+count);
                 }

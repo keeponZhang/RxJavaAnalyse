@@ -80,6 +80,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
             f = executor.submit(run);
         } else {
             //这里直接用线程池延迟执行
+            System.out.println("NewThreadWorker scheduleActual delay=="+delayTime);
             f = executor.schedule(run, delayTime, unit);
         }
         run.add(f);
@@ -91,6 +92,8 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
     public void unsubscribe() {
         isUnsubscribed = true;
         executor.shutdownNow();
+        System.out.println("<<<<<<<<<<<<OperatorTimeoutBase NewThreadWorker shutdownNow   >>>>>>>>>>>>>");
+
     }
 
     @Override

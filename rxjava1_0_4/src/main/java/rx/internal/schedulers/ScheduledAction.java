@@ -43,6 +43,7 @@ public final class ScheduledAction extends AtomicReference<Thread> implements Ru
     @Override
     public void run() {
         try {
+            System.out.println("ScheduledAction  NewThreadWorker run action ="+action);
             lazySet(Thread.currentThread());
             action.call();
         } catch (Throwable e) {
@@ -69,7 +70,11 @@ public final class ScheduledAction extends AtomicReference<Thread> implements Ru
     @Override
     public void unsubscribe() {
         if (!cancel.isUnsubscribed()) {
+            System.out.println("ScheduledAction  NewThreadWorker run unsubscribe =");
             cancel.unsubscribe();
+        }else{
+            System.out.println("ScheduledAction  NewThreadWorker run else >>>>");
+
         }
     }
 

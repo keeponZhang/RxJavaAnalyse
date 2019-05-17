@@ -47,8 +47,11 @@ public final class OperatorThrottleFirst<T> implements Operator<T, T> {
             @Override
             public void onNext(T v) {
                 long now = scheduler.now();
+                System.out.println("OperatorThrottleFirst call onNext now=="+now+"  v="+v);
+                //第一个数据会发送，时间到了，会发送接下来接收到的最近的数据
                 if (lastOnNext == 0 || now - lastOnNext >= timeInMilliseconds) {
                     lastOnNext = now;
+                    System.out.println("---------OperatorThrottleFirst call onNext 发送数据咯---------  v="+v);
                     subscriber.onNext(v);
                 } 
             }

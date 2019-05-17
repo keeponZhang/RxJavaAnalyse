@@ -7550,6 +7550,7 @@ public class Observable<T> {
             // allow the hook to intercept and/or decorate
 //            调用 Observable 中的 OnSubscribe.call(Subscriber) 。在这里，事件发送的逻辑开始运行。
             //相当于rxjava2 Observable.subscribeActual(subscriber)
+            //这里是重点，一般来说，下层subscriber触发订阅事件后，会触动上层Observable的call方法，传人subscriber，call方法里面的一般逻辑就是调用subscriber的onNex发送事件
             hook.onSubscribeStart(this, onSubscribe).call(subscriber);
 //            将传入的 Subscriber 作为 Subscription 返回。这是为了方便 unsubscribe().
             return hook.onSubscribeReturn(subscriber);

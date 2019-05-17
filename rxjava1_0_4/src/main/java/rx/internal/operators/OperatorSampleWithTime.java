@@ -79,6 +79,7 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
         
         @Override
         public void onNext(T t) {
+            System.out.println("OperatorSampleWithTime SamplerSubscriber   onNext "+t);
             value = t;
         }
 
@@ -94,9 +95,15 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
             unsubscribe();
         }
 
+        //这个会定时回调,直到unsubscribe
         @Override
         public void call() {
+            //这里拿的其实就是value,并设置为EMPTY_TOKEN，一段时间内没新的数据去更新value，再次拿会等于EMPTY_TOKEN
             Object localValue = VALUE_UPDATER.getAndSet(this, EMPTY_TOKEN);
+//            value = "keepon";
+//            Object localValue2 = VALUE_UPDATER.getAndSet(this, EMPTY_TOKEN);
+            System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call localValue "+localValue+" time="+System.currentTimeMillis()+" -------------");
+//            System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call localValue2 "+localValue2+" time="+System.currentTimeMillis()+" -------------");
             if (localValue != EMPTY_TOKEN) {
                 try {
                     @SuppressWarnings("unchecked")
@@ -105,6 +112,9 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
                 } catch (Throwable e) {
                     onError(e);
                 }
+            }else{
+                System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call 不发送-------------");
+
             }
         }
     }

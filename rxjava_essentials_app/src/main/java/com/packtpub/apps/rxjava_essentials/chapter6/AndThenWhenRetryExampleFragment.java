@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,21 +31,24 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
+import rx.joins.Pattern2;
+import rx.joins.Plan0;
+import rx.observables.JoinObservable;
 
 
-public class ZipBufferWindowExampleFragment extends Fragment {
+public class AndThenWhenRetryExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
 
 	@BindView(R.id.fragment_first_example_swipe_container)
 	SwipeRefreshLayout mSwipeRefreshLayout;
-	@BindView(R.id.zip)
-	Button             mZip;
-	@BindView(R.id.buffer)
-	Button             mBuffer;
-	@BindView(R.id.window)
-	Button             mWindow;
+	@BindView(R.id.andthenwhen)
+	Button             mAndthenwhen;
+	@BindView(R.id.retry)
+	Button             mRetry;
+	@BindView(R.id.retryWhen)
+	Button             mRetryWhen;
 	Unbinder unbinder;
 
 	private ApplicationAdapter mAdapter;
@@ -54,12 +56,12 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 	private List<AppInfo>      mApps;
 
-	public ZipBufferWindowExampleFragment() {
+	public AndThenWhenRetryExampleFragment() {
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_example_zip, container, false);
+		View view = inflater.inflate(R.layout.fragment_example_andthenwhen, container, false);
 		unbinder = ButterKnife.bind(this, view);
 		return view;
 	}
@@ -95,14 +97,19 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 
 		Observable<Long> tictoc = Observable.interval(1, TimeUnit.SECONDS);
 
-		Observable
-				.zip(observableApp, tictoc, new Func2<AppInfo, Long, AppInfo>() {
-					@Override
-					public AppInfo call(AppInfo appInfo, Long time) {
-						appInfo.setName(time + " " + appInfo.getName());
-						return appInfo;
-					}
-				})
+		Pattern2<AppInfo, Long> pattern = JoinObservable.from(observableApp).and(tictoc);
+		Plan0<AppInfo> plan = pattern.then(new Func2<AppInfo, Long, AppInfo>() {
+			@Override
+			public AppInfo call(AppInfo appInfo, Long time) {
+				appInfo.setName(time + " " + appInfo.getName());
+				return appInfo;
+			}
+		});
+//		Plan0<AppInfo> plan = pattern.then(this::updateTitle);
+		//目前来看，跟zip效果一样
+		JoinObservable
+				.when(plan)
+				.toObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new Observer<AppInfo>() {
 					@Override
@@ -140,103 +147,64 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.zip, R.id.buffer,R.id.window})
+	@OnClick({R.id.andthenwhen, R.id.retry, R.id.retryWhen})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
-			case R.id.zip:
-				zip();
+			case R.id.andthenwhen:
+				andthenwhen();
 				break;
-			case R.id.buffer:
-				buffer();
+			case R.id.retry:
+				retry();
 				break;
-			case R.id.window:
-				window();
+			case R.id.retryWhen:
+				retryWhen();
 				break;
 		}
 	}
 
-	private void window() {
-		Observable<AppInfo> observableApp = Observable.from(mApps.subList(0,6));
-
-		Subscriber<Observable<AppInfo>> subscriber = new Subscriber<Observable<AppInfo>>() {
-			@Override
-			public void onCompleted() {
-
-			}
-
-			@Override
-			public void onError(Throwable e) {
-
-			}
-
-			@Override
-			public void onNext(Observable<AppInfo> appInfoObservable) {
-				Log.e("TAG", "ZipBufferWindowExampleFragment  window  onNext:" + appInfoObservable);
-				appInfoObservable.subscribe(new Subscriber<AppInfo>() {
-					@Override
-					public void onCompleted() {
-						Log.w("TAG", "ZipBufferWindowExampleFragment window appInfoObservable onCompleted:" + appInfoObservable);
-					}
-
-					@Override
-					public void onError(Throwable e) {
-
-					}
-
-					@Override
-					public void onNext(AppInfo appInfo) {
-						Log.w("TAG", "ZipBufferWindowExampleFragment window appInfoObservable onNext:" + appInfo);
-					}
-				});
-			}
-		};
-		observableApp.window(3).subscribe(subscriber);
-		Log.e("TAG", "ZipBufferWindowExampleFragment window child subscriber:"+subscriber);
+	private void retryWhen() {
 	}
 
-	private void buffer() {
-		Observable<AppInfo> observableApp = Observable.from(mApps.subList(0,6));
-		observableApp.buffer(3).subscribe(new Subscriber<List<AppInfo>>() {
+	private void retry() {
+		Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+			@Override
+			public void call(Subscriber<? super Integer> subscriber) {
+				if (subscriber.isUnsubscribed()) return;
+				//循环输出数字
+				try {
+					for (int i = 0; i < 10; i++) {
+						if (i == 4) {
+							throw new Exception("this is number 4 error！");
+						}
+						subscriber.onNext(i);
+					}
+					subscriber.onCompleted();
+				} catch (Throwable e) {
+					subscriber.onError(e);
+				}
+			}
+		});
+
+		observable.retry(2).subscribe(new Subscriber<Integer>() {
 			@Override
 			public void onCompleted() {
-
+				System.out.println("Sequence complete.");
 			}
 
 			@Override
 			public void onError(Throwable e) {
-
+				System.err.println("Error: " + e.getMessage());
 			}
 
 			@Override
-			public void onNext(List<AppInfo> appInfos) {
-				Log.e("TAG", "ZipBufferWindowExampleFragment buffer onNext:" + appInfos);
+			public void onNext(Integer value) {
+				System.out.println("Next:" + value);
 			}
 		});
+
 	}
 
-	private void zip() {
-		Observable<String> just = Observable.just("zhangshan", "lisi", "wnagwu");
-		Observable<Long> tictoc = Observable.interval(1, TimeUnit.SECONDS);
-		Observable.zip(just, tictoc, new Func2<String, Long, String>() {
-			@Override
-			public String call(String s, Long aLong) {
-				return s + ":" + aLong;
-			}
-		}).subscribe(new Subscriber<String>() {
-			@Override
-			public void onCompleted() {
-
-			}
-
-			@Override
-			public void onError(Throwable e) {
-
-			}
-
-			@Override
-			public void onNext(String s) {
-				Log.e("TAG", "ZipBufferWindowExampleFragment onNext:"+s);
-			}
-		});
+	private void andthenwhen() {
+		
 	}
 }

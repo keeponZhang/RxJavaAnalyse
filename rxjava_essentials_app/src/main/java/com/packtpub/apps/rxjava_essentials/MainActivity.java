@@ -10,13 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
 import com.packtpub.apps.rxjava_essentials.chapter4.DistinctExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleSampleTimeoutDebounceFragment;
 import com.packtpub.apps.rxjava_essentials.chapter4.TakeRepeatRangeDeferExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.GroupByConcatExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.MapExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.ScanExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter6.AndThenWhenExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter6.CombineLatestExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter6.AndThenWhenRetryExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter6.CombineLatestSwithStartWithExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.JoinExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.MergeExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.ZipBufferWindowExampleFragment;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 3:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new FilterFirstSingleExampleFragment())
+                    .replace(R.id.container, new FilterFirstSingleSampleTimeoutDebounceFragment())
                     .commit();
                 break;
             case 4:
@@ -140,12 +140,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 12:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new CombineLatestExampleFragment())
+                    .replace(R.id.container, new CombineLatestSwithStartWithExampleFragment())
                     .commit();
                 break;
             case 13:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new AndThenWhenExampleFragment())
+                    .replace(R.id.container, new AndThenWhenRetryExampleFragment())
                     .commit();
                 break;
             case 14:

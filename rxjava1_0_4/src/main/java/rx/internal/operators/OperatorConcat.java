@@ -123,6 +123,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         @Override
         public void onNext(Observable<? extends T> t) {
+            System.out.println("OperatorConcat ConcatSubscriber onNext Observable= "+t);
             queue.add(nl.next(t));
             if (WIP_UPDATER.getAndIncrement(this) == 0) {
                 subscribeNext();
@@ -158,6 +159,8 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
                     child.onCompleted();
                 } else if (o != null) {
                     Observable<? extends T> obs = nl.getValue(o);
+                    System.out.println("OperatorConcat ConcatSubscriber subscribeNext Observable obs= "+obs);
+                    //child是下层真正的subscriber
                     currentSubscriber = new ConcatInnerSubscriber<T>(this, child, requested);
                     current.set(currentSubscriber);
                     obs.unsafeSubscribe(currentSubscriber);
@@ -207,6 +210,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         @Override
         public void onCompleted() {
+            //上一个Obeservable发送数据，下一个才开始发，跟merge相比，保证有序
             if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
                 // terminal completion to parent so it continues to the next
                 parent.completeInner();

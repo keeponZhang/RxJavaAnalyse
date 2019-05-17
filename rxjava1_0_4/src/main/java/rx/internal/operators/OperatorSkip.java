@@ -54,6 +54,7 @@ public final class OperatorSkip<T> implements Observable.Operator<T, T> {
 
             @Override
             public void onNext(T t) {
+                //实现也很简单，记录跳过的个数，到了指定跳过数量后，才真正发送数据
                 if (skipped >= toSkip) {
                     child.onNext(t);
                 } else {

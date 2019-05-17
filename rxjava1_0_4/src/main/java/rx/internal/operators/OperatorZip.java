@@ -256,7 +256,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
                         if (allHaveValues) {
                             try {
                                 // all have something so emit
-                                //调用zipFuntion
+                                //调用zipFuntion,这是跟merge的最大区别
                                 child.onNext(zipFunction.call(vs));
                                 // we emitted so decrement the requested counter
                                 requested.decrementAndGet();

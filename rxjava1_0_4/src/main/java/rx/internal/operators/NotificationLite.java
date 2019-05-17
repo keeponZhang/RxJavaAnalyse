@@ -147,6 +147,7 @@ public final class NotificationLite<T> {
                 o.onError(((OnErrorSentinel) n).e);
                 return true;
             }
+            System.out.println("NotificationLite accept Observer "+o);
             o.onNext((T) n);
             return false;
         } else {

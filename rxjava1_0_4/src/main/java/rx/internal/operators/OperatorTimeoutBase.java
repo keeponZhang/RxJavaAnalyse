@@ -115,6 +115,7 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
 
         @Override
         public void onNext(T value) {
+            System.out.println("OperatorTimeoutBase TimeoutSubscriber onNext ="+value+" time:"+System.currentTimeMillis());
             boolean onNextWins = false;
             synchronized (gate) {
                 if (terminated == 0) {
@@ -124,7 +125,11 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
             }
             if (onNextWins) {
                 serializedSubscriber.onNext(value);
-                serial.set(timeoutStub.call(this, actual, value, inner));
+                //这里会最终回调
+//                System.out.println("<<<<<<<<<<<<OperatorTimeoutBase TimeoutSubscriber onNext  timeoutStub.call >>>>>>>>>>>>>");
+//                timeoutStub.call(this, actual, value, inner);
+                //serial.set会把上一个action取消掉
+              serial.set(timeoutStub.call(this, actual, value, inner));
             }
         }
 
@@ -164,7 +169,9 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
                     timeoutWins = true;
                 }
             }
+            System.out.println("OperatorTimeoutBase TimeoutSubscriber onTimeout:"+System.currentTimeMillis()+" timeoutWins= "+timeoutWins);
             if (timeoutWins) {
+                //只传时间单元的话，这里other == null
                 if (other == null) {
                     serializedSubscriber.onError(new TimeoutException());
                 } else {

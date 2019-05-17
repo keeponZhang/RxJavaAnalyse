@@ -62,14 +62,26 @@ public class OperatorSkipLast<T> implements Operator<T, T> {
                     // If count == 0, we do not need to put value into deque
                     // and remove it at once. We can emit the value
                     // directly.
+                    //第一个是直接发送的
                     subscriber.onNext(value);
                     return;
                 }
+                //takeLast的实现，takeLast再onCompleted才启动发送时
+               /* if (deque.size() == count) {
+                    //移除前面的，因为这里是目标是要保存后面的，takeLast(因为要发送的数量是一定的，如果还有数据过来，说明队列里头的数据时可以不要的)
+                    Object o = deque.removeFirst();
+                    System.out.println("-------------OperatorTakeLast  deque.removeFirst()"+o+"  --------------count="+count);
+                }
+                //往队列里插入数据,value不为空的话，还是value，空的话返回ON_NEXT_NULL_SENTINEL，因为deque不支持插入空值
+                deque.offerLast(notification.next(value));*/
+
+               //这里的逻辑是：缓存已经到了要发送的数据了，还有数据发过来，所以队列头的是要发送的数据
                 if (deque.size() == count) {
                     subscriber.onNext(on.getValue(deque.removeFirst()));
                 } else {
                     request(1);
                 }
+                //除了第一个不入队列
                 deque.offerLast(on.next(value));
             }
 

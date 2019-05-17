@@ -84,9 +84,11 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
         public OnSubscribeAction(State<T> state) {
             this.state = state;
         }
-
+        //BufferUntilSubscriber是一个subject，作为Observable被订阅时，subscriber从下面的call方法传入
         @Override
         public void call(final Subscriber<? super T> s) {
+            System.out.println(" BufferUntilSubscriber OnSubscribeAction call  Subscriber="+s);
+            //把s赋值给state.observerRef，方便下面发送事件
             if (state.casObserverRef(null, s)) {
                 s.add(Subscriptions.create(new Action0() {
                     @SuppressWarnings("unchecked")
@@ -110,6 +112,7 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
                             nl.accept(state.observerRef, o);
                         }
                         synchronized (state.guard) {
+                            //buffer为空时跳出去
                             if (state.buffer.isEmpty()) {
                                 // Although the buffer is empty, there is still a chance
                                 // that further events may be put into the `buffer`.
@@ -181,6 +184,7 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
             state.observerRef.onNext(t);
         }
         else {
+            System.out.println("BufferUntilSubscriber subject onNext "+t);
             emit(state.nl.next(t));
         }
     }
