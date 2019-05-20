@@ -55,7 +55,7 @@ import rx.subscriptions.Subscriptions;
     @Override
     public void call(final Subscriber<? super T> child) {
         SubjectObserver<T> bo = new SubjectObserver<T>(child);
-        System.out.println("SubjectSubscriptionManager OnSubscribeRedo call childsubscriber= "+child+"  SubjectObserver="+bo);
+        System.out.println("SubjectSubscriptionManager OnSubscribeRedo  最顶层OnSubscribe call childsubscriber= "+child+"  SubjectObserver="+bo);
 
         addUnsubscriber(child, bo);
         onStart.call(bo);
@@ -223,7 +223,7 @@ import rx.subscriptions.Subscriptions;
         }
         @Override
         public void onNext(T t) {
-            System.out.println("OnSubscribeRedo SubjectObserver onNext "+t);
+            System.out.println("OnSubscribeRedo 最顶层 SubjectObserver onNext "+t);
             actual.onNext(t);
         }
         @Override

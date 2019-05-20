@@ -38,6 +38,8 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
             boolean terminated;
             @Override
             public void onNext(Notification<T> t) {
+                //这里的child是OnSubscribeRedo workerSubscriber
+                System.out.println("OperatorDematerialize OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child);
                 switch (t.getKind()) {
                 case OnNext:
                     if (!terminated) {

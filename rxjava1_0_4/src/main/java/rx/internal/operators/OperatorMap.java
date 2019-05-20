@@ -55,8 +55,10 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
                 try {
                     //接收到事件时，会用func1函数进行下转换
                     //把上层的T转换成R在发送给下层订阅者
-                    System.out.println("-------OperatorMap  Subscriber onNext ---------"+t);
-                    o.onNext(transformer.call(t));
+                    System.out.println("-------OnSubscribeRedo OperatorMap  Subscriber onNext 前 ---------"+t);
+                    R call = transformer.call(t);
+                    o.onNext(call);
+                    System.out.println("-------OnSubscribeRedo OperatorMap  Subscriber onNext 后  ---------"+t+"  call="+call);
                 } catch (Throwable e) {
                     Exceptions.throwIfFatal(e);
                     onError(OnErrorThrowable.addValueAsLastCause(e, t));
