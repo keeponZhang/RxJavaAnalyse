@@ -137,6 +137,7 @@ import rx.subscriptions.Subscriptions;
      * @return the last active SubjectObservers
      */
     SubjectObserver<T>[] terminate(Object n) {
+        //设置最近一个latest
         set(n);
         active = false;
 
@@ -144,6 +145,7 @@ import rx.subscriptions.Subscriptions;
         if (oldState.terminated) {
             return State.NO_OBSERVERS;
         }
+        //设置terminated为true
         return STATE_UPDATER.getAndSet(this, State.TERMINATED).observers;
     }
 

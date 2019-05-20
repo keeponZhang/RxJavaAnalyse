@@ -84,12 +84,13 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                 @Override
                 public Notification<?> call(Notification<?> terminalNotification) {
-                    System.out.println("OnSubscribeRedo  1.1--------- RedoFinite Func1 call------------》》》》》terminalNotification=" + terminalNotification);
+                    System.out.println("OnSubscribeRedo  1.2--------- RedoFinite Func1 call------------》》》》》terminalNotification=" + terminalNotification+ " terminalNotification.getKind()="+terminalNotification.getKind());
                     if (count == 0) {
                         return terminalNotification;
                     }
 
                     num++;
+                    //terminalNotification.getKind OnError,下面是否重试会通过判断terminalNotification.getKind 来判断
                     if (num <= count) {
                         return Notification.createOnNext(num);
                     } else {
@@ -208,7 +209,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
         final SerialSubscription sourceSubscriptions = new SerialSubscription();
         child.add(sourceSubscriptions);
-
+        //是Notification类型的，这个很重要
         final PublishSubject<Notification<?>> terminals = PublishSubject.create();
 
         final Action0 subscribeToSource = new Action0() {
@@ -231,6 +232,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         unsubscribe();
                         //onError跟onCompleted terminals ，经过此时terminals充当observer，terminals.lift创建的subsrciber
                         //触发三次lift生成的Observable的最顶层Observable发送事件，调用的是PublishSubject的onNext,接着调用SubjectSubscriptionManager的SubjectObserver的onNext
+                        System.out.println("OnSubscribeRedo  onError");
                         terminals.onNext(Notification.createOnError(e));
                     }
                     //onNext方法直接接受source发送的事件，进而转发给child,不经过terminals，所以next事件跟后面lift生成的Observable无关
@@ -285,13 +287,13 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     @Override
                     public void onNext(Notification<?> t) {
                         if (t.isOnCompleted() && stopOnComplete) {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext if " + this);
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext <<  if >>" + this+"  Notification.getKind="+t.getKind());
                             child.onCompleted();
                         } else if (t.isOnError() && stopOnError) {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext else if " + this);
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext << else if >>" + this+"  Notification.getKind="+t.getKind());
                             child.onError(t.getThrowable());
                         } else {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext else  " + this);
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext << else  >>" + this+"  Notification.getKind="+t.getKind());
                             isLocked.set(false);
                             filteredTerminals.onNext(t);
                         }
@@ -306,7 +308,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         });
         System.out.println("OnSubscribeRedo call 0.5 terminals.lift ="+terminalslift);
         //  controlHandlerFunction: RedoFinite  terminalslift作为controlHandlerFunction.call的方法参数
-        //相当于terminalslift.map.lift ,所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
+        //相当于terminalslift.map.lift ,terminals.lift.map.lift所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
         final Observable<?> restarts = controlHandlerFunction.call(terminalslift);
 
         // subscribe to the restarts observable to know when to schedule the next redo.
@@ -320,18 +322,23 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 Subscriber<Object> workerSubscriber = new Subscriber<Object>(child) {
                     @Override
                     public void onCompleted() {
+                        System.out.println("OnSubscribeRedo workerSubscriber onCompleted" );
                         child.onCompleted();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        System.out.println("OnSubscribeRedo workerSubscriber onError" );
                         child.onError(e);
                     }
 
                     @Override
                     public void onNext(Object t) {
-                        System.out.println("OnSubscribeRedo  ---------  worker.schedule  restarts onNext==" + t +" workerSubscriber="+this+ " ---------"+"  consumerCapacity.get()="+ consumerCapacity.get());
+                        boolean isLockedBoolean = isLocked.get();
+                        boolean unsubscribed = child.isUnsubscribed();
+                        System.out.println("OnSubscribeRedo  ---------workerSubscriber  worker.schedule   restarts onNext==" + t +" subscriber="+this+ " ---------"+"  isLockedBoolean="+ isLockedBoolean+" unsubscribed="+unsubscribed);
                         if (!isLocked.get() && !child.isUnsubscribed()) {
+                            //这里重新发射
                             if (consumerCapacity.get() > 0) {
                                 worker.schedule(subscribeToSource);
                             } else {
@@ -348,6 +355,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 };
                 System.out.println("OnSubscribeRedo  ---------  restarts.unsafeSubscribe(workerSubscriber) restarts==" + restarts +" workerSubscriber="+workerSubscriber+ " ---------");
                 //restarts是lift 3次最后一次生成的Observable, restarts.unsafeSubscribe会实现层层订阅（层层调用Observable的OnSubscribe的call方法，再调用Operator的call方法生成subscriber，让生成的subsriber订阅上层，最上层的会调用onNext开始分发）
+                //terminals.lift.map.lift.unsafeSubscribe(workerSubscriber);
                 restarts.unsafeSubscribe(workerSubscriber);
             }
         });

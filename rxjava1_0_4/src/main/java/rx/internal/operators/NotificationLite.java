@@ -92,6 +92,7 @@ public final class NotificationLite<T> {
      * @return the item, or a null token representing the item if the item is {@code null}
      */
     public Object next(T t) {
+        System.out.println("NotificationLite  next="+t);
         if (t == null)
             return ON_NEXT_NULL_SENTINEL;
         else
@@ -118,6 +119,7 @@ public final class NotificationLite<T> {
      * @return an object encapsulating the exception
      */
     public Object error(Throwable e) {
+        //AsyncSubject通过通过该类判断，所以onError没有onComplete的话，不会发送onnext
         return new OnErrorSentinel(e);
     }
 

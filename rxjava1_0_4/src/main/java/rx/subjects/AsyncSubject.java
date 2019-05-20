@@ -89,6 +89,7 @@ public final class AsyncSubject<T> extends Subject<T, T> {
 
     @Override
     public void onCompleted() {
+	    System.out.println("AsyncSubject  onCompleted:");
         if (state.active) {
             Object last = lastValue;
             if (last == null) {
@@ -107,6 +108,7 @@ public final class AsyncSubject<T> extends Subject<T, T> {
 
     @Override
     public void onError(final Throwable e) {
+	    System.out.println("AsyncSubject  onError:");
         if (state.active) {
             Object n = nl.error(e);
             List<Throwable> errors = null;
@@ -134,6 +136,7 @@ public final class AsyncSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         lastValue = nl.next(v);
+        System.out.println("AsyncSubject  onNext:"+v+" lastValue="+lastValue);
     }
 
     @Override

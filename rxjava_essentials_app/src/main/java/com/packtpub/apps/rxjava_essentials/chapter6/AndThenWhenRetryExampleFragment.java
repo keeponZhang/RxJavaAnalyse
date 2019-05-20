@@ -31,11 +31,15 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func2;
 import rx.joins.Pattern2;
 import rx.joins.Plan0;
 import rx.observables.JoinObservable;
+import rx.subjects.AsyncSubject;
+import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 
 public class AndThenWhenRetryExampleFragment extends Fragment {
@@ -190,12 +194,12 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment onError:");
+				Log.e("TAG", "AndThenWhenRetryExampleFragment  OnSubscribeRedo onError:");
 			}
 
 			@Override
 			public void onNext(Integer value) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment onNext:" + value);
+				Log.e("TAG", "AndThenWhenRetryExampleFragment  OnSubscribeRedo onNext:" + value);
 			}
 		});
 
@@ -204,12 +208,12 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 	private void andthenwhen() {
 
 	}
-
+//	相对比其他Subject常用，它的Observer只会接收到PublishSubject被订阅之后发送的数据
 	private void publishSubject() {
-		PublishSubject publishSubject = PublishSubject.create();
+		PublishSubject<String> publishSubject = PublishSubject.create();
 		publishSubject.onNext("publishSubject1");
 		publishSubject.onNext("publishSubject2");
-		publishSubject.subscribe(new Observer() {
+		publishSubject.subscribe(new Observer<String>() {
 			@Override
 			public void onCompleted() {
 
@@ -221,8 +225,8 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 			}
 
 			@Override
-			public void onNext(Object o) {
-
+			public void onNext(String o) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment onNext:" +o);
 			}
 		});
 		publishSubject.onNext("publishSubject3");
@@ -242,15 +246,89 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 				retryWhen();
 				break;
 			case R.id.asyncSubject:
-
+				asyncSubject();
 				break;
 			case R.id.behaviorSubject:
+				behaviorSubject();
 				break;
 			case R.id.publishSubject:
 				publishSubject();
 				break;
 			case R.id.replaySubject:
+				replaySubject();
 				break;
 		}
+	}
+//	ReplaySubject会发射所有数据给观察者，无论它们是何时订阅的。也有其它版本的ReplaySubject，在重放缓存增长到一定大小的时候或过了一段时间后会丢弃旧的数据
+	private void replaySubject() {
+		ReplaySubject replaySubject = ReplaySubject.create(); //创建默认初始缓存容量大小为16的ReplaySubject，当数据条目超过16会重新分配内存空间，使用这种方式，不论ReplaySubject何时被订阅，Observer都能接收到数据
+		//replaySubject = ReplaySubject.create(100);//创建指定初始缓存容量大小为100的ReplaySubject
+		//replaySubject = ReplaySubject.createWithSize(2);//只缓存订阅前最后发送的2条数据
+		//replaySubject=ReplaySubject.createWithTime(1,TimeUnit.SECONDS,Schedulers.computation());  //replaySubject被订阅前的前1秒内发送的数据才能被接收
+		replaySubject.onNext("replaySubject:pre1");
+		replaySubject.onNext("replaySubject:pre2");
+		replaySubject.onNext("replaySubject:pre3");
+		replaySubject.subscribe(new Action1<String>() {
+			@Override
+			public void call(String s) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment call:" +s);
+			}
+		});
+		replaySubject.onNext("replaySubject:after1");
+		replaySubject.onNext("replaySubject:after2");
+
+	}
+//	以上代码，Observer会接收到behaviorSubject2、behaviorSubject3、behaviorSubject4，如果在behaviorSubject.subscribe()之前不发送behaviorSubject1、behaviorSubject2，则Observer会先接收到default,再接收behaviorSubject3、behaviorSubject4。
+	private void behaviorSubject() {
+		BehaviorSubject behaviorSubject = BehaviorSubject.create("default");
+		behaviorSubject.onNext("behaviorSubject1");
+		behaviorSubject.onNext("behaviorSubject2");
+		behaviorSubject.subscribe(new Observer<String>() {
+			@Override
+			public void onCompleted() {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onCompleted:" );
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onError:" );
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onNext:" );
+			}
+		});
+
+		behaviorSubject.onNext("behaviorSubject3");
+		behaviorSubject.onNext("behaviorSubject4");
+	}
+//	Observer只会接收asyncSubject的onCompleted()被调用前的最后一个数据，即“asyncSubject3”，如果不调用onCompleted()，Subscriber将不接收任何数据。
+	private void asyncSubject() {
+		AsyncSubject asyncSubject = AsyncSubject.create();
+		asyncSubject.onNext("asyncSubject1");
+		asyncSubject.onNext("asyncSubject2");
+		asyncSubject.onNext("asyncSubject3");
+//		asyncSubject.onNext(null);
+//			asyncSubject.onCompleted();
+		asyncSubject.onError(new Exception("keepon"));
+		asyncSubject.subscribe(new Observer<String>() {
+			@Override
+			public void onCompleted() {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onCompleted:" );
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onError:" );
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onNext:" +s);
+			}
+		});
+		asyncSubject.onNext("asyncSubject4");
+
 	}
 }

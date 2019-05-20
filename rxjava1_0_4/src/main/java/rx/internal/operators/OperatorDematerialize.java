@@ -39,7 +39,7 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
             @Override
             public void onNext(Notification<T> t) {
                 //这里的child是OnSubscribeRedo workerSubscriber
-                System.out.println("OperatorDematerialize OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child);
+                System.out.println("OperatorDematerialize OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child+ " t.getKind()="+t.getKind());
                 switch (t.getKind()) {
                 case OnNext:
                     if (!terminated) {
