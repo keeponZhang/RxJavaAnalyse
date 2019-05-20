@@ -1,47 +1,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:orientation="vertical"
-             tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
+              tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
 
-    <Button
-        android:id="@+id/andthenwhen"
-        android:textAllCaps="false"
-        android:onClick="andthenwhen"
-        android:text="andthenwhen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/retry"
-        android:textAllCaps="false"
-        android:onClick="retry"
-        android:text="retry"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+	<Button
+		android:id="@+id/andthenwhen"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="andthenwhen"
+		android:text="andthenwhen"
+		android:textAllCaps="false"/>
 
-    <Button
-        android:id="@+id/retryWhen"
-        android:textAllCaps="false"
-        android:onClick="retryWhen"
-        android:text="retryWhen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+	<Button
+		android:id="@+id/retry"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="retry"
+		android:text="retry"
+		android:textAllCaps="false"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/fragment_first_example_swipe_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+	<Button
+		android:id="@+id/retryWhen"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="retryWhen"
+		android:text="retryWhen"
+		android:textAllCaps="false"/>
 
-        <android.support.v7.widget.RecyclerView
-                android:id="@+id/fragment_first_example_list"
-                android:clipToPadding="false"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_horizontal_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+	<Button
+		android:id="@+id/asyncSubject"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="asyncSubject"
+		android:text="asyncSubject"
+		android:textAllCaps="false"/>
+
+	<Button
+		android:id="@+id/behaviorSubject"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="behaviorSubject"
+		android:text="behaviorSubject"
+		android:textAllCaps="false"/>
+
+	<Button
+		android:id="@+id/publishSubject"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="publishSubject"
+		android:text="publishSubject"
+		android:textAllCaps="false"/>
+
+	<Button
+		android:id="@+id/replaySubject"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="replaySubject"
+		android:text="replaySubject"
+		android:textAllCaps="false"/>
+
+	<android.support.v4.widget.SwipeRefreshLayout
+		android:id="@+id/fragment_first_example_swipe_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/fragment_first_example_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:clipToPadding="false"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingBottom="@dimen/activity_vertical_margin"/>
+	</android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

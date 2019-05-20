@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import rx.functions.Func2;
 import rx.joins.Pattern2;
 import rx.joins.Plan0;
 import rx.observables.JoinObservable;
+import rx.subjects.PublishSubject;
 
 
 public class AndThenWhenRetryExampleFragment extends Fragment {
@@ -50,6 +52,14 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 	@BindView(R.id.retryWhen)
 	Button             mRetryWhen;
 	Unbinder unbinder;
+	@BindView(R.id.asyncSubject)
+	Button mAsyncSubject;
+	@BindView(R.id.behaviorSubject)
+	Button mBehaviorSubject;
+	@BindView(R.id.publishSubject)
+	Button mPublishSubject;
+	@BindView(R.id.replaySubject)
+	Button mReplaySubject;
 
 	private ApplicationAdapter mAdapter;
 
@@ -87,7 +97,7 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 
 		mApps = ApplicationsList.getInstance().getList();
 
-		loadList(mApps.subList(0, 5));
+		loadList(mApps.subList(0, 2));
 	}
 
 	private void loadList(List<AppInfo> apps) {
@@ -105,7 +115,7 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 				return appInfo;
 			}
 		});
-//		Plan0<AppInfo> plan = pattern.then(this::updateTitle);
+		//		Plan0<AppInfo> plan = pattern.then(this::updateTitle);
 		//目前来看，跟zip效果一样
 		JoinObservable
 				.when(plan)
@@ -147,20 +157,6 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.andthenwhen, R.id.retry, R.id.retryWhen})
-	public void onViewClicked(View view) {
-		switch (view.getId()) {
-			case R.id.andthenwhen:
-				andthenwhen();
-				break;
-			case R.id.retry:
-				retry();
-				break;
-			case R.id.retryWhen:
-				retryWhen();
-				break;
-		}
-	}
 
 	private void retryWhen() {
 	}
@@ -169,7 +165,8 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
 			@Override
 			public void call(Subscriber<? super Integer> subscriber) {
-				if (subscriber.isUnsubscribed()) return;
+				if (subscriber.isUnsubscribed())
+					return;
 				//循环输出数字
 				try {
 					for (int i = 0; i < 10; i++) {
@@ -188,23 +185,72 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		observable.retry(2).subscribe(new Subscriber<Integer>() {
 			@Override
 			public void onCompleted() {
-				System.out.println("Sequence complete.");
+				Log.e("TAG", "AndThenWhenRetryExampleFragment onCompleted:");
 			}
 
 			@Override
 			public void onError(Throwable e) {
-				System.err.println("Error: " + e.getMessage());
+				Log.e("TAG", "AndThenWhenRetryExampleFragment onError:");
 			}
 
 			@Override
 			public void onNext(Integer value) {
-				System.out.println("Next:" + value);
+				Log.e("TAG", "AndThenWhenRetryExampleFragment onNext:" + value);
 			}
 		});
 
 	}
 
 	private void andthenwhen() {
-		
+
+	}
+
+	private void publishSubject() {
+		PublishSubject publishSubject = PublishSubject.create();
+		publishSubject.onNext("publishSubject1");
+		publishSubject.onNext("publishSubject2");
+		publishSubject.subscribe(new Observer() {
+			@Override
+			public void onCompleted() {
+
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(Object o) {
+
+			}
+		});
+		publishSubject.onNext("publishSubject3");
+		publishSubject.onNext("publishSubject4");
+	}
+
+	@OnClick({R.id.andthenwhen, R.id.retry, R.id.retryWhen, R.id.asyncSubject, R.id.behaviorSubject, R.id.publishSubject, R.id.replaySubject})
+	public void onViewClicked(View view) {
+		switch (view.getId()) {
+			case R.id.andthenwhen:
+				andthenwhen();
+				break;
+			case R.id.retry:
+				retry();
+				break;
+			case R.id.retryWhen:
+				retryWhen();
+				break;
+			case R.id.asyncSubject:
+
+				break;
+			case R.id.behaviorSubject:
+				break;
+			case R.id.publishSubject:
+				publishSubject();
+				break;
+			case R.id.replaySubject:
+				break;
+		}
 	}
 }

@@ -64,7 +64,7 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
             final Subscriber<?> self = this;
             @Override
             public void onNext(final T t) {
-                
+                //一段时间后发送最后一个数据
                 final int index = state.next(t);
                 ssub.set(worker.schedule(new Action0() {
                     @Override

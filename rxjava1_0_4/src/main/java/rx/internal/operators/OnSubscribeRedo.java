@@ -73,9 +73,11 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
             this.count = count;
         }
 
+        //ts:前面 terminals.lift创建的一个Observable
         @Override
         public Observable<?> call(Observable<? extends Notification<?>> ts) {
-            System.out.println("OnSubscribeRedo  1.1--------- RedoFinite  call------------》》》》》ts="+ts);
+            System.out.println("OnSubscribeRedo  0.6--------- RedoFinite map  Observable<? extends Notification<?>> call------------》》》》》ts="+ts);
+            //这里通过先map后lift再次创建Observable返回，相当于lift两次
             Observable<?> dematerialize = ts.map(new Func1<Notification<?>, Notification<?>>() {
 
                 int num = 0;
@@ -96,7 +98,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 }
 
             }).dematerialize();
-            System.out.println("OnSubscribeRedo  1.1--------- RedoFinite  return------------》》》》》dematerialize="+dematerialize);
+            System.out.println("OnSubscribeRedo  0.7--------- RedoFinite  return------------》》》》》 Observable dematerialize="+dematerialize);
             return dematerialize;
         }
     }
@@ -192,7 +194,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         this.stopOnError = stopOnError;
         this.scheduler = scheduler;
     }
-
+    //child是下层的Subscriber，source是上层的Observable
     @Override
     public void call(final Subscriber<? super T> child) {
         final AtomicBoolean isLocked = new AtomicBoolean(true);
@@ -200,7 +202,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         // incremented when requests are made, decremented when requests are fulfilled
         final AtomicLong consumerCapacity = new AtomicLong(0l);
         final AtomicReference<Producer> currentProducer = new AtomicReference<Producer>();
-        //TrampolineScheduler
+        //TrampolineScheduler InnerCurrentThreadScheduler
         final Scheduler.Worker worker = scheduler.createWorker();
         child.add(worker);
 
@@ -226,15 +228,17 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     @Override
                     public void onError(Throwable e) {
                         unsubscribe();
+                        //onError跟onCompleted terminals ，经过此时terminals充当observer，terminals.lift创建的subsrciber
                         terminals.onNext(Notification.createOnError(e));
                     }
-
+                    //onNext方法直接接受source发送的事件，进而转发给child,不经过terminals
                     @Override
                     public void onNext(T v) {
                         if (consumerCapacity.get() != Long.MAX_VALUE) {
                             consumerCapacity.decrementAndGet();
                         }
                         System.out.println("OnSubscribeRedo terminalDelegatingSubscriber onNext="+v);
+                        //调用该方法把事件发给下层的订阅者
                         child.onNext(v);
                     }
 
@@ -258,42 +262,50 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         // the observable received by the control handler function will receive notifications of onCompleted in the case of 'repeat' 
         // type operators or notifications of onError for 'retry' this is done by lifting in a custom operator to selectively divert 
         // the retry/repeat relevant values to the control handler
-        final Observable<?> restarts = controlHandlerFunction.call(
-                terminals.lift(new Operator<Notification<?>, Notification<?>>() {
+        //terminals:PublishSubject 这里充当Observable
+        Observable<Notification<?>> terminalslift = terminals.lift(new Operator<Notification<?>, Notification<?>>() {
+            //下面call方法是Operator的call方法，返回另一个Subscriber
+            @Override
+            public Subscriber<? super Notification<?>> call(final Subscriber<? super Notification<?>> filteredTerminals) {
+                //启动订阅后，会OnSubscribe的call方法，一层一层上去，这里就是其中几个lift的一层
+                System.out.println("OnSubscribeRedo  2--------- restarts Operator call------------filteredTerminals 》》》》》" + filteredTerminals + " subsriber= " + this);
+                return new Subscriber<Notification<?>>(filteredTerminals) {
                     @Override
-                    public Subscriber<? super Notification<?>> call(final Subscriber<? super Notification<?>> filteredTerminals) {
-                        //
-                        System.out.println("OnSubscribeRedo  2--------- restarts Operator call------------》》》》》"+filteredTerminals);
-                        return new Subscriber<Notification<?>>(filteredTerminals) {
-                            @Override
-                            public void onCompleted() {
-                                filteredTerminals.onCompleted();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                filteredTerminals.onError(e);
-                            }
-
-                            @Override
-                            public void onNext(Notification<?> t) {
-                                if (t.isOnCompleted() && stopOnComplete)
-                                    child.onCompleted();
-                                else if (t.isOnError() && stopOnError)
-                                    child.onError(t.getThrowable());
-                                else {
-                                    isLocked.set(false);
-                                    filteredTerminals.onNext(t);
-                                }
-                            }
-
-                            @Override
-                            public void setProducer(Producer producer) {
-                                producer.request(Long.MAX_VALUE);
-                            }
-                        };
+                    public void onCompleted() {
+                        filteredTerminals.onCompleted();
                     }
-                }));
+
+                    @Override
+                    public void onError(Throwable e) {
+                        filteredTerminals.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(Notification<?> t) {
+                        if (t.isOnCompleted() && stopOnComplete) {
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext if " + this);
+                            child.onCompleted();
+                        } else if (t.isOnError() && stopOnError) {
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext else if " + this);
+                            child.onError(t.getThrowable());
+                        } else {
+                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext else  " + this);
+                            isLocked.set(false);
+                            filteredTerminals.onNext(t);
+                        }
+                    }
+
+                    @Override
+                    public void setProducer(Producer producer) {
+                        producer.request(Long.MAX_VALUE);
+                    }
+                };
+            }
+        });
+        System.out.println("OnSubscribeRedo call 0.5 terminals.lift ="+terminalslift);
+        //  controlHandlerFunction: RedoFinite  terminalslift作为controlHandlerFunction.call的方法参数
+        //相当于terminalslift.map.lift
+        final Observable<?> restarts = controlHandlerFunction.call(terminalslift);
 
         // subscribe to the restarts observable to know when to schedule the next redo.
         //worker经过一系列调用会调到call方法
@@ -316,7 +328,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onNext(Object t) {
-                        System.out.println("OnSubscribeRedo  ---------  worker.schedule  restarts onNext==" + t + " ---------");
+                        System.out.println("OnSubscribeRedo  ---------  worker.schedule  restarts onNext==" + t +" workerSubscriber="+this+ " ---------");
                         if (!isLocked.get() && !child.isUnsubscribed()) {
                             if (consumerCapacity.get() > 0) {
                                 worker.schedule(subscribeToSource);
@@ -328,14 +340,16 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void setProducer(Producer producer) {
+                        System.out.println("OnSubscribeRedo   worker.schedule setProducer ");
                         producer.request(Long.MAX_VALUE);
                     }
                 };
-                System.out.println("OnSubscribeRedo  ---------  restarts.unsafeSubscribe(workerSubscriber) restarts==" + restarts + " ---------");
+                System.out.println("OnSubscribeRedo  ---------  restarts.unsafeSubscribe(workerSubscriber) restarts==" + restarts +" workerSubscriber="+workerSubscriber+ " ---------");
+                //restarts是lift 3次最后一次生成的Observable, restarts.unsafeSubscribe会实现层层订阅（层层调用Observable的OnSubscribe的call方法，再调用Operator的call方法生成subscriber，让生成的subsriber订阅上层，最上层的会调用onNext开始分发）
                 restarts.unsafeSubscribe(workerSubscriber);
             }
         });
-
+        System.out.println("OnSubscribeRedo call setProducer");
         child.setProducer(new Producer() {
 
             @Override
@@ -346,6 +360,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     producer.request(n);
                 } else
                 if (c == 0 && resumeBoundary.compareAndSet(true, false)) {
+                    System.out.println("OnSubscribeRedo request ----------");
                     worker.schedule(subscribeToSource);
                 }
             }

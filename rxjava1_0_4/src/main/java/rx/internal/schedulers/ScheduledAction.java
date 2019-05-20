@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import rx.Subscription;
 import rx.exceptions.OnErrorNotImplementedException;
 import rx.functions.Action0;
+import rx.internal.tag.TagAction0;
 import rx.plugins.RxJavaPlugins;
 import rx.subscriptions.CompositeSubscription;
 
@@ -43,8 +44,11 @@ public final class ScheduledAction extends AtomicReference<Thread> implements Ru
     @Override
     public void run() {
         try {
-            System.out.println("ScheduledAction  NewThreadWorker run action ="+action);
+//            System.out.println("ScheduledAction  NewThreadWorker run action ="+action);
             lazySet(Thread.currentThread());
+            if(action instanceof TagAction0){
+                System.out.println("<<<<<<<<<<<<<<<<<<<ScheduledAction  NewThreadWorker --run-- TagAction ="+action+" >>>>>>>>>>>>>>>>>>>>>"+" "+System.currentTimeMillis());
+            }
             action.call();
         } catch (Throwable e) {
             // nothing to do but print a System error as this is fatal and there is nowhere else to throw this
@@ -70,11 +74,14 @@ public final class ScheduledAction extends AtomicReference<Thread> implements Ru
     @Override
     public void unsubscribe() {
         if (!cancel.isUnsubscribed()) {
-            System.out.println("ScheduledAction  NewThreadWorker run unsubscribe =");
+            if(action instanceof TagAction0){
+                System.out.println("<<<<<<<<<<<<<<<<<<<ScheduledAction  NewThreadWorker run TagAction unsubscribe ="+action+" >>>>>>>>>>>>>>>>>>>>>"+" "+System.currentTimeMillis());
+            }
             cancel.unsubscribe();
         }else{
-            System.out.println("ScheduledAction  NewThreadWorker run else >>>>");
-
+            if(action instanceof TagAction0){
+                System.out.println("ScheduledAction  NewThreadWorker TagAction run  unsubscribe else >>>>"+action+" "+System.currentTimeMillis());
+            }
         }
     }
 
@@ -123,6 +130,10 @@ public final class ScheduledAction extends AtomicReference<Thread> implements Ru
 
         @Override
         public void unsubscribe() {
+//            if(f instanceof TagFuture){
+//                System.out.println("------- ScheduledAction FutureCompleter TagFuture TagAction cancel  ------------"  +" "+System.currentTimeMillis());
+//            }
+            //这里取消延迟任务
             if (ScheduledAction.this.get() != Thread.currentThread()) {
                 f.cancel(true);
             } else {

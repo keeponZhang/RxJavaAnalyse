@@ -263,8 +263,7 @@ public class Observable<T> {
     //lift会创造一个Observable，使用lift操作符的，下一层Subscriber订阅的Observable是该Observable，最后subscribe触发订阅后,会调用上层Observable的OnSubscribe的call方法，传入Subscriber
     //一般来说，lift中不但会创建Observable，还会创建一个Subscriber，然后调用上一层的Observable的OnSubscribe的call方法，把新创建的Subscriber传入
     public final <R> Observable<R> lift(final Operator<? extends R, ? super T> lift) {
-        System.out.println("------Observable lift    -------"+lift);
-        return new Observable<R>(new OnSubscribe<R>() {
+        OnSubscribe<R> onSubscribe = new OnSubscribe<R>() {
             @Override
             //调用map后subscribe，此时map的Observable就是刚new出来这个，然后会调到这个call方法
             public void call(Subscriber<? super R> o) {
@@ -272,16 +271,17 @@ public class Observable<T> {
                     Type[] types = analysisClazzInfo(o);
                     //map的话，看OperatorMap的call
                     //merge操作生成的是Subscriber<Observable<? extends T>>，对
-	                System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》");
-	                Subscriber<? super T> st = hook.onLift(lift).call(o);
+//                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
+                    Subscriber<? super T> st = hook.onLift(lift).call(o);
+                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this+"  转化后st="+st);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
                         st.onStart();
                         //map又会往上订阅，map上层Observable正是Observable.this,其持有的OnSubscribe就是onSubscribe，但是两个感兴趣的subscriber不一定一样
                         //所以会经过一个lift变换，调用lift.call(originalSubscriber)创建一个新的Subscriber
-                        onSubscribe.call(st);
+                        Observable.this.onSubscribe.call(st);
                     } catch (Throwable e) {
-                        // localized capture of errors rather than it skipping all operators 
+                        // localized capture of errors rather than it skipping all operators
                         // and ending up in the try/catch of the subscribe method which then
                         // prevents onErrorResumeNext and other similar approaches to error handling
                         if (e instanceof OnErrorNotImplementedException) {
@@ -298,7 +298,10 @@ public class Observable<T> {
                     o.onError(e);
                 }
             }
-        });
+        };
+        Observable   rObservable = new Observable<R>(onSubscribe);
+        System.out.println("------Observable OnSubscribeRedo lift    -------"+lift+" liftObservable="+rObservable+"  onSubscribe="+onSubscribe);
+        return rObservable;
     }
     public static Type[]  analysisClazzInfo(Object object) {
         Type[] params=null;

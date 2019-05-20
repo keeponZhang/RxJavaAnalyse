@@ -97,7 +97,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 		mSwipeRefreshLayout.setRefreshing(true);
 		mRecyclerView.setVisibility(View.GONE);
 
-		mApps = ApplicationsList.getInstance().getList().subList(0,16);
+		mApps = ApplicationsList.getInstance().getList().subList(0,5);
 
 		loadList(mApps);
 	}
@@ -250,17 +250,17 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 			@Override
 			public void call(Subscriber<? super AppInfo> subscriber) {
 				for (int i = 0; i < mApps.size(); i++) {
-					if(i==10){
-						SystemClock.sleep(1200);
+					if(i==2){
+						SystemClock.sleep(2000);
 					}else{
-						SystemClock.sleep(200);
+						SystemClock.sleep(300);
 					}
 					subscriber.onNext(mApps.get(i));
 				}
 				subscriber.onCompleted();
 			}
 		}).subscribeOn(Schedulers.io())
-				.timeout(600,TimeUnit.MILLISECONDS)
+				.timeout(1500,TimeUnit.MILLISECONDS)
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new Observer<AppInfo>() {
 					@Override

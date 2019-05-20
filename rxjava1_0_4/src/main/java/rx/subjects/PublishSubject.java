@@ -118,6 +118,7 @@ public final class PublishSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         for (SubjectObserver<T> bo : state.observers()) {
+            System.out.println("PublishSubject OnSubscribeRedo onNext "+bo);
             bo.onNext(v);
         }
     }

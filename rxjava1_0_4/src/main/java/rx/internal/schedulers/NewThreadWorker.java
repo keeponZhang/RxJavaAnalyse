@@ -16,11 +16,18 @@
 package rx.internal.schedulers;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
-import rx.*;
+import rx.Scheduler;
+import rx.Subscription;
 import rx.functions.Action0;
-import rx.plugins.*;
+import rx.internal.tag.TagFuture;
+import rx.plugins.RxJavaPlugins;
+import rx.plugins.RxJavaSchedulersHook;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -76,12 +83,16 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
         //把action用ScheduledAction封装，ScheduledAction实现了runnable接口，run方法里会调用action的call方法
         ScheduledAction run = new ScheduledAction(decoratedAction);
         Future<?> f;
+
         if (delayTime <= 0) {
             f = executor.submit(run);
         } else {
             //这里直接用线程池延迟执行
             System.out.println("NewThreadWorker scheduleActual delay=="+delayTime);
             f = executor.schedule(run, delayTime, unit);
+        }
+        if(action instanceof Action0){
+            f = new TagFuture(f,action);
         }
         run.add(f);
 
@@ -91,8 +102,8 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
     @Override
     public void unsubscribe() {
         isUnsubscribed = true;
+        System.out.println("<<<<<<<<<<<<OperatorTimeoutBase NewThreadWorker  TagAction shutdownNow   >>>>>>>>>>>>>");
         executor.shutdownNow();
-        System.out.println("<<<<<<<<<<<<OperatorTimeoutBase NewThreadWorker shutdownNow   >>>>>>>>>>>>>");
 
     }
 
