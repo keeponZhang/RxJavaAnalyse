@@ -32,6 +32,7 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.joins.Pattern2;
 import rx.joins.Plan0;
@@ -42,7 +43,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
 
-public class AndThenWhenRetryExampleFragment extends Fragment {
+public class AndThenWhenRetrySubjectFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -70,7 +71,7 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 	private List<AppInfo>      mApps;
 
-	public AndThenWhenRetryExampleFragment() {
+	public AndThenWhenRetrySubjectFragment() {
 	}
 
 	@Override
@@ -163,6 +164,55 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 
 
 	private void retryWhen() {
+		Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+			@Override
+			public void call(Subscriber<? super Integer> subscriber) {
+				if (subscriber.isUnsubscribed())
+					return;
+				//循环输出数字
+				try {
+					for (int i = 0; i < 10; i++) {
+						if (i == 4) {
+							throw new Exception("this is number 4 error！");
+						}
+						subscriber.onNext(i);
+					}
+					subscriber.onCompleted();
+				} catch (Throwable e) {
+					subscriber.onError(e);
+				}
+			}
+		});
+
+		observable.retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
+			@Override
+			public Observable<?> call(Observable<? extends Throwable> throwableObservable) {
+				//这里可以发送新的被观察者 Observable
+				return throwableObservable.flatMap(new Func1<Throwable, Observable<?>>() {
+					@Override
+					public Observable<?> call(Throwable throwable) {
+						//如果发射的onError就终止
+						return Observable.error(new Throwable("retryWhen终止啦"));
+					}
+				});
+
+			}
+		}).subscribe(new Subscriber<Integer>() {
+			@Override
+			public void onCompleted() {
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen onCompleted:");
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen  OnSubscribeRedo onError:");
+			}
+
+			@Override
+			public void onNext(Integer value) {
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen OnSubscribeRedo onNext:" + value);
+			}
+		});
 	}
 
 	private void retry() {
@@ -189,24 +239,23 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		observable.retry(2).subscribe(new Subscriber<Integer>() {
 			@Override
 			public void onCompleted() {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment onCompleted:");
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retry onCompleted:");
 			}
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment  OnSubscribeRedo onError:");
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retry OnSubscribeRedo onError:");
 			}
 
 			@Override
 			public void onNext(Integer value) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment  OnSubscribeRedo onNext:" + value);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment  retry OnSubscribeRedo onNext:" + value);
 			}
 		});
 
 	}
 
 	private void andthenwhen() {
-
 	}
 //	相对比其他Subject常用，它的Observer只会接收到PublishSubject被订阅之后发送的数据
 	private void publishSubject() {
@@ -226,7 +275,7 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(String o) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment onNext:" +o);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment onNext:" +o);
 			}
 		});
 		publishSubject.onNext("publishSubject3");
@@ -271,7 +320,7 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		replaySubject.subscribe(new Action1<String>() {
 			@Override
 			public void call(String s) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment call:" +s);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment call:" +s);
 			}
 		});
 		replaySubject.onNext("replaySubject:after1");
@@ -286,17 +335,17 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		behaviorSubject.subscribe(new Observer<String>() {
 			@Override
 			public void onCompleted() {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onCompleted:" );
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment behaviorSubject onCompleted:" );
 			}
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onError:" );
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment behaviorSubject onError:" );
 			}
 
 			@Override
 			public void onNext(String s) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment behaviorSubject onNext:" );
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment behaviorSubject onNext:" );
 			}
 		});
 
@@ -315,17 +364,17 @@ public class AndThenWhenRetryExampleFragment extends Fragment {
 		asyncSubject.subscribe(new Observer<String>() {
 			@Override
 			public void onCompleted() {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onCompleted:" );
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment asyncSubject onCompleted:" );
 			}
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onError:" );
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment asyncSubject onError:" );
 			}
 
 			@Override
 			public void onNext(String s) {
-				Log.e("TAG", "AndThenWhenRetryExampleFragment asyncSubject onNext:" +s);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment asyncSubject onNext:" +s);
 			}
 		});
 		asyncSubject.onNext("asyncSubject4");

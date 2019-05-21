@@ -172,7 +172,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("Take and TakeLast RepeatRangeDefer", getResources().getDrawable(R.drawable.ic_action_filter)));
         items.add(new NavigationItem("Distinct abd DistinctUntilChanged", getResources().getDrawable(R.drawable.ic_action_filter)));
 
-        items.add(new NavigationItem("Map", getResources().getDrawable(R.drawable.ic_action_wizard)));
+        items.add(new NavigationItem("MapFlatMapCast", getResources().getDrawable(R.drawable.ic_action_wizard)));
         items.add(new NavigationItem("Scan", getResources().getDrawable(R.drawable.ic_action_wizard)));
         items.add(new NavigationItem("GroupBy Concat", getResources().getDrawable(R.drawable.ic_action_wizard)));
 
@@ -180,7 +180,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("ZipBufferWindow", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("Join", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("CombineLatest", getResources().getDrawable(R.drawable.ic_action_process_save)));
-        items.add(new NavigationItem("And Then When", getResources().getDrawable(R.drawable.ic_action_process_save)));
+        items.add(new NavigationItem("AndThenWhenRetrySubject", getResources().getDrawable(R.drawable.ic_action_process_save)));
 
         items.add(new NavigationItem("SharedPreferences", getResources().getDrawable(R.drawable.ic_action_playback_schuffle)));
         items.add(new NavigationItem("Long task", getResources().getDrawable(R.drawable.ic_action_playback_schuffle)));

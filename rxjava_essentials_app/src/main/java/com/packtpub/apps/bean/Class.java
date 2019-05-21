@@ -1,0 +1,57 @@
+package com.packtpub.apps.bean;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Class {
+
+    public Class (int id) {
+        this.id = id;
+        mockGroups();
+    }
+
+    private void mockGroups() {
+        mGroups = new ArrayList<Group>();
+        for (int i = 0; i < 3; i++) {
+            Group group = new Group(i);
+            mGroups.add(group);
+        }
+    }
+
+    private int id;
+
+    private List<Student> mStudents;
+    private List<Group>   mGroups;
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<Student> getStudents() {
+        return mStudents;
+    }
+
+    public void setStudents(List<Student> students) {
+        mStudents = students;
+    }
+
+    public List<Group> getGroups() {
+        return mGroups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        mGroups = groups;
+    }
+
+    @Override
+    public String toString() {
+        return "Class" + getId();
+    }
+
+
+}

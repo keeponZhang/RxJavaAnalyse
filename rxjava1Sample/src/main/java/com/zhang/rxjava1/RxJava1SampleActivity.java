@@ -224,7 +224,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 	}
 
 	public void flatMap(View view) {
-		//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
+		//一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的
 		Observable.from(new School().getClasses())
 				//输入是Class类型，输出是ObservableSource<Group>类型
 				.flatMap(new Func1<Class, Observable<Group>>() {
@@ -257,10 +257,12 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 		datas.add(1);
 		datas.add(2);
 		datas.add(3);
-//		Observable.from(datas)
-		Observable.just(1)
-				//just(1)一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的(flatMap经过两次lift,先map后merge)
+//	Observable.from(datas)
+		Observable.just(1,2)
+				//一共会创建4个Observable,1个ScalarSynchronousObservable，1个OnSubscribeFromIterable，2个lift生成的(flatMap经过两次lift,先map后merge)
 				//相当于先做map变换，生成Observable，再由生成的Observable作为soure，（要发送的事件也是Observable类型的），做merge操作，merge通过lift再生成一个Observable
+				//Observable.just(1,2).lift(new OperatorMap<T, R>(func)).lift(new OperatorMerge<T>())
+				//OperatorMerges接受到的是Observable,最上层有几个数据，就有几个Observable
 				.flatMap(new Func1<Integer, Observable<String>>() {
 					@Override
 					public Observable<String> call(Integer integer) {
