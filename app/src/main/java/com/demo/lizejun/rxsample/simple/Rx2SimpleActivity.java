@@ -25,12 +25,13 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.AsyncSubject;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
 
-public class SimpleActivity extends AppCompatActivity {
+public class Rx2SimpleActivity extends AppCompatActivity {
 
 	private int i;
 	private Disposable mDisposable;
@@ -41,7 +42,7 @@ public class SimpleActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_simple);
 	}
 	private Disposable mDisposable2;
-	private static final String TAG = "SimpleActivity";
+	private static final String TAG = "Rx2SimpleActivity";
 	Observer<String> observer = new Observer<String>() {
 
 		private Disposable mD;
@@ -82,27 +83,36 @@ public class SimpleActivity extends AppCompatActivity {
 			Log.e(TAG, "onNext:"+s);
 		}
 	};
-	public void observer(View view) {
+	//doOnSubscribe所处线程是所处订阅的线程
+	public void doOnSubscribe(View view) {
 		i=0;
-//	getObservable().subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
+//	getObservableCreate().subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
 //		@Override
 //		public void accept(Disposable disposable) throws Exception {
 //			Log.e(TAG, "accept disposable:"+disposable);
 //		}
 //	}).subscribe(observer);
 
-		getObservable()
+//		getObservableCreate()
+		Observable.just("Keepon")
+				.subscribeOn(Schedulers.io())
 				.doOnSubscribe(new Consumer<Disposable>() {
 			@Override
 			//doOnSubscribe会创建DisposableLambdaObserver，DisposableLambdaObserver的onSubscribe方调用了Consumer.accept
 			public void accept(Disposable disposable) throws Exception {
+				Log.e("TAG", "Rx2SimpleActivity accept:" + Thread.currentThread().getName());
 				mDisposable2 = disposable;
 				Log.e(TAG, "accept disposable:"+disposable.getClass().getName());
 //				mDisposable2.dispose();
 			}
+		}).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.computation()).doOnSubscribe(new Consumer<Disposable>() {
+			@Override
+			public void accept(Disposable disposable) throws Exception {
+				Log.e("TAG", "Rx2SimpleActivity accept doOnSubscribe2:"+Thread.currentThread().getName());
+			}
 		}).subscribe(observer);
 
-//	getObservable().subscribe(observer);
+//	getObservableCreate().subscribe(observer);
 //		getObservableJust().subscribe(observer);
 //		getObservableFrom().subscribe(observer);
 	}
@@ -116,7 +126,7 @@ public class SimpleActivity extends AppCompatActivity {
 		Observable observable = Observable.fromArray(words);
 		return  observable;
 	}
-	private Observable<String> getObservable() {
+	private Observable<String> getObservableCreate() {
 		//ObservableCreate不是在subscribeActual直接发数据，因为这时数据不知道，而是有套了一层ObservableOnSubscribe
 		// ObservableJust是在subscribeActual发送数据的，因为ObservableJust持有要发送的数据
 		return Observable.create(new ObservableOnSubscribe<String>() {
@@ -159,6 +169,11 @@ public class SimpleActivity extends AppCompatActivity {
 
 				Log.d(TAG, "map apply:"+integer);
 				return "map转换："+integer;
+			}
+		}).doOnSubscribe(new Consumer<Disposable>() {
+			@Override
+			public void accept(Disposable disposable) throws Exception {
+
 			}
 		}).subscribe(new Consumer<String>() {
 			@Override
@@ -446,7 +461,7 @@ public class SimpleActivity extends AppCompatActivity {
 		Observable.create(new ObservableOnSubscribe<Integer>() {
 			@Override
 			public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-				Log.d(TAG, "flatMap onNext1:");
+				Log.d(TAG, "flatMap onNext1:"+Thread.currentThread().getName());
 				emitter.onNext(1);
 				//				Log.d(TAG, "flatMap onNext2:");
 				//				emitter.onNext(2);
@@ -463,7 +478,8 @@ public class SimpleActivity extends AppCompatActivity {
 		}).doOnNext(new Consumer<String>() {
 			@Override
 			public void accept(String s) throws Exception {
-
+				Log.e("TAG", "Rx2SimpleActivity doOnNext accept:");
+				s = s + "doOnNext";
 			}
 		}).subscribe(new Consumer<String>() {
 			@Override

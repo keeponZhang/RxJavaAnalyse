@@ -13,6 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/concat2"
+        android:textAllCaps="false"
+        android:onClick="concat2"
+        android:text="concat2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/concatMap"
         android:textAllCaps="false"
         android:onClick="concatMap"

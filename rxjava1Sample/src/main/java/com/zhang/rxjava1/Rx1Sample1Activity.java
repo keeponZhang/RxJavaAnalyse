@@ -1,7 +1,6 @@
 package com.zhang.rxjava1;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,23 +8,20 @@ import android.view.View;
 import com.zhang.rxjava1.bean.Student;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import rx.subjects.AsyncSubject;
 
-public class RxJava1Sample2Activity extends AppCompatActivity {
-	private static final String tag = "RxJava1Sample2Activity";
+public class Rx1Sample1Activity extends AppCompatActivity {
+	private static final String tag = "Rx1Sample1Activity";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_rx_java1_sample2);
+		setContentView(R.layout.activity_rx_java1_sample);
 	}
 	// 创建被观察者
 	Observable<String> observable = Observable.create(new Observable.OnSubscribe<String>() {
@@ -114,7 +110,7 @@ public class RxJava1Sample2Activity extends AppCompatActivity {
 		return Observable.just(new Student("keepon"));
 	}
 
-	private static final String TAG = "RxJava1Sample2Activity";
+	private static final String TAG = "Rx1Sample1Activity";
 	public void merge(View view) {
 		//merge 合并多个Observable的发射物
 		//merge括号里是一个Observable(OnSubscribeFromIterable)，merge会用到lift，又会new一个Observable,

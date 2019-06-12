@@ -22,7 +22,7 @@ import com.demo.lizejun.rxsample.chapter6.RetryActivity;
 import com.demo.lizejun.rxsample.chapter7.CombineLatestActivity;
 import com.demo.lizejun.rxsample.chapter8.CacheActivity;
 import com.demo.lizejun.rxsample.chapter9.TimeActivity;
-import com.demo.lizejun.rxsample.simple.SimpleActivity;
+import com.demo.lizejun.rxsample.simple.Rx2SimpleActivity;
 import com.demo.lizejun.rxsample.utils.Utils;
 
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                         Utils.startActivity(v.getContext(), UsingActivity.class);
                         break;
                     case 16:
-                        Utils.startActivity(v.getContext(), SimpleActivity.class);
+                        Utils.startActivity(v.getContext(), Rx2SimpleActivity.class);
                         break;
                     default:
                         break;

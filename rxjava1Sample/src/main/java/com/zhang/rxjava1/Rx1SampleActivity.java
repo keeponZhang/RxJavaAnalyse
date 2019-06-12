@@ -26,18 +26,18 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class RxJava1SampleActivity extends AppCompatActivity {
+public class Rx1SampleActivity extends AppCompatActivity {
 
 	private ImageView mIv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_rxjava1_sample1);
 		mIv = (ImageView) findViewById(R.id.iv);
 	}
 
-	private static final String tag = "RxJava1SampleActivity";
+	private static final String tag = "Rx1SampleActivity";
 	Observer<String> mObserver = new Observer<String>() {
 		@Override
 		public void onNext(String s) {
@@ -184,7 +184,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 				});
 	}
 
-	private static final String TAG = "RxJava1SampleActivity";
+	private static final String TAG = "Rx1SampleActivity";
 
 	public void map(View view) {
 		Observable.just("http://ep.dzb.ciwong.com/rep/new/4055.jpg")// ObservableJust
@@ -387,7 +387,7 @@ public class RxJava1SampleActivity extends AppCompatActivity {
 	}
 
 	public void jumpSample2(View view) {
-		Intent intent = new Intent(this, RxJava1Sample2Activity.class);
+		Intent intent = new Intent(this, Rx1Sample1Activity.class);
 		startActivity(intent);
 	}
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -127,18 +128,67 @@ public class GroupByConcatExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.concat, R.id.concatMap})
+	@OnClick({R.id.concat,R.id.concat2, R.id.concatMap})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.concat:
 				concat();
+				break;
+			case R.id.concat2:
+			    concat2();
 				break;
 			case R.id.concatMap:
 				break;
 		}
 	}
 
-	private void concat() {
+    private void concat2() {
+        Observable<String> stringObservable = Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+//                subscriber.onError(new RuntimeException("keepon"));
+                subscriber.onNext("10");
+                subscriber.onNext("11");
+                subscriber.onNext("12");
+                //没有onCompleted，stringObservable2发送的是收不到的
+                subscriber.onCompleted();
+
+            }
+        });
+        Observable<String> stringObservable2 = Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext("20");
+                subscriber.onNext("21");
+                subscriber.onNext("22");
+                subscriber.onCompleted();
+            }
+        });
+        Observable.concat(stringObservable, stringObservable2)
+                .first(new Func1<String, Boolean>() {
+                    @Override
+                    public Boolean call(String s) {
+                        return !TextUtils.isEmpty(s)&&s.startsWith("3");
+                    }
+                }).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.e("TAG", "GroupByConcatExampleFragment onCompleted:");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG", "GroupByConcatExampleFragment onError:"+e.getMessage());
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.e("TAG", "GroupByConcatExampleFragment onNext:"+s);
+            }
+        });
+    }
+
+    private void concat() {
 		AppInfo appInfo = mApps.get(0);
 		AppInfo appInfo2 = mApps.get(2);
 		Observable<AppInfo> appInfoObservable = Observable.create(new Observable.OnSubscribe<AppInfo>() {

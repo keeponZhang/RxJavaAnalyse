@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	tools:context=".RxJava1SampleActivity">
+	tools:context=".Rx1SampleActivity">
 
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="flatMap4"
+		android:onClick="observer"
 		android:textAllCaps="false"
-		android:text="flatMap4"
+		android:text="observer"
 		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="merge"
+		android:onClick="observerJust"
 		android:textAllCaps="false"
-		android:text="merge"
+		android:text="observerJust"
 		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="merge2"
+		android:onClick="subscribeOnAndObserveOn"
 		android:textAllCaps="false"
-		android:text="merge2"
+		android:text="subscribeOnAndObserveOn"
 		/>
 	<Button
 		android:layout_width="wrap_content"
@@ -55,18 +53,34 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="doOnSubscribe"
+		android:onClick="flatMap3"
 		android:textAllCaps="false"
-		android:text="doOnSubscribe"
+		android:text="flatMap3"
 		/>
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="asyncSubject"
+		android:onClick="jumpSample2"
 		android:textAllCaps="false"
-		android:text="asyncSubject"
+		android:text="jumpSample2"
 		/>
-
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="concatMap"
+		android:textAllCaps="false"
+		android:text="concatMap"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="doOnSubscribe"
+		android:textAllCaps="false"
+		android:text="doOnSubscribe"
+		/>
+	<ImageView
+		android:layout_width="150dp"
+		android:layout_height="120dp"
+		android:id="@+id/iv"
+		/>
 </LinearLayout>
-
-</ScrollView>

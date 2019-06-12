@@ -13,8 +13,8 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:onClick="observer"
-		android:text="ovserver"
+		android:onClick="doOnSubscribe"
+		android:text="doOnSubscribe"
 		android:textAllCaps="false"/>
 	<Button
 		android:layout_width="wrap_content"
