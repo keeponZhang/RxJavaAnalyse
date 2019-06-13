@@ -1,5 +1,6 @@
 package com.demo.lizejun.rxsample.simple;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.demo.lizejun.rxsample.R;
+import com.demo.lizejun.rxsample.ZeMaoRx2Activity;
 import com.demo.lizejun.rxsample.simple.bean.Course;
 import com.demo.lizejun.rxsample.simple.bean.Student;
 
@@ -40,6 +42,10 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_simple);
+	}
+	public void zemaoSample(View view) {
+		Intent intent = new Intent(this,ZeMaoRx2Activity.class);
+		startActivity(intent);
 	}
 	private Disposable mDisposable2;
 	private static final String TAG = "Rx2SimpleActivity";

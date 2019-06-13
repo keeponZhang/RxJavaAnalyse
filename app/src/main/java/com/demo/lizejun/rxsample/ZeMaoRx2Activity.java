@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class ZeMaoRx2Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         titles.add("(15) MVP 示例");
         titles.add("(16) 使用Using操作符");
         titles.add("(17) 简单使用");
-        MainAdapter mainAdapter = new MainAdapter(titles);
+        ZeMaoRx2Adapter mainAdapter = new ZeMaoRx2Adapter(titles);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mainAdapter);
     }

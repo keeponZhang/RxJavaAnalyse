@@ -57,6 +57,7 @@ public class DownloadActivity extends AppCompatActivity {
         });
         DisposableObserver<Integer> disposableObserver = new DisposableObserver<Integer>() {
 
+
             @Override
             public void onNext(Integer value) {
                 Log.d("DownloadActivity", "onNext=" + value);

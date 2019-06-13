@@ -28,12 +28,12 @@ import com.demo.lizejun.rxsample.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
+public class ZeMaoRx2Adapter extends RecyclerView.Adapter<ZeMaoRx2Adapter.MainViewHolder> {
 
     private List<String> mTitles = new ArrayList<>();
 
 
-    public MainAdapter(List<String> titles) {
+    public ZeMaoRx2Adapter(List<String> titles) {
         mTitles = titles;
     }
 
