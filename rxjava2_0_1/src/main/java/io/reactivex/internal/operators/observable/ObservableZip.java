@@ -268,6 +268,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
         @Override
         public void onNext(T t) {
             queue.offer(t);
+//  parent:  ZipCoordinator
             parent.drain();
         }
 

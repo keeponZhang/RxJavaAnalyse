@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/rx2Sample" />
             <option value="$PROJECT_DIR$/rxJavaJoins_22" />
             <option value="$PROJECT_DIR$/rxandroid1_0_1" />
             <option value="$PROJECT_DIR$/rxandroid2_0_1" />
@@ -17,6 +18,7 @@
             <option value="$PROJECT_DIR$/rxjava1_0_4" />
             <option value="$PROJECT_DIR$/rxjava2_0_1" />
             <option value="$PROJECT_DIR$/rxjava_essentials_app" />
+            <option value="$PROJECT_DIR$/shouxie_rxjava" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

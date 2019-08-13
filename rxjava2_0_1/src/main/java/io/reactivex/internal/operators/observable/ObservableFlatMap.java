@@ -141,9 +141,10 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
                     wip++;
                 }
             }
-            //与map的对比：map转化后直接发送给下一层的订阅者
+            //与map的对比：map转化后直接发送给下一层的订阅者;
+            // flatmap转换后是一个ObservableSource，下层观察者订阅的不是这个类型，所以还需要InnerObserver，InnerObserver订阅ObservableSource的类型，再发送给下一层真正的Observer
 //            v = ObjectHelper.requireNonNull(mapper.apply(t), "The mapper function returned a null value.");
-            //            actual.onNext(p);
+            //            actual.onNext(v);
             subscribeInner(p);
         }
 
