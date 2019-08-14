@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -150,7 +152,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
             final Observer<? super R> a = actual;
             final T[] os = row;
             final boolean delayError = this.delayError;
-
+//            zip发送的事件数量跟上游中发送事件最少的那一根水管的事件数量是有关的
             for (;;) {
 
                 for (;;) {
@@ -161,8 +163,9 @@ public final class ObservableZip<T, R> extends Observable<R> {
                             boolean d = z.done;
                             T v = z.queue.poll();
                             boolean empty = v == null;
-
-                            if (checkTerminated(d, empty, a, delayError, z)) {
+                            boolean checkTerminated = checkTerminated(d, empty, a, delayError, z);
+                            Log.e("TAG", "ZipCoordinator drain checkTerminated:"+checkTerminated+" v="+v);
+                            if (checkTerminated) {
                                 return;
                             }
                             if (!empty) {
@@ -189,6 +192,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
 
                     R v;
                     try {
+                        //这个是zip中的apply方法
                         v = ObjectHelper.requireNonNull(zipper.apply(os.clone()), "The zipper returned a null value");
                     } catch (Throwable ex) {
                         Exceptions.throwIfFatal(ex);
@@ -197,6 +201,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         return;
                     }
 
+                    //转换后发送给下游真正的观察者
                     a.onNext(v);
 
                     Arrays.fill(os, null);
@@ -267,6 +272,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
 //        一是入队，二是调用 ZipCoordinator#drain() 方法
         @Override
         public void onNext(T t) {
+            //offer相当于add，不抛异常
             queue.offer(t);
 //  parent:  ZipCoordinator
             parent.drain();
