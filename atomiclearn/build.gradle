@@ -1,17 +1,18 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+
     defaultConfig {
+        applicationId "com.example.atomiclearn"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetVersion
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'proguard-rules.pro'
 
     }
 
@@ -24,13 +25,11 @@ android {
 
 }
 
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.reactivestreams:reactive-streams:1.0.0'
+
+    testImplementation 'junit:junit:4.12'
+    compile "com.android.support.constraint:constraint-layout:${rootProject.ext.CONTRANT_LAYOUT_VERSION}"
+    compile "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+
 }
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-sourceCompatibility = "7"
-targetCompatibility = "7"

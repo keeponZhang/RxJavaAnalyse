@@ -1,4 +1,4 @@
-include ':app', ':rxjava2_0_1', ':rxandroid2_0_1', ':rxjava1', ':rx2Sample'
+include ':app', ':rxjava2_0_1', ':rxandroid2_0_1', ':rxjava1', ':rx2Sample', ':atomiclearn'
 
 include  ':rxjava_essentials_app'
 include ':rxjava1Sample'

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RxJavaAnalyse.iml" filepath="$PROJECT_DIR$/RxJavaAnalyse.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atomiclearn/atomiclearn.iml" filepath="$PROJECT_DIR$/atomiclearn/atomiclearn.iml" />
       <module fileurl="file://$PROJECT_DIR$/rx2Sample/rx2Sample.iml" filepath="$PROJECT_DIR$/rx2Sample/rx2Sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" filepath="$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" filepath="$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" />

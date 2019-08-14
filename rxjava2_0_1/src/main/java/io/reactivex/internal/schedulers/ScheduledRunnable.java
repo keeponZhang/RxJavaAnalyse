@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.schedulers;
 
+import android.util.Log;
+
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
@@ -94,6 +96,7 @@ implements Runnable, Callable<Object>, Disposable {
 
     @Override
     public void dispose() {
+        Log.e("TAG", "DebounceTimedObserver ScheduledRunnable dispose:");
         for (;;) {
             Object o = get(FUTURE_INDEX);
             if (o == DONE || o == DISPOSED) {
@@ -101,6 +104,7 @@ implements Runnable, Callable<Object>, Disposable {
             }
             if (compareAndSet(FUTURE_INDEX, o, DISPOSED)) {
                 if (o != null) {
+                    //这里把任务取消
                     ((Future<?>)o).cancel(true);
                 }
                 break;

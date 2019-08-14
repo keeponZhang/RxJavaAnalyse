@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.*;
 
@@ -78,18 +80,28 @@ public final class ObservableDebounceTimed<T> extends AbstractObservableWithUpst
                 return;
             }
             long idx = index + 1;
+
             index = idx;
+
 
             Disposable d = timer.get();
             if (d != null) {
+                Log.e("TAG", "DebounceTimedObserver onNext before dispose:"+d+" d.isDisposed="+d.isDisposed()+" 数据t:"+t);
+                //这句也是重点，只要有数据进来并且worker.schedule还没调用run方法，就dispose掉，达到防抖效果
                 d.dispose();
             }
-
+            //d第一次是null,之后是DISPOSED
+            //de new 完也是null
             DebounceEmitter<T> de = new DebounceEmitter<T>(t, idx, this);
-            if (timer.compareAndSet(d, de)) {
+            Log.d("TAG", "DebounceTimedObserver onNext before d:"+d+" de="+de);
+            boolean compareAndSet = timer.compareAndSet(d, de);
+            Log.e("TAG", "DebounceTimedObserver onNext after compareAndSet d:"+d+" de="+de+"  compareAndSet===="+compareAndSet);
+            if (compareAndSet) {
                 d = worker.schedule(de, timeout, unit);
-
+                Log.w("TAG", "DebounceTimedObserver onNext after schedule d:"+d+" de="+de);
+                //重点是这句（timer的值闲杂是de了，所以需要这句）
                 de.setResource(d);
+                Log.e("TAG", "DebounceTimedObserver onNext after setResource d:"+d+" de="+de+ "------------------end");
             }
 
         }
@@ -163,6 +175,7 @@ public final class ObservableDebounceTimed<T> extends AbstractObservableWithUpst
 
         @Override
         public void run() {
+            Log.e("TAG", "DebounceTimedObserver DebounceEmitter run:");
             if (once.compareAndSet(false, true)) {
                 parent.emit(idx, value, this);
             }
@@ -170,6 +183,7 @@ public final class ObservableDebounceTimed<T> extends AbstractObservableWithUpst
 
         @Override
         public void dispose() {
+            Log.e("TAG", "DebounceEmitter dispose:");
             DisposableHelper.dispose(this);
         }
 

@@ -187,6 +187,7 @@ public class ChapterNine {
                 }, BackpressureStrategy.ERROR)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                //这里虽然没有调用request ，但是上游已经发射了
                 .subscribe(new Subscriber<Integer>() {
 
                     @Override

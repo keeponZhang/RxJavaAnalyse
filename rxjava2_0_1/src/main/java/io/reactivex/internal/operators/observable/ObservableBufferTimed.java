@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -79,9 +81,9 @@ extends AbstractObservableWithUpstream<T, U> {
     }
     @Override
     protected void subscribeActual(Observer<? super U> t) {
-         Type[] types = analysisClazzInfo(t);
         analysisClazzInfo(this);
         if (timespan == timeskip && maxSize == Integer.MAX_VALUE) {
+            //时间走这里
             source.subscribe(new BufferExactUnboundedObserver<T, U>(
                     new SerializedObserver<U>(t),
                     bufferSupplier, timespan, unit, scheduler));
@@ -102,7 +104,7 @@ extends AbstractObservableWithUpstream<T, U> {
         source.subscribe(new BufferSkipBoundedObserver<T, U>(
                 new SerializedObserver<U>(t),
                 bufferSupplier, timespan, timeskip, unit, w));
-
+        Log.e("TAG", "ObservableBufferTimed subscribeActual:");
     }
 
     static final class BufferExactUnboundedObserver<T, U extends Collection<? super T>>
@@ -149,6 +151,7 @@ extends AbstractObservableWithUpstream<T, U> {
                 actual.onSubscribe(this);
 
                 if (!cancelled) {
+                    Log.e("TAG", "BufferExactUnboundedObserver onSubscribe:");
                     Disposable d = scheduler.schedulePeriodicallyDirect(this, timespan, timespan, unit);
                     if (!timer.compareAndSet(null, d)) {
                         d.dispose();
@@ -159,6 +162,7 @@ extends AbstractObservableWithUpstream<T, U> {
 
         @Override
         public void onNext(T t) {
+            Log.e("TAG", "BufferExactUnboundedObserver onNext:"+t);
             synchronized (this) {
                 U b = buffer;
                 if (b == null) {
@@ -179,6 +183,7 @@ extends AbstractObservableWithUpstream<T, U> {
 
         @Override
         public void onComplete() {
+            //这里是timer十几就是定时任务
             DisposableHelper.dispose(timer);
             U b;
             synchronized (this) {
@@ -207,6 +212,7 @@ extends AbstractObservableWithUpstream<T, U> {
 
         @Override
         public void run() {
+            Log.e("TAG", "BufferExactUnboundedObserver run time:" + System.currentTimeMillis());
             U next;
 
             try {
@@ -303,6 +309,7 @@ extends AbstractObservableWithUpstream<T, U> {
 
         @Override
         public void onNext(T t) {
+            Log.e("TAG", "BufferSkipBoundedObserver onNext:"+t);
             synchronized (this) {
                 for (U b : buffers) {
                     b.add(t);
@@ -361,6 +368,7 @@ extends AbstractObservableWithUpstream<T, U> {
             if (cancelled) {
                 return;
             }
+            //U 是一个集合，buffer后面的观察者订阅的是一个集合类型的
             final U b; // NOPMD
 
             try {
@@ -554,6 +562,7 @@ extends AbstractObservableWithUpstream<T, U> {
 
         @Override
         public void run() {
+            //这个方法定时执行
             U next;
 
             try {

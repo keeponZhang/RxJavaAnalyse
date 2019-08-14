@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/atomiclearn" />
             <option value="$PROJECT_DIR$/rx2Sample" />
             <option value="$PROJECT_DIR$/rxJavaJoins_22" />
             <option value="$PROJECT_DIR$/rxandroid1_0_1" />

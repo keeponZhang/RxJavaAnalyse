@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.request).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //95 上游不会再发送事件
+//                ChapterNine.request(95);
                 ChapterNine.request(96);
             }
         });

@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.schedulers;
 
+import android.util.Log;
+
 import java.util.concurrent.*;
 
 import io.reactivex.Scheduler;
@@ -109,6 +111,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Disposable {
         ScheduledRunnable sr = new ScheduledRunnable(decoratedRun, parent);
 
         if (parent != null) {
+            //这里加进去，其实parent就是CompositeDisposable
             if (!parent.add(sr)) {
                 return sr;
             }
@@ -134,6 +137,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Disposable {
     public void dispose() {
         if (!disposed) {
             disposed = true;
+            Log.e("TAG", "DebounceTimedObserver NewThreadWorker dispose:");
             executor.shutdownNow();
         }
     }
