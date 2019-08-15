@@ -37,7 +37,7 @@ public class ObservableJust<T> extends Observable<T> {
         public void run(){
             try {
                 // 3.第三步 observer -> MapObserver.onNext(String)
-                Log.d("TAG"," ObservableJust onNext=="+item+"  " +Thread.currentThread().getName());
+                Log.d("TAG"," ObservableJust PollingActivity onNext=="+item+"  " +Thread.currentThread().getName());
                 observer.onNext(item);
                 observer.onComplete();
             }catch (Exception e){

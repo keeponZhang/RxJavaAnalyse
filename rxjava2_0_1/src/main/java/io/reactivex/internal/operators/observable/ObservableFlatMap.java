@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.*;
@@ -565,6 +567,7 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
         }
         @Override
         public void onNext(U t) {
+            Log.e("TAG", "PollingActivity ObservableFlatMap InnerObserver onNext:"+t);
         //  funsionMode 默认是 None，走第一个if 逻辑，最终调用的是 上面的MergeObserable 的 tryEmit 方法
             if (fusionMode == QueueDisposable.NONE) {
         //    parent:  MergeObserver<T, U>

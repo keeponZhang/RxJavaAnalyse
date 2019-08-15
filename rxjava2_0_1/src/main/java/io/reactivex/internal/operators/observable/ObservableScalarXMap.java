@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -243,6 +245,7 @@ public final class ObservableScalarXMap {
         @Override
         public void run() {
             if (get() == START && compareAndSet(START, ON_NEXT)) {
+                Log.e("TAG", "PollingActivity ScalarDisposable run:"+value);
                 observer.onNext(value);
                 if (get() == ON_NEXT) {
                     lazySet(ON_COMPLETE);

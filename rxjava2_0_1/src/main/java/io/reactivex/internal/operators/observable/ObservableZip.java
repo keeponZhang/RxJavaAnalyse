@@ -147,7 +147,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
             }
 
             int missing = 1;
-
+            Log.e("TAG", "ZipCoordinator drain ------------------start:");
             final ZipObserver<T, R>[] zs = observers;
             final Observer<? super R> a = actual;
             final T[] os = row;
@@ -157,14 +157,18 @@ public final class ObservableZip<T, R> extends Observable<R> {
 
                 for (;;) {
                     int i = 0;
+                    Log.e("TAG", "ZipCoordinator drain for (;;) i:"+i);
                     int emptyCount = 0;
                     for (ZipObserver<T, R> z : zs) {
+                        //不等于空才会进来
                         if (os[i] == null) {
+                            //done 表示其中一方已经完成发送所有事件
                             boolean d = z.done;
                             T v = z.queue.poll();
                             boolean empty = v == null;
                             boolean checkTerminated = checkTerminated(d, empty, a, delayError, z);
-                            Log.e("TAG", "ZipCoordinator drain checkTerminated:"+checkTerminated+" v="+v);
+                            Log.e("TAG", "ZipCoordinator drain checkTerminated:"+checkTerminated+" v="+v+"   i ="+i);
+                            //返回true，表示发送事件少的那方已经发送完成了
                             if (checkTerminated) {
                                 return;
                             }
@@ -185,7 +189,8 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         }
                         i++;
                     }
-
+                    Log.w("TAG", "ZipCoordinator drain emptyCount:"+emptyCount);
+                    //有一个empty就不会真正转换事件
                     if (emptyCount != 0) {
                         break;
                     }
@@ -201,13 +206,13 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         return;
                     }
 
-                    //转换后发送给下游真正的观察者
+                    //转换后发送给下游真正的观察者;发送下去表示这个循环还得继续
                     a.onNext(v);
-
                     Arrays.fill(os, null);
                 }
 
                 missing = addAndGet(-missing);
+                Log.e("TAG", "ZipCoordinator drain missing:"+missing);
                 if (missing == 0) {
                     return;
                 }
@@ -228,6 +233,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         if (e != null) {
                             a.onError(e);
                         } else {
+                            //发送完成事件给下游真正的观察者
                             a.onComplete();
                         }
                         return true;
