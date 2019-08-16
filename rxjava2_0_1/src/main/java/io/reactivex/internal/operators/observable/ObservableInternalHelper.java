@@ -12,6 +12,8 @@
  */
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -19,6 +21,7 @@ import io.reactivex.*;
 import io.reactivex.functions.*;
 import io.reactivex.internal.functions.Functions;
 import io.reactivex.observables.ConnectableObservable;
+import io.reactivex.subjects.Subject;
 
 /**
  * Helper utility class to support Observable with inner classes.
@@ -208,7 +211,9 @@ public final class ObservableInternalHelper {
 
         @Override
         public ObservableSource<?> apply(Observable<Notification<Object>> no) throws Exception {
-            return handler.apply(no.map(MapToInt.INSTANCE));
+            Observable<Object> map = no.map(MapToInt.INSTANCE);
+            Log.e("TAG", "PollingActivity RepeatWhenOuterHandler apply map:"+map+"  no is subject="+(no instanceof Subject));
+            return handler.apply(map);
         }
     }
 

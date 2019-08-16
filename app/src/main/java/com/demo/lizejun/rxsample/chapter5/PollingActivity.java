@@ -11,17 +11,22 @@ import com.demo.lizejun.rxsample.R;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.internal.observers.ToNotificationObserver;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.Subject;
 
 public class PollingActivity extends AppCompatActivity {
 
@@ -83,7 +88,102 @@ public class PollingActivity extends AppCompatActivity {
             }
 
         });
+        findViewById(R.id.tv_advance5).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(!DoubleClickCheckUtils.vertifyDuration()){
+                    return;
+                }
+                test();
+            }
+
+        });
+        findViewById(R.id.tv_advance6).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(!DoubleClickCheckUtils.vertifyDuration()){
+                    return;
+                }
+                subsribeAgain();
+            }
+
+        });
         mCompositeDisposable = new CompositeDisposable();
+    }
+
+    private void subsribeAgain() {
+
+    }
+
+    Observer   mObserver2 = new Observer<Long>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Long value) {
+            Log.e("TAG", "PollingActivity  mObserver2 onNext:" + value);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    };
+    Observer  mObserver1 = new Observer<Long>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Long value) {
+            Log.e("TAG", "PollingActivity  mObserver1 onNext:" + value);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    };
+    Observable  mLongObservable = Observable.create(new ObservableOnSubscribe<Long>() {
+        @Override
+        public void subscribe(ObservableEmitter<Long> e) throws Exception {
+            long l = System.currentTimeMillis();
+            e.onNext(l);
+            e.onComplete();
+        }
+    });
+    private void test() {
+        ToNotificationObserver<Object> actionObserver = new ToNotificationObserver<Object>(new Consumer<Notification<Object>>() {
+            @Override
+            public void accept(Notification<Object> o) {
+                Log.e("TAG", "PollingActivity test accept:");
+
+            }
+        });
+        mLongObservable.flatMap(new Function<Long, ObservableSource<?>>() {
+            @Override
+            public ObservableSource<?> apply(Long aLong) throws Exception {
+
+                return Observable.just(aLong);
+            }
+        }).subscribe(actionObserver);
+//        mLongObservable.subscribe(mObserver2);
+
     }
 
     private void startSimplePolling() {
@@ -257,7 +357,7 @@ public class PollingActivity extends AppCompatActivity {
             @Override
             public ObservableSource<Long> apply(Observable<Object> objectObservable) throws Exception {
                 //最先调用，repeatWhen生成的Observable会最放到最前面去
-                Log.e("TAG", "PollingActivity apply Object:" + objectObservable + "--------------");
+                Log.e("TAG", "PollingActivity apply Object:" + objectObservable + "--------------"+(objectObservable instanceof Subject));
                 return Observable.create(new ObservableOnSubscribe<Long>() {
                     @Override
                     public void subscribe(ObservableEmitter<Long> e) throws Exception {
@@ -280,6 +380,7 @@ public class PollingActivity extends AppCompatActivity {
         @Override
         public void subscribe(ObservableEmitter<Long> e) throws Exception {
             long l = System.currentTimeMillis();
+            Log.e("TAG", "PollingActivity subscribe ObservableOnSubscribe 发送数据:"+l);
             e.onNext(l);
             //没有onComplete，只会发送一次
             e.onComplete();
@@ -298,6 +399,7 @@ public class PollingActivity extends AppCompatActivity {
                 return objectObservable.flatMap(new Function<Object, ObservableSource<Long>>() {
                     @Override
                     public ObservableSource<Long> apply(Object o) throws Exception {
+                        Log.d("TAG", "PollingActivity apply  flatMap Object  ------>> :"+o);
                         mRepeatCount++;
                         if(mRepeatCount>3){
                             return Observable.error(new Throwable("Polling work finished"));
