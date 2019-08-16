@@ -389,7 +389,8 @@ public class PollingActivity extends AppCompatActivity {
     private void startAdvancePolling4() {
 
         Log.d(TAG, "startAdvancePolling click4");
-        Observable<Long> observable = Observable.create(mObservableOnSubscribe4).repeatWhen(new Function<Observable<Object>, ObservableSource<Long>>() {
+        Observable observable1 = Observable.create(mObservableOnSubscribe4);
+        Observable<Long> observable2 =observable1 .repeatWhen(new Function<Observable<Object>, ObservableSource<Long>>() {
             private long mRepeatCount;
 
             @Override
@@ -411,8 +412,11 @@ public class PollingActivity extends AppCompatActivity {
             }
 
         });
+        //其实repeat后面生成的Oberverable 与observable1无关联，通过处理disposableObserver会订阅observable1，此时disposableObserver被两个被观察者订阅
+        //因为repeat后面生成的Oberverable类似于subject,所以两次订阅只observable1会发送数据，然后调用repeat后面生成的Oberverable发送数据（subject.onNext),此时有会诱发observable1再次订阅disposableObserver，达成重复的结果
         DisposableObserver<Long> disposableObserver = getDisposableObserver();
-        observable.subscribe(disposableObserver);
+        Log.e("TAG", "PollingActivity startAdvancePolling4 disposableObserver:"+disposableObserver);
+        observable2.subscribe(disposableObserver);
         mCompositeDisposable.add(disposableObserver);
     }
 

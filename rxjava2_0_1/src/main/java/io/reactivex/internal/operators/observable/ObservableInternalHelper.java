@@ -211,6 +211,7 @@ public final class ObservableInternalHelper {
 
         @Override
         public ObservableSource<?> apply(Observable<Notification<Object>> no) throws Exception {
+            //no:Subject<Notification<Object>> subject = BehaviorSubject.<Notification<Object>>create().toSerialized();
             Observable<Object> map = no.map(MapToInt.INSTANCE);
             Log.e("TAG", "PollingActivity RepeatWhenOuterHandler apply map:"+map+"  no is subject="+(no instanceof Subject));
             return handler.apply(map);

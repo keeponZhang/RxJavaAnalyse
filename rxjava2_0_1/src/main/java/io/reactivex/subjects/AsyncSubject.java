@@ -290,7 +290,7 @@ public final class AsyncSubject<T> extends Subject<T> {
         }
         return array;
     }
-
+    //Deferred 推迟 Scalar:数量  Disposable：用后即丢弃的; 一次性的
     static final class AsyncDisposable<T> extends DeferredScalarDisposable<T> {
         private static final long serialVersionUID = 5629876084736248016L;
 

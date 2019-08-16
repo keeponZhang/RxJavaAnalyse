@@ -374,6 +374,8 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 		});
 
 	}
+
+//	Subject 发送onComplete事件后没有调用dispose();而CreateEmitter有
 //	AsyncSubject:Observer会接收AsyncSubject的onComplete()之前的最后一个数据。
 	public void asyncSubject(View view) {
 		AsyncSubject<Integer> source = AsyncSubject.create();//AsyncSubject：不管在什么位置订阅，都只接接收到最后一条数据
@@ -413,6 +415,7 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 		source.onNext(1);
 		source.onNext(2);
 		source.onNext(3);
+		source.onComplete();
 // It will get 4 and onComplete for second observer also.
 		source.subscribe(getSecondObserver());
 		source.onNext(4);
@@ -446,12 +449,12 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 
 			@Override
 			public void onError(Throwable e) {
-
+				Log.w("TAG", "Rx2SimpleActivity getFirstObserver onError:");
 			}
 
 			@Override
 			public void onComplete() {
-
+				Log.d("TAG", "Rx2SimpleActivity getFirstObserver onComplete:");
 			}
 		};
 	}
@@ -469,12 +472,12 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 
 			@Override
 			public void onError(Throwable e) {
-
+				Log.w("TAG", "Rx2SimpleActivity getSecondObserver onError:");
 			}
 
 			@Override
 			public void onComplete() {
-
+				Log.d("TAG", "Rx2SimpleActivity getSecondObserver onComplete:");
 			}
 		};
 	}

@@ -74,7 +74,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         try {
 
             Log.e("TAG", "PollingActivity ObservableRedo subscribeActual subject:"+subject);
-            //这里传入的是subject，不是source 特别注意
+            //这里传入的是subject，不是source 特别注意  manager：ObservableInternalHelper
             //handler:repeatWhen中的 function   no :Observable<Notification<Object>> handler:
 //            handler.apply(no.map(ObservableInternalHelper.MapToInt.INSTANCE));
             action = ObjectHelper.requireNonNull(manager.apply(subject), "The function returned a null ObservableSource");
@@ -158,6 +158,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         public void onComplete() {
             Log.e("TAG", "PollingActivity RedoObserver onComplete:");
             if (compareAndSet(false, true)) {
+                //这里调用subject发射时重点，会到BehaviorSubject的onNext
                 if (retryMode) {
                     subject.onComplete();
                 } else {

@@ -653,7 +653,7 @@ public final class ReplaySubject<T> extends Subject<T> {
                 if (index != size) {
                     continue;
                 }
-
+                //已经发送过的index，重点
                 rs.index = index;
 
                 missed = rs.addAndGet(-missed);

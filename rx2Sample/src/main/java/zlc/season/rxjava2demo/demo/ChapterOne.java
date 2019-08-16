@@ -29,6 +29,7 @@ public class ChapterOne {
                 emitter.onNext(2);
                 emitter.onNext(3);
                 emitter.onComplete();
+                emitter.onNext(4);
             }
         });
         //创建一个下游 Observer

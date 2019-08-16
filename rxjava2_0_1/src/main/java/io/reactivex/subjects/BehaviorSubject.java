@@ -13,6 +13,8 @@
 
 package io.reactivex.subjects;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.*;
@@ -141,6 +143,7 @@ public final class BehaviorSubject<T> extends Subject<T> {
 
     @Override
     protected void subscribeActual(Observer<? super T> observer) {
+        Log.e("TAG", "PollingActivity BehaviorSubject subscribeActual observer============:"+observer);
         BehaviorDisposable<T> bs = new BehaviorDisposable<T>(observer, this);
         observer.onSubscribe(bs);
         if (add(bs)) {
@@ -379,6 +382,7 @@ public final class BehaviorSubject<T> extends Subject<T> {
         writeLock.lock();
         try {
             index++;
+            //每次调用onNext时会保存起来，有新的订阅是会把这个值发送出去
             value.lazySet(o);
         } finally {
             writeLock.unlock();
