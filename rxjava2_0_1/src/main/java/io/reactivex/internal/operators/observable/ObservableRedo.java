@@ -146,6 +146,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         @Override
         public void onError(Throwable t) {
             if (compareAndSet(false, true)) {
+                //retrywhen 时，retryMode 为true 会走这里；subject.onNext会触发重新订阅，onError，onComplete不会
                 if (retryMode) {
                     subject.onNext(Notification.createOnError(t));
                 } else {

@@ -66,7 +66,20 @@
 		android:textAllCaps="false"
 		android:text="asyncSubject"
 		/>
-
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="concat"
+		android:textAllCaps="false"
+		android:text="concat"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="concatEager "
+		android:textAllCaps="false"
+		android:text="concatEager "
+		/>
 </LinearLayout>
 
 </ScrollView>

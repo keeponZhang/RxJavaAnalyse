@@ -387,7 +387,7 @@ public class Rx1SampleActivity extends AppCompatActivity {
 	}
 
 	public void jumpSample2(View view) {
-		Intent intent = new Intent(this, Rx1Sample1Activity.class);
+		Intent intent = new Intent(this, Rx1Sample2Activity.class);
 		startActivity(intent);
 	}
 

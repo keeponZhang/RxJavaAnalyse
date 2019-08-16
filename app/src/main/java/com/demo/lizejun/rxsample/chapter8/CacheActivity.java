@@ -178,6 +178,7 @@ public class CacheActivity extends AppCompatActivity {
 
             @Override
             public void onNext(List<NewsResultEntity> newsResultEntities) {
+                Log.e("TAG", "CacheActivity onNext:"+newsResultEntities);
                 mNewsResultEntities.clear();
                 mNewsResultEntities.addAll(newsResultEntities);
                 mNewsAdapter.notifyDataSetChanged();

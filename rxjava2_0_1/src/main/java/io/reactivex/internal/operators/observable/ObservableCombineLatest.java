@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.*;
 
@@ -116,6 +118,7 @@ public final class ObservableCombineLatest<T, R> extends Observable<R> {
                 if (cancelled) {
                     return;
                 }
+                //每个Observeable分别订阅CombinerObserver
                 sources[i].subscribe(as[i]);
             }
         }
@@ -174,7 +177,10 @@ public final class ObservableCombineLatest<T, R> extends Observable<R> {
                 } else {
                     latest[index] = value;
                 }
+
                 f = a == len;
+                //a 代表已经不为空的Observable的个数
+                Log.e("TAG", "LatestCoordinator combine index="+""+index+" latest[index]:"+latest[index]+"  a="+a+"  len="+len );
                 // see if either all sources completed
                 empty = c == len
                         || (value == null && o == null); // or this source completed without any value
