@@ -35,4 +35,16 @@
         android:text="使用 repeatWhen 4 "
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
+    <TextView
+        android:id="@+id/tv_advance5"
+        android:gravity="center"
+        android:text="测试用 "
+        android:layout_width="match_parent"
+        android:layout_height="40dp"/>
+    <TextView
+        android:id="@+id/tv_advance6"
+        android:gravity="center"
+        android:text="再次订阅 "
+        android:layout_width="match_parent"
+        android:layout_height="40dp"/>
 </LinearLayout>

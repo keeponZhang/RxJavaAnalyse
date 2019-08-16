@@ -15,16 +15,23 @@ package io.reactivex.internal.operators.observable;
 
 import android.util.Log;
 
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import io.reactivex.*;
+import io.reactivex.Notification;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
-import io.reactivex.functions.*;
-import io.reactivex.internal.disposables.*;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.internal.disposables.ListCompositeDisposable;
+import io.reactivex.internal.disposables.SequentialDisposable;
 import io.reactivex.internal.functions.ObjectHelper;
 import io.reactivex.internal.observers.ToNotificationObserver;
-import io.reactivex.subjects.*;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T> {
     final Function<? super Observable<Notification<Object>>, ? extends ObservableSource<?>> manager;
@@ -41,15 +48,18 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
 
     @Override
     public void subscribeActual(Observer<? super T> s) {
-
+//  当观察者订阅BehaviorSubject时，它开始发射原始Observable最近发射的数据（如果此时还没有收到任何数据，它会发射一个默认值），
+//  然后继续发射其它任何来自原始Observable的数据。
         Subject<Notification<Object>> subject = BehaviorSubject.<Notification<Object>>create().toSerialized();
 
         final RedoObserver<T> parent = new RedoObserver<T>(s, subject, source, retryMode);
 
+        //这个观察者只是用来重新订阅
         ToNotificationObserver<Object> actionObserver = new ToNotificationObserver<Object>(new Consumer<Notification<Object>>() {
             @Override
             public void accept(Notification<Object> o) {
                 //其实这里是由ToNotificationObserver的onNext方法调用的
+                // 这里其实比parent.handle(Notification.<Object>createOnNext(0))晚调用，等发送了数据才会到这里
                 Log.w("TAG", "<<<<<<<ObservableRedo PollingActivity ToNotificationObserver aceept 被调用:"+o);
                 // 主要作用:retrywhen上游的Observable订阅RedoObserver
                 parent.handle(o);
@@ -62,6 +72,11 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         ObservableSource<?> action;
 
         try {
+
+            Log.e("TAG", "PollingActivity ObservableRedo subscribeActual subject:"+subject);
+            //这里传入的是subject，不是source 特别注意
+            //handler:repeatWhen中的 function   no :Observable<Notification<Object>> handler:
+//            handler.apply(no.map(ObservableInternalHelper.MapToInt.INSTANCE));
             action = ObjectHelper.requireNonNull(manager.apply(subject), "The function returned a null ObservableSource");
         } catch (Throwable ex) {
             Exceptions.throwIfFatal(ex);
@@ -89,7 +104,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         // trigger 触发 first subscription
         //handle一次， source.subscribe(this);  source: retrywhen上游的Observable ,this :RedoObserver
         //action有主动发射，这里触发的是第二次重复；如果没有则触发第一次，一般来说，中间层不会主动发射
-        //  parent.handle(Notification.<Object>createOnNext(0))可以调用  source.subscribe(this);诱发最顶层被观察者发射
+        //  parent.handle(Notification.<Object>createOnNext(0))可以调用  source.subscribe(this);诱发最顶层被观察者发射 ,从而不仅RedoObserver可以收到，ToNotificationObserver也可以收到
         Log.w("TAG", "PollingActivity ObservableRedo subscribeActual handle 第一次 before#########################");
        parent.handle(Notification.<Object>createOnNext(0));
         Log.w("TAG", "PollingActivity ObservableRedo subscribeActual handle 第一次 #################end");
@@ -169,7 +184,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
                                 }
 //                                source: retrywhen上游的Observable ,this :RedoObserver
                                 //如果发送的事件时onNext的，会一直重复订阅
-                                Log.e("TAG", "PollingActivity RedoObserver handle repeat 上游订阅 source.subscribe(this)++++");
+                                Log.e("TAG", "PollingActivity RedoObserver handle repeat 上游订阅 source.subscribe(this)++++source =="+source);
                                 source.subscribe(this);
 
                                 missed = wip.addAndGet(-missed);

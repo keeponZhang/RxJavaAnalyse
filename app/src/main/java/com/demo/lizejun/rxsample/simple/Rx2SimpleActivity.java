@@ -31,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.AsyncSubject;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.ReplaySubject;
 
 
 public class Rx2SimpleActivity extends AppCompatActivity {
@@ -375,92 +376,107 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 	}
 //	AsyncSubject:Observer会接收AsyncSubject的onComplete()之前的最后一个数据。
 	public void asyncSubject(View view) {
-		AsyncSubject<String> subject = AsyncSubject.create();
-		subject.onNext("asyncSubject1");
-		subject.onNext("asyncSubject2");
-//		subject.onComplete()必须要调用才会开始发送数据，否则Subscriber将不接收任何数据
-//		subject.onComplete();
-		subject.subscribe(new Consumer<String>() {
-			@Override
-			public void accept(@NonNull String s) throws Exception {
-				Log.e(TAG,"asyncSubject:" + s);
-			}
-		}, new Consumer<Throwable>() {
-			@Override
-			public void accept(@NonNull Throwable throwable) throws Exception {
-				Log.e(TAG,"asyncSubject onError");
-				  //不输出（异常才会输出）
-			}
-		}, new Action() {
-			@Override
-			public void run() throws Exception {
-				Log.e(TAG,"asyncSubject:complete");
-			}
-		});
-
-		subject.onNext("asyncSubject3");
-		subject.onComplete();
-		subject.onNext("asyncSubject4");
+		AsyncSubject<Integer> source = AsyncSubject.create();//AsyncSubject：不管在什么位置订阅，都只接接收到最后一条数据
+// It will get only 4 and onComplete
+		source.onNext(0);
+		source.subscribe(getFirstObserver());
+		source.onNext(1);
+		source.onNext(2);
+		source.onNext(3);
+// It will also get only get 4 and onComplete
+		source.subscribe(getSecondObserver());
+		source.onNext(4);
+		//不发送onComplete ，观察者收不到数据
+		source.onComplete();
 	}
-
+	//BehaviorSubject：接收到订阅前的最后一条数据和订阅后的所有数据。
 	public void behaviorSubject(View view) {
-		BehaviorSubject<String> subject = BehaviorSubject.createDefault("behaviorSubject1");
-		subject.onNext("behaviorSubject2");
-
-		subject.subscribe(new Consumer<String>() {
-			@Override
-			public void accept(@NonNull String s) throws Exception {
-				Log.e("TAG", "behaviorSubject:" +s);
-			 //输出asyncSubject:asyncSubject3
-			}
-		}, new Consumer<Throwable>() {
-			@Override
-			public void accept(@NonNull Throwable throwable) throws Exception {
-				Log.e("TAG", "behaviorSubject onError" );
-				 //不输出（异常才会输出）
-			}
-		}, new Action() {
-			@Override
-			public void run() throws Exception {
-				Log.e("TAG", "behaviorSubject:complete:" );
-			 //输出 behaviorSubject onComplete
-			}
-		});
-
-		subject.onNext("behaviorSubject3");
-		subject.onNext("behaviorSubject4");
+		BehaviorSubject<Integer> source = BehaviorSubject.create();
+		source.onNext(-1);
+		source.onNext(0);
+// It will get 0,1, 2, 3, 4 and onComplete
+		source.subscribe(getFirstObserver());
+		source.onNext(1);
+		source.onNext(2);
+		source.onNext(3);
+// It will get 3(last emitted)and 4(subsequent item) and onComplete
+		source.subscribe(getSecondObserver());
+		source.onNext(4);
+		source.onComplete();
 	}
 // PublishSubject:Observer只接收PublishSubject被订阅之后发送的数据。
 	public void publishSubject(View view) {
-		PublishSubject<String> subject = PublishSubject.create();
-		subject.onNext("publicSubject1");
-		subject.onNext("publicSubject2");
-		subject.onComplete();
-
-		subject.subscribe(new Consumer<String>() {
-			@Override
-			public void accept(@NonNull String s) throws Exception {
-				Log.e(TAG, "publicSubject:"+s);
-			}
-		}, new Consumer<Throwable>() {
-			@Override
-			public void accept(@NonNull Throwable throwable) throws Exception {
-				Log.e(TAG, "publicSubject onError:" );
-			  //不输出（异常才会输出）
-			}
-		}, new Action() {
-			@Override
-			public void run() throws Exception {
-				Log.e(TAG, "publicSubject:complete" );
-			  //输出 publicSubject onComplete
-			}
-		});
-
-		subject.onNext("publicSubject3");
-		subject.onNext("publicSubject4");
+		PublishSubject<Integer> source = PublishSubject.create();//PublicSubject：接收到订阅之后的所有数据。
+		source.onNext(0);
+// It will get 1, 2, 3, 4 and onComplete
+		source.subscribe(getFirstObserver());
+		source.onNext(1);
+		source.onNext(2);
+		source.onNext(3);
+// It will get 4 and onComplete for second observer also.
+		source.subscribe(getSecondObserver());
+		source.onNext(4);
+		source.onComplete();
+	}
+	//ReplaySubject：接收到所有的数据，包括订阅之前的所有数据和订阅之后的所有数据。
+	public void replaySubject(View view) {
+		ReplaySubject<Integer> source = ReplaySubject.create();
+// It will get 1, 2, 3, 4
+		source.onNext(1);
+		source.subscribe(getFirstObserver());
+		source.onNext(2);
+		source.onNext(3);
+		source.onNext(4);
+		source.onComplete();
+// It will also get 1, 2, 3, 4 as we have used replay Subject
+		source.subscribe(getSecondObserver());
 	}
 
-	public void replaySubject(View view) {
+	private Observer<? super Integer> getFirstObserver() {
+		return new Observer<Integer>() {
+			@Override
+			public void onSubscribe(Disposable d) {
+
+			}
+
+			@Override
+			public void onNext(Integer value) {
+				Log.e("TAG", "Rx2SimpleActivity getFirstObserver onNext:"+value);
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onComplete() {
+
+			}
+		};
+	}
+	private Observer<? super Integer> getSecondObserver() {
+		return new Observer<Integer>() {
+			@Override
+			public void onSubscribe(Disposable d) {
+
+			}
+
+			@Override
+			public void onNext(Integer value) {
+				Log.e("TAG", "Rx2SimpleActivity getSecondObserver onNext:"+value);
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onComplete() {
+
+			}
+		};
 	}
 
 	public void doOnNext(View view) {
