@@ -96,11 +96,11 @@ public class HotObservableActivity extends AppCompatActivity {
     }
 
     private void createObservable() {
-        //createColdSource(); //(1)订阅到cold;
-        //createPublishSource(); //(2)订阅到cold.publish();
-        //createShareSource(); //(3)订阅到cold.share();
+        createColdSource(); //(1)订阅到cold;
+        createPublishSource(); //(2)订阅到cold.publish();
+        createShareSource(); //(3)订阅到cold.share();
         //createAutoConnectSource(); //(4)订阅到cold.publish().autoConnect(2);
-        createReplySource(); //(5)订阅到cold.reply(3);
+//        createReplySource(); //(5)订阅到cold.reply(3);
     }
 
     //直接订阅Cold Observable。

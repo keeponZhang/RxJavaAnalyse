@@ -24,8 +24,8 @@ import com.packtpub.apps.rxjava_essentials.chapter7.LongTaskFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.NetworkTaskFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.SharedPreferencesListFragment;
 import com.packtpub.apps.rxjava_essentials.chapter8.SoActivity;
-import com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment;
-import com.packtpub.apps.rxjava_essentials.example2.SecondExampleFragment;
+import com.packtpub.apps.rxjava_essentials.example1.CreateFragment;
+import com.packtpub.apps.rxjava_essentials.example2.FromFragment;
 import com.packtpub.apps.rxjava_essentials.example3.JustTimerExampleFragment;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerCallbacks;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerFragment;
@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         switch (position) {
             case 0:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new FirstExampleFragment())
+                    .replace(R.id.container, new CreateFragment())
                     .commit();
                 break;
             case 1:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new SecondExampleFragment())
+                    .replace(R.id.container, new FromFragment())
                     .commit();
                 break;
             case 2:

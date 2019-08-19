@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.*;
@@ -43,6 +45,8 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
             }
             @Override
             public void onNext(U t) {
+                Log.e("TAG", "ObservableTakeUntil onNext:" + t);
+                //重点是这里，当otherObservable发射数据之后，取消订阅，就不允许再发射数据了
                 frc.dispose();
                 serial.onComplete();
             }
@@ -84,6 +88,7 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
 
         @Override
         public void onNext(T t) {
+            Log.e("TAG", "ObservableTakeUntil TakeUntilObserver onNext:" + t);
             actual.onNext(t);
         }
 

@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
               android:orientation="vertical"
-             tools:context="com.packtpub.apps.rxjava_essentials.example1.FirstExampleFragment">
+             tools:context="com.packtpub.apps.rxjava_essentials.example1.CreateFragment">
 
     <Button
         android:id="@+id/map"

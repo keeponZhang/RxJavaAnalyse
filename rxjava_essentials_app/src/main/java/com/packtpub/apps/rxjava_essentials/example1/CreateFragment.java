@@ -39,7 +39,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class FirstExampleFragment extends Fragment {
+public class CreateFragment extends Fragment {
 
     @BindView(R.id.fragment_first_example_list)
     RecyclerView mRecyclerView;
@@ -51,7 +51,7 @@ public class FirstExampleFragment extends Fragment {
 
     private File mFilesDir;
 
-    public FirstExampleFragment() {
+    public CreateFragment() {
     }
 
     @Override
@@ -156,7 +156,7 @@ public class FirstExampleFragment extends Fragment {
                 String name = appInfo.getName();
                 String iconPath = mFilesDir + "/" + name;
                 Utils.storeBitmap(App.instance, icon, name);
-                Log.d("TAG", "FirstExampleFragment getApps:" + Thread.currentThread().getName());
+                Log.d("TAG", "CreateFragment getApps:" + Thread.currentThread().getName());
                 if (subscriber.isUnsubscribed()) {
                     return;
                 }

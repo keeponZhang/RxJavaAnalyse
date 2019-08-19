@@ -26,7 +26,7 @@ import rx.Observable;
 import rx.Observer;
 
 
-public class SecondExampleFragment extends Fragment {
+public class FromFragment extends Fragment {
 
     @BindView(R.id.fragment_first_example_list)
     RecyclerView mRecyclerView;
@@ -38,7 +38,7 @@ public class SecondExampleFragment extends Fragment {
 
     private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 
-    public SecondExampleFragment() {
+    public FromFragment() {
     }
 
     @Override

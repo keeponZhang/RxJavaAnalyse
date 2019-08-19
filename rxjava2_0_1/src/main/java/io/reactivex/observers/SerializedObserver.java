@@ -12,6 +12,8 @@
  */
 package io.reactivex.observers;
 
+import android.util.Log;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.DisposableHelper;
@@ -84,6 +86,7 @@ public final class SerializedObserver<T> implements Observer<T>, Disposable {
 
     @Override
     public void onNext(T t) {
+        Log.e("TAG", "ObservableTakeUntil SerializedObserver onNext:"+t);
         if (done) {
             return;
         }

@@ -191,7 +191,7 @@ public class CacheActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                Log.d(TAG, "加载完成");
+                Log.d(TAG, "加载完成 ObservableTakeUntil");
             }
         };
     }
@@ -200,5 +200,14 @@ public class CacheActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mCompositeDisposable.clear();
+    }
+
+    public void takeUtil(View view) {
+        Observable<List<NewsResultEntity>> networkArticle = getNetworkArticle(800);
+        DisposableObserver<List<NewsResultEntity>> disposableObserver = getArticleObserver();
+        Observable.merge(networkArticle , getCacheArticle(2000).subscribeOn(Schedulers.io())
+                .takeUntil(networkArticle))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(disposableObserver);
     }
 }

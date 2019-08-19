@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+
 import com.demo.lizejun.rxsample.R;
 import com.demo.lizejun.rxsample.network.entity.WeatherApi;
 import com.demo.lizejun.rxsample.network.entity.WeatherEntity;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import java.net.UnknownHostException;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -36,8 +35,8 @@ public class WeatherActivity extends AppCompatActivity {
     private static final String TAG = "WeatherDemo";
     private static final long[] CITY_ARRAY = new long[] {
             101010100L,
-            101010100L,
-            101010100L,
+            201010100L,
+            301010100L,
             101030100L
     };
 
@@ -132,6 +131,7 @@ public class WeatherActivity extends AppCompatActivity {
 
             @Override
             public boolean test(Boolean aBoolean) throws Exception {
+
                 return aBoolean && getCacheCity() > 0;
             }
 
@@ -139,6 +139,7 @@ public class WeatherActivity extends AppCompatActivity {
 
             @Override
             public Long apply(Boolean aBoolean) throws Exception {
+                Log.e("TAG", "WeatherActivity test:"+getCacheCity());
                 return getCacheCity();
             }
 
@@ -167,10 +168,12 @@ public class WeatherActivity extends AppCompatActivity {
                             if (isInterrupted()) {
                                 break;
                             }
-                            Log.d(TAG, "重新定位");
-                            Thread.sleep(1000);
+                            Log.d(TAG, "重新定位-----------------------");
+
+                            Thread.sleep(10000);
                             Log.d(TAG, "定位到城市信息=" + cityId);
                             mCityPublish.onNext(cityId);
+                            Log.d(TAG, "去请求天气信息=" + cityId);
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -191,6 +194,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (mNetStatusPublish != null) {
+                    Log.e("TAG", "WeatherDemo WeatherActivity onReceive:");
                     mNetStatusPublish.onNext(isNetworkConnected());
                 }
             }

@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.demo.lizejun.rxsample.chapter14.TokenActivity">
     <Button
+        android:textAllCaps="false"
         android:id="@+id/bt_request_observable"
         android:text="使用Observable+Observer"
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/bt_request_flow"
         android:layout_marginTop="10dp"
         android:text="使用Flow+Subscriber"

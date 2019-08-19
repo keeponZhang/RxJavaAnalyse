@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     tools:context="com.demo.lizejun.rxsample.chapter8.CacheActivity">
     <Button
+        android:textAllCaps="false"
         android:id="@+id/bt_contact_refresh"
         android:text="使用contact实现"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/bt_contact_eager_refresh"
         android:text="使用contactEager实现"
         android:gravity="center"
@@ -24,9 +26,17 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/bt_publish_refresh"
         android:text="使用publish实现"
         android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"/>
+    <Button
+        android:textAllCaps="false"
+        android:text="takeUtil"
+        android:gravity="center"
+        android:onClick="takeUtil"
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <android.support.v7.widget.RecyclerView

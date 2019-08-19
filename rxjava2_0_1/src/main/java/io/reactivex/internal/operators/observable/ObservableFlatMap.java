@@ -567,7 +567,7 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
         }
         @Override
         public void onNext(U t) {
-            Log.e("TAG", "PollingActivity ObservableFlatMap InnerObserver onNext:"+t);
+            Log.e("TAG", " ObservableTakeUntil PollingActivity ObservableFlatMap InnerObserver onNext:"+t);
         //  funsionMode 默认是 None，走第一个if 逻辑，最终调用的是 上面的MergeObserable 的 tryEmit 方法
             if (fusionMode == QueueDisposable.NONE) {
         //    parent:  MergeObserver<T, U>

@@ -1,22 +1,19 @@
 package com.demo.lizejun.rxsample.chapter9;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.demo.lizejun.rxsample.R;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class TimeActivity extends AppCompatActivity {
 
@@ -79,7 +76,7 @@ public class TimeActivity extends AppCompatActivity {
         mCompositeDisposable.add(disposableObserver);
     }
 
-    //每隔 1s 执行一次任务，第一次任务执行前有 2s 的间隔，执行无限次
+    //每隔 1s 执行一次任务，第一次任务执行前有 1s 的间隔，执行无限次
     private void startTimeDemo2() {
         DisposableObserver<Long> disposableObserver = getTimeDemoObserver();
         Observable.interval(1000, TimeUnit.MILLISECONDS).subscribe(disposableObserver);

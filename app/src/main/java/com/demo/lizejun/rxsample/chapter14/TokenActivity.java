@@ -1,12 +1,11 @@
 package com.demo.lizejun.rxsample.chapter14;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.demo.lizejun.rxsample.R;
 
@@ -165,6 +164,7 @@ public class TokenActivity extends AppCompatActivity {
                             return Flowable.error(new Throwable(ERROR_RETRY));
                         } else if (ERROR_TOKEN.equals(throwable.getMessage())) {
                             mRetryCount++;
+                            //flatmap 生成的observable会被InnerObserver订阅一次，接着在发送下级真正的观察者
                             return TokenLoader.getInstance().getNetTokenFlowLocked();
                         } else {
                             return Flowable.error(throwable);
