@@ -15,6 +15,8 @@
  */
 package rx.observers;
 
+import android.util.Log;
+
 import java.util.Arrays;
 
 import rx.Subscriber;
@@ -205,6 +207,7 @@ public class SafeSubscriber<T> extends Subscriber<T> {
         // if we did not throw above we will unsubscribe here, if onError failed then unsubscribe happens in the catch
         try {
             unsubscribe();
+            Log.e("TAG", "收到错误 SafeSubscriber _onError unsubscribe:");
         } catch (RuntimeException unsubscribeException) {
             try {
                 RxJavaPlugins.getInstance().getErrorHandler().handleError(unsubscribeException);

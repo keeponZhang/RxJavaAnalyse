@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -38,10 +40,11 @@ public final class OperatorTimeout<T> extends OperatorTimeoutBase<T> {
             @Override
             public Subscription call(final TimeoutSubscriber<T> timeoutSubscriber, final Long seqId, Scheduler.Worker inner) {
                 System.out.println("OperatorTimeout call FirstTimeoutStub Scheduler.Worker="+inner);
+                //这里有个定时任务，超过时间没有取消掉的话，会调用call方法，从而调用timeoutSubscriber.onTimeout(seqId)方法
                 return inner.schedule(new Action0() {
                     @Override
                     public void call() {
-                        System.out.println("-------OperatorTimeout OperatorTimeoutBase call firstTimeoutStub 调用timeout啦------------");
+                        Log.e("TAG", "-------OperatorTimeout OperatorTimeoutBase call firstTimeoutStub 没发送一个数据调用timeout啦------------");
                         timeoutSubscriber.onTimeout(seqId);
                     }
                 }, timeout, timeUnit);
@@ -61,7 +64,7 @@ public final class OperatorTimeout<T> extends OperatorTimeoutBase<T> {
                     @Override
                     public void call() {
                         super.call();
-                     System.out.println("<<<<<<<<<<< OperatorTimeout NewThreadWorker OperatorTimeoutBase call  TagAction otherTimeoutStub 调用timeout啦>>>>>>>>>>");
+                        Log.e("TAG", "<<<<<<<<<<< OperatorTimeout NewThreadWorker OperatorTimeoutBase call  TagAction otherTimeoutStub 调用timeout啦>>>>>>>>>>)");
                         timeoutSubscriber.onTimeout(seqId);
                     }
                 };

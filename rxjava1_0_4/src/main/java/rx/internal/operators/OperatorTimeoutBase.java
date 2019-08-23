@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
@@ -58,6 +60,7 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
         this.firstTimeoutStub = firstTimeoutStub;
         this.timeoutStub = timeoutStub;
         this.other = other;
+        //scheduler : EventLoopsScheduler
         this.scheduler = scheduler;
     }
 
@@ -115,7 +118,7 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
 
         @Override
         public void onNext(T value) {
-            System.out.println("OperatorTimeoutBase TimeoutSubscriber onNext ="+value+" time:"+System.currentTimeMillis());
+            Log.e("TAG", "OperatorTimeoutBase TimeoutSubscriber onNext ="+value+" time:"+System.currentTimeMillis());
             boolean onNextWins = false;
             synchronized (gate) {
                 if (terminated == 0) {
@@ -128,6 +131,7 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
 //                System.out.println("<<<<<<<<<<<<OperatorTimeoutBase TimeoutSubscriber onNext  timeoutStub.call >>>>>>>>>>>>>");
 //               timeoutStub.call(this, actual, value, inner);
                 //timeoutStub.call(this, actual, value, inner)会生成一个Subscription，serial.set会把上一个Subscription unSubscribe掉
+                Log.e("TAG", "TimeoutSubscriber onNext serial.set(timeoutStub.call(this, actual, value, inner) terminated:"+terminated+" actual="+actual);
               serial.set(timeoutStub.call(this, actual, value, inner));
             }
         }
@@ -159,16 +163,16 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
                 serializedSubscriber.onCompleted();
             }
         }
-
+        //超时会调用这个方法
         public void onTimeout(long seqId) {
             long expected = seqId;
             boolean timeoutWins = false;
             synchronized (gate) {
+                //getAndSet 返回旧的
                 if (expected == actual && TERMINATED_UPDATER.getAndSet(this, 1) == 0) {
                     timeoutWins = true;
                 }
-            }
-            System.out.println("OperatorTimeoutBase TimeoutSubscriber onTimeout:"+System.currentTimeMillis()+" timeoutWins= "+timeoutWins);
+            Log.e("TAG", "OperatorTimeoutBase TimeoutSubscriber onTimeout:"+System.currentTimeMillis()+" timeoutWins= "+timeoutWins);
             if (timeoutWins) {
                 //只传时间单元的话，这里other == null
                 if (other == null) {
@@ -180,4 +184,5 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
             }
         }
     }
+}
 }

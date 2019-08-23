@@ -62,7 +62,7 @@ public class OperatorSkipLast<T> implements Operator<T, T> {
                     // If count == 0, we do not need to put value into deque
                     // and remove it at once. We can emit the value
                     // directly.
-                    //第一个是直接发送的
+                    //count=0时直接发送的
                     subscriber.onNext(value);
                     return;
                 }

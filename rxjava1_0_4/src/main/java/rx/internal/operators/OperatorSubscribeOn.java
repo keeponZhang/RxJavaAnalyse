@@ -38,6 +38,7 @@ public class OperatorSubscribeOn<T> implements Operator<T, Observable<T>> {
 
     @Override
     public Subscriber<? super Observable<T>> call(final Subscriber<? super T> subscriber) {
+        //scheduler :NewThreadScheduler.instance()
         final Worker inner = scheduler.createWorker();
         subscriber.add(inner);
         return new Subscriber<Observable<T>>(subscriber) {

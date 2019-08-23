@@ -12,6 +12,8 @@
  */
 package rx;
 
+import android.util.Log;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -273,7 +275,7 @@ public class Observable<T> {
                     //merge操作生成的是Subscriber<Observable<? extends T>>，对
 //                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
                     Subscriber<? super T> st = hook.onLift(lift).call(o);
-                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this+"  转化后st="+st);
+                    Log.d("TAG", "Observable call:OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this+"  转化后st="+st);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
                         st.onStart();

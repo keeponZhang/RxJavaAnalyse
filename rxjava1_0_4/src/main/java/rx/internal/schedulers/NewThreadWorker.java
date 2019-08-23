@@ -15,6 +15,8 @@
  */
 package rx.internal.schedulers;
 
+import android.util.Log;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -102,7 +104,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Subscription {
     @Override
     public void unsubscribe() {
         isUnsubscribed = true;
-        System.out.println("<<<<<<<<<<<<OperatorTimeoutBase NewThreadWorker  TagAction shutdownNow   >>>>>>>>>>>>>");
+        Log.e("TAG", "<<<<<<<<<<<<OperatorTimeoutBase NewThreadWorker unsubscribe TagAction shutdownNow>>>>>>>>>>>>>");
         executor.shutdownNow();
 
     }

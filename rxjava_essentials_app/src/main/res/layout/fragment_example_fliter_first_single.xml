@@ -68,6 +68,13 @@
         android:text="skip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/unsubscribe"
+        android:textAllCaps="false"
+        android:onClick="unsubscribe"
+        android:text="unsubscribe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"
