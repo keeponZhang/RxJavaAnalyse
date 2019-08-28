@@ -75,13 +75,13 @@ public class OperatorSkipLast<T> implements Operator<T, T> {
                 //往队列里插入数据,value不为空的话，还是value，空的话返回ON_NEXT_NULL_SENTINEL，因为deque不支持插入空值
                 deque.offerLast(notification.next(value));*/
 
-               //这里的逻辑是：缓存已经到了要发送的数据了，还有数据发过来，所以队列头的是要发送的数据
+               //这里的逻辑是：队列数量等于要跳过的数量，还有数据发过来，所以队列的第一个是要发送的数据
                 if (deque.size() == count) {
                     subscriber.onNext(on.getValue(deque.removeFirst()));
                 } else {
                     request(1);
                 }
-                //除了第一个不入队列
+                //on.next(value) 其实就是转换，然后入队列,放在队尾
                 deque.offerLast(on.next(value));
             }
 

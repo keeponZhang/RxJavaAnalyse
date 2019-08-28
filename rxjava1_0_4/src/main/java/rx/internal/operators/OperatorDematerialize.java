@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import rx.Notification;
 import rx.Observable.Operator;
 import rx.Subscriber;
@@ -33,6 +35,7 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
 
     @Override
     public Subscriber<? super Notification<T>> call(final Subscriber<? super T> child) {
+        Log.e("TAG", "OperatorDematerialize call OnSubscribeRedo 1.1:");
         return new Subscriber<Notification<T>>(child) {
             /** Do not send two onCompleted events. */
             boolean terminated;

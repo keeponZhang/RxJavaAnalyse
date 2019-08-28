@@ -93,6 +93,10 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 
 	private void loadList(List<AppInfo> apps) {
 		mRecyclerView.setVisibility(View.VISIBLE);
+		take(apps);
+	}
+	//take中实现很简单，记录发送的个数，到了之后发送onCompleted
+	private void take(List<AppInfo> apps) {
 		Observable.from(apps)
 				.take(3)
 				.subscribe(new Observer<AppInfo>() {
@@ -114,7 +118,8 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 					}
 				});
 	}
-
+	//takelast 和skiplast的实现有点一样，又有点不一样
+	//都使用了队列，skiplast队列数量达到，取第一个发送；takelast队列数量达到，直接扔掉，然后在代理subcriber onComplete发送队列的数据
 	public void takeLast() {
 		//		mAdapter.clearData();
 		Observable.from(mApps)
@@ -163,9 +168,8 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 				break;
 		}
 	}
-
+	//interval就是timer 延迟时间和周期时间一样，最终调用的是同一个方法
 	private void interval() {
-		//interval就是timer 延迟时间和周期时间一样，最终调用的是同一个方法
 		Subscription stopMePlease = Observable.interval(3,TimeUnit.SECONDS)
 				.subscribe(new Observer<Long>() {
 					@Override
@@ -210,14 +214,14 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 
 					@Override
 					public void onNext(AppInfo appInfo) {
-						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+						Log.e("TAG", "TakeRepeatRangeDeferExampleFragment OnSubscribeRedo onNext:" + appInfo.getName());
 						mAddedApps.add(appInfo);
 						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
 					}
 				});
 	}
 
-
+	//range实现原理也很简单，从start开始，发送count个，每次加1
 	public void range() {
 		Observable.range(10, 3)
 				.subscribe(new Observer<Integer>() {
@@ -264,7 +268,7 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 
 
 	}
-
+	//当产生订阅时，会调用deferred中observableFactory.call()方法，得到真正的Observable,然后订阅真正的Subscriber
 	@OnClick(R.id.defer)
 	public void onViewClicked() {
 		deferred.subscribe(new Subscriber<Integer>() {

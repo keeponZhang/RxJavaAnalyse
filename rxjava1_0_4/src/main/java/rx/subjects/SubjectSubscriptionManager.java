@@ -15,6 +15,8 @@
  */
 package rx.subjects;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -55,7 +57,7 @@ import rx.subscriptions.Subscriptions;
     @Override
     public void call(final Subscriber<? super T> child) {
         SubjectObserver<T> bo = new SubjectObserver<T>(child);
-        System.out.println("SubjectSubscriptionManager OnSubscribeRedo  最顶层OnSubscribe call childsubscriber= "+child+"  SubjectObserver="+bo);
+        Log.e("TAG","SubjectSubscriptionManager OnSubscribeRedo  1.3 最顶层OnSubscribe call childsubscriber= "+child+"  SubjectObserver="+bo);
 
         addUnsubscriber(child, bo);
         onStart.call(bo);
@@ -225,7 +227,7 @@ import rx.subscriptions.Subscriptions;
         }
         @Override
         public void onNext(T t) {
-            System.out.println("OnSubscribeRedo 最顶层 SubjectObserver onNext "+t);
+            Log.w("TAG","OnSubscribeRedo 1.9 最顶层 SubjectObserver onNext "+t);
             actual.onNext(t);
         }
         @Override

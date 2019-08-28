@@ -94,7 +94,7 @@ public class DistinctExampleFragment extends Fragment {
 		Observable<AppInfo> fullOfDuplicates = Observable.from(apps)
 				.take(3)
 				.repeat(3);
-		//distinct过滤重复的
+		//distinct过滤重复的(distinct实现很简单，用HashSet去重)
 		fullOfDuplicates.distinct()
 				.subscribe(new Observer<AppInfo>() {
 					@Override
@@ -146,17 +146,19 @@ public class DistinctExampleFragment extends Fragment {
 	private void distinctUntilChangedfun() {
 
 	}
-
+	int index = 0;
 	private void distinctFun() {
+		index = 0;
 		Observable<AppInfo> fullOfDuplicates = Observable.from(mApps)
-				.take(3)
-				.repeat(3);
+				.take(1)
+				.repeat(2);
 		//distinct过滤重复的
 		fullOfDuplicates.distinct(new Func1<AppInfo, AppInfo>() {
 			@Override
 			public AppInfo call(AppInfo appInfo) {
-				appInfo.setName(appInfo.getName()+":change");
-				return null;
+				appInfo.setName(appInfo.getName()+":change"+index);
+				index++;
+				return appInfo;
 			}
 		})
 				.subscribe(new Observer<AppInfo>() {
@@ -182,6 +184,7 @@ public class DistinctExampleFragment extends Fragment {
 				});
 	}
 
+	///实现很简单，记录上次发送的key，跟要发送的key对比，不同的话才发送
 	private void distinctUntilChanged() {
 				//去重，连续的，后面跟前面一样的
 			 Observable.interval(1, TimeUnit.SECONDS)

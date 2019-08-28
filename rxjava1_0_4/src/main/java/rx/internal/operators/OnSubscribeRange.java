@@ -59,6 +59,7 @@ public final class OnSubscribeRange implements OnSubscribe<Integer> {
                 // already started with fast-path
                 return;
             }
+            //默认走这里
             if (n == Long.MAX_VALUE) {
                 REQUESTED_UPDATER.set(this, n);
                 // fast-path without backpressure

@@ -131,7 +131,7 @@ public class JustTimerExampleFragment extends Fragment {
 			}
 		});
 	}
-
+	//使用线程池延迟，initialDelay是第一次延迟时间，period是之后的延迟时间
 	private void timer() {
 		//OnSubscribeTimerPeriodically 两个参数分别是第一次延迟的时间，发送的间隔时间
 		mTimeSubscription = Observable.timer(3, 3, TimeUnit.SECONDS)

@@ -483,12 +483,12 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 	}
 
 	//skip(3)指定跳过数量后，才真正发送数据
-	//skipLast(3) 第一个会发送
+	//skipLast(3) 先入队列，队列的数量等于要跳过的数量时，还有数据发送过来，把队列的第一个发送出去
 	private void skip() {
 		Observable.from(mApps)
 				//跟take,takeLast相对应
 //				.skip(3)
-				.skipLast(3)
+				.skipLast(2)
 				.subscribe(new Observer<AppInfo>() {
 					@Override
 					public void onCompleted() {
