@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
@@ -235,6 +237,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
                         final Object[] vs = new Object[observers.length];
                         boolean allHaveValues = true;
                         for (int i = 0; i < observers.length; i++) {
+                            //发送的事件时放在items，这里取出来
                             RxRingBuffer buffer = ((InnerSubscriber) observers[i]).items;
                             Object n = buffer.peek();
 
@@ -242,7 +245,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
                                 allHaveValues = false;
                                 continue;
                             }
-
+                            //有一方发送完成事件，下方真正的观察者就会收到完成事件
                             if (buffer.isCompleted(n)) {
                                 child.onCompleted();
                                 // we need to unsubscribe from all children since children are
@@ -324,7 +327,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
 
             @Override
             public void onNext(Object t) {
-                System.out.println(" OperatorZip  InnerSubscriber onNext ==== "+t+ "  "+InnerSubscriber.this);
+                Log.e("TAG"," OperatorZip  InnerSubscriber onNext ==== "+t+ "  "+InnerSubscriber.this);
                 try {
                     items.onNext(t);
                 } catch (MissingBackpressureException e) {

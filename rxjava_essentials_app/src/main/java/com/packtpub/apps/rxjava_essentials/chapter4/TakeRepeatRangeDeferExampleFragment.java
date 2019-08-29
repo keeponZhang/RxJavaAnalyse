@@ -189,7 +189,7 @@ public class TakeRepeatRangeDeferExampleFragment extends Fragment {
 					}
 				});
 	}
-
+	//repeat原理比较复杂
 	private void repeat() {
 		AppInfo appInfo = mApps.get(0);
 		//		Observable.create(new Observable.OnSubscribe<AppInfo>() {

@@ -13,7 +13,7 @@ import com.packtpub.apps.rxjava_essentials.chapter4.DistinctExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleSampleTimeoutDebounceFragment;
 import com.packtpub.apps.rxjava_essentials.chapter4.TakeRepeatRangeDeferExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.GroupByConcatExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter5.MapFlatMapCastFragment;
+import com.packtpub.apps.rxjava_essentials.chapter5.MapFlatMapCastSwitchMapFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.ScanExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.AndThenWhenRetrySubjectFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.CombineLatestSwithStartWithExampleFragment;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 6:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new MapFlatMapCastFragment())
+                    .replace(R.id.container, new MapFlatMapCastSwitchMapFragment())
                     .commit();
                 break;
             case 7:

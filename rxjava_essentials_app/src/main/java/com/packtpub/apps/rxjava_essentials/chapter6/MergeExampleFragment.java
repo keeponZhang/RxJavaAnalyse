@@ -91,7 +91,7 @@ public class MergeExampleFragment extends Fragment {
 
 		Observable<AppInfo> observableApps = Observable.from(apps);
 		Observable<AppInfo> observableReversedApps = Observable.from(reversedApps);
-
+		//merge跟concat有点像，不过不保证有序
 		Observable<AppInfo> mergedObserbable = Observable.merge(observableApps, observableReversedApps);
 
 		mergedObserbable.subscribe(new Observer<AppInfo>() {

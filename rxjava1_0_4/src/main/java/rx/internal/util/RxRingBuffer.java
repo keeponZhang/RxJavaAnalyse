@@ -15,6 +15,8 @@
  */
 package rx.internal.util;
 
+import android.util.Log;
+
 import java.util.Queue;
 
 import rx.Observer;
@@ -334,7 +336,10 @@ public class RxRingBuffer implements Subscription {
         if (queue == null) {
             throw new IllegalStateException("This instance has been unsubscribed and the queue is no longer usable.");
         }
-        if (!queue.offer(on.next(o))) {
+        Object next = on.next(o);
+        boolean b = !queue.offer(next);
+        Log.w("TAG", "OperatorZip RxRingBuffer onNext  ------------------:"+b+"  on.next(o)="+next);
+        if (b) {
             throw new MissingBackpressureException();
         }
     }

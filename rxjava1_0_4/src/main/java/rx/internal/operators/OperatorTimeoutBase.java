@@ -57,6 +57,7 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
     private final Scheduler scheduler;
 
     /* package-private */OperatorTimeoutBase(FirstTimeoutStub<T> firstTimeoutStub, TimeoutStub<T> timeoutStub, Observable<? extends T> other, Scheduler scheduler) {
+        //没发送数据也会超时，靠firstTimeoutStub这个定时器触发
         this.firstTimeoutStub = firstTimeoutStub;
         this.timeoutStub = timeoutStub;
         this.other = other;

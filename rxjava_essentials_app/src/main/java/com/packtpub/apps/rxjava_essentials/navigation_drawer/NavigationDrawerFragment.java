@@ -172,7 +172,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("Take and TakeLast RepeatRangeDefer", getResources().getDrawable(R.drawable.ic_action_filter)));
         items.add(new NavigationItem("Distinct abd DistinctUntilChanged", getResources().getDrawable(R.drawable.ic_action_filter)));
 
-        items.add(new NavigationItem("MapFlatMapCast", getResources().getDrawable(R.drawable.ic_action_wizard)));
+        items.add(new NavigationItem("MapFlatMapCastSwitchMap", getResources().getDrawable(R.drawable.ic_action_wizard)));
         items.add(new NavigationItem("Scan", getResources().getDrawable(R.drawable.ic_action_wizard)));
         items.add(new NavigationItem("GroupBy Concat", getResources().getDrawable(R.drawable.ic_action_wizard)));
 

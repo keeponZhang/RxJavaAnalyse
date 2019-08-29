@@ -20,6 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/switchmap"
+        android:textAllCaps="false"
+        android:onClick="switchmap"
+        android:text="switchmap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/cast"
         android:textAllCaps="false"
         android:onClick="cast"

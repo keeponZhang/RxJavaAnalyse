@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
@@ -96,6 +98,7 @@ public final class OperatorSwitch<T> implements Operator<T, Observable<? extends
 
         @Override
         public void onNext(Observable<? extends T> t) {
+            Log.w("TAG", "MapFlatMapCastSwitchMapFragment SwitchSubscriber onNext:"+t);
             final int id;
             long remainingRequest;
             synchronized (guard) {
@@ -109,6 +112,7 @@ public final class OperatorSwitch<T> implements Operator<T, Observable<? extends
                 currentSubscriber = new InnerSubscriber(id, remainingRequest);
                 currentSubscriber.requested = remainingRequest;
             }
+            //会把上一个解除订阅
             ssub.set(currentSubscriber);
 
             t.unsafeSubscribe(currentSubscriber);

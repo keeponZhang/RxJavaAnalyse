@@ -3,6 +3,7 @@ package com.packtpub.apps.rxjava_essentials.chapter5;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,7 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.functions.Func1;
 import rx.observables.GroupedObservable;
+import rx.schedulers.Schedulers;
 
 
 public class GroupByConcatExampleFragment extends Fragment {
@@ -187,31 +189,44 @@ public class GroupByConcatExampleFragment extends Fragment {
             }
         });
     }
-
+    //先发送第一个Observable，后发送第二个Observable(即使不同线程)
     private void concat() {
 		AppInfo appInfo = mApps.get(0);
 		AppInfo appInfo2 = mApps.get(2);
 		Observable<AppInfo> appInfoObservable = Observable.create(new Observable.OnSubscribe<AppInfo>() {
 			@Override
 			public void call(Subscriber<? super AppInfo> subscriber) {
-				subscriber.onNext( null);
-//				subscriber.onNext(new AppInfo("keeon","keepOnIcon",System.currentTimeMillis()) );
+//				subscriber.onNext( null);
+				subscriber.onNext(new AppInfo("zhang","zhangIcon",System.currentTimeMillis()) );
+				subscriber.onNext(new AppInfo("zhang2","zhangIcon2",System.currentTimeMillis()) );
+				Log.w("TAG", "OperatorConcat  GroupByConcatExampleFragment appInfoObservable call onNext:");
+				SystemClock.sleep(5000);
 				subscriber.onCompleted();
+				Log.e("TAG", "OperatorConcat GroupByConcatExampleFragment call onCompleted -------》》》:");
+
 			}
 		});
-		Observable<AppInfo> just = Observable.just(appInfo);
-		Observable<AppInfo> just2 = Observable.just(appInfo2);
-		Log.e("TAG", "GroupByConcatExampleFragment concat appInfo:"+appInfo.getName()+"  appInfo2:"+appInfo2.getName());
-		Observable.concat(appInfoObservable,just2).first(new Func1<AppInfo, Boolean>() {
+		Observable<AppInfo> just = Observable.create(new Observable.OnSubscribe<AppInfo>() {
 			@Override
-			public Boolean call(AppInfo appInfo) {
-				if(appInfo!=null&&appInfo.getName().length()!=5){
-					Log.e("TAG", "GroupByConcatExampleFragment call:" + appInfo.getName().length());
-					return true;
-				}
-				return false;
+			public void call(Subscriber<? super AppInfo> subscriber) {
+				subscriber.onNext(new AppInfo("keeon","keepOnIcon",System.currentTimeMillis()) );
+				Log.w("TAG", "OperatorConcat GroupByConcatExampleFragment   just call onNext:");
+				subscriber.onCompleted();
 			}
-		}).subscribe(new Observer<AppInfo>() {
+		}).subscribeOn(Schedulers.io());
+		Observable<AppInfo> just2 = Observable.just(appInfo2);
+		Observable.concat(appInfoObservable,just)
+//				.first(new Func1<AppInfo, Boolean>() {
+//			@Override
+//			public Boolean call(AppInfo appInfo) {
+//				if(appInfo!=null&&appInfo.getName().length()!=5){
+//					Log.e("TAG", "GroupByConcatExampleFragment call:" + appInfo.getName().length());
+//					return true;
+//				}
+//				return false;
+//			}
+//		})
+				.subscribe(new Observer<AppInfo>() {
 			@Override
 			public void onCompleted() {
 				Log.e("TAG", "GroupByConcatExampleFragment onCompleted:");
@@ -224,7 +239,7 @@ public class GroupByConcatExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(AppInfo appInfo) {
-				Log.e("TAG", "GroupByConcatExampleFragment concat onNext:"+appInfo.getName());
+				Log.e("TAG", "OperatorConcat GroupByConcatExampleFragment concat onNext:"+appInfo.getName());
 			}
 		});
 	}

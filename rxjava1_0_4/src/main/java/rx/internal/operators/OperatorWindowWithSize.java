@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -95,7 +97,7 @@ public final class OperatorWindowWithSize<T> implements Operator<Observable<T>, 
         
         @Override
         public void onNext(T t) {
-            System.out.println("OperatorWindowWithSize ExactSubscriber onNext "+t+"  child:"+child);
+            Log.e("TAG", "OperatorWindowWithSize ExactSubscriber onNext "+t+"  child:"+child);
             //window 是一个subject，可充当Observabel和Observer
             if (window == null) {
                 noWindow = false;
@@ -108,6 +110,7 @@ public final class OperatorWindowWithSize<T> implements Operator<Observable<T>, 
             //到达数量后，window清空，当该Subscriber接收到下个事件时，会重新创建
             if (++count % size == 0) {
                 window.onCompleted();
+                Log.e("TAG", "ExactSubscriber OperatorWindowWithSize onNext window.onCompleted()----------:");
                 window = null;
                 noWindow = true;
                 if (child.isUnsubscribed()) {

@@ -109,6 +109,7 @@ public class ScanExampleFragment extends Fragment {
     }
 
     private void scan() {
+        //scan可以实现累加
         Observable.just(1,2,3,4,5)
                 .scan(new Func2<Integer, Integer, Integer>() {
                     @Override

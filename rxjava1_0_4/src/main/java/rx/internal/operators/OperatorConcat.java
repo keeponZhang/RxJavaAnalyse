@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
@@ -96,12 +98,16 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         public void onStart() {
             // no need for more than 1 at a time since we concat 1 at a time, so we'll request 2 to start ...
             // 1 to be subscribed to, 1 in the queue, then we'll keep requesting 1 at a time after that
+            //把这里改成1，后面 request(1)注释掉不行
             request(2);
+            Log.e("TAG", "OperatorConcat ConcatSubscriber onStart   request(2) ------------------:");
         }
 
         private void requestFromChild(long n) {
             // we track 'requested' so we know whether we should subscribe the next or not
-            if (REQUESTED_UPDATER.getAndAdd(this, n) == 0) {
+            long andAdd = REQUESTED_UPDATER.getAndAdd(this, n);
+            Log.e("TAG", "OperatorConcat ConcatSubscriber requestFromChild andAdd:"+andAdd+"  wip="+wip);
+            if ( andAdd == 0) {
                 if (currentSubscriber == null && wip > 0) {
                     // this means we may be moving from one subscriber to another after having stopped processing
                     // so need to kick off the subscribe via this request notification
@@ -123,9 +129,12 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         @Override
         public void onNext(Observable<? extends T> t) {
-            System.out.println("OperatorConcat ConcatSubscriber onNext Observable= "+t);
+
+            //队列很重要，如果第一个observable没处理完，来了第二个observable,入队列，前面observable处理完，会调用subscribeNext从队列取出
             queue.add(nl.next(t));
-            if (WIP_UPDATER.getAndIncrement(this) == 0) {
+            int andIncrement = WIP_UPDATER.getAndIncrement(this);
+            Log.w("TAG", "OperatorConcat ConcatSubscriber onNext Observable= "+t+"  andIncrement="+andIncrement);
+            if (andIncrement == 0) {
                 subscribeNext();
             }
         }
@@ -145,6 +154,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         }
 
         void completeInner() {
+            //其实这里全部注释掉，第二个observable也会发送到ConcatSubscriber的onNext方法，只是无法继续向下分发，两个observable是用Observable.from封装成集合按顺序发送的
             request(1);
             currentSubscriber = null;
             if (WIP_UPDATER.decrementAndGet(this) > 0) {
@@ -159,7 +169,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
                     child.onCompleted();
                 } else if (o != null) {
                     Observable<? extends T> obs = nl.getValue(o);
-                    System.out.println("OperatorConcat ConcatSubscriber subscribeNext Observable obs= "+obs);
+                    Log.e("TAG", "OperatorConcat ConcatSubscriber subscribeNext Observable obs= "+obs);
                     //child是下层真正的subscriber
                     currentSubscriber = new ConcatInnerSubscriber<T>(this, child, requested);
                     current.set(currentSubscriber);
@@ -191,12 +201,14 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         }
 
         void requestMore(long n) {
+            Log.w("TAG", "OperatorConcat ConcatInnerSubscriber requestMore:"+n);
             request(n);
         }
 
         @Override
         public void onNext(T t) {
             parent.decrementRequested();
+            Log.e("TAG", "OperatorConcat ConcatInnerSubscriber ConcatInnerSubscriber 发送给 child onNext:"+t);
             child.onNext(t);
         }
 

@@ -345,7 +345,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         if (!isLocked.get() && !child.isUnsubscribed()) {
                             //这里重新发射
                             if (consumerCapacity.get() > 0) {
-                                //重点
+                                //重复发射的启动：重点
                                 worker.schedule(subscribeToSource);
                             } else {
                                 resumeBoundary.compareAndSet(false, true);
@@ -362,6 +362,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 Log.e("TAG", "OnSubscribeRedo 1 ---------  restarts.unsafeSubscribe(workerSubscriber) restarts==" + restarts +" workerSubscriber="+workerSubscriber+ " ---------");
                 //restarts是lift 3次最后一次生成的Observable, restarts.unsafeSubscribe会实现层层订阅（层层调用Observable的OnSubscribe的call方法，再调用Operator的call方法生成subscriber，让生成的subsriber订阅上层，最上层的会调用onNext开始分发）
                 //terminals.lift.map.lift.unsafeSubscribe(workerSubscriber);
+                //这里启动层层订阅，但是最顶层的observabel还没发射，需要调用terminals.onNext
                 restarts.unsafeSubscribe(workerSubscriber);
             }
         });
@@ -377,7 +378,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 } else
                 if (c == 0 && resumeBoundary.compareAndSet(true, false)) {
                     Log.e("TAG", "OnSubscribeRedo request ----------开始调用call方法，call方法中 source.unsafeSubscribe,启动发射");
-                    //重点
+                    //第一次启动：重点
                     worker.schedule(subscribeToSource);
                 }
             }

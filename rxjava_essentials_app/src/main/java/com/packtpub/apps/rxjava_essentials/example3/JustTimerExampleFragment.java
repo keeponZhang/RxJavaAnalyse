@@ -152,6 +152,7 @@ public class JustTimerExampleFragment extends Fragment {
 				});
 	}
 
+	//这里延迟3秒发送，只执行一次
 	private void timer2() {
 //		OnSubscribeTimerOnce
 		mTimeSubscription = Observable.timer(3, TimeUnit.SECONDS)
