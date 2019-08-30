@@ -242,6 +242,7 @@ public final class OperatorZip<R> implements Operator<R, Observable<?>[]> {
                             Object n = buffer.peek();
 
                             if (n == null) {
+                                //有一方为空，allHaveValues就为false，跳出循环
                                 allHaveValues = false;
                                 continue;
                             }

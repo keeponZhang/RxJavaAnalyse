@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -126,6 +128,7 @@ public final class OnSubscribeCombineLatest<T, R> implements OnSubscribe<R> {
                     if (i == sources.size() - 1) {
                         toRequest += leftOver;
                     }
+                    //sources有几个,就创建几个MultiSourceRequestableSubscriber分别订阅，类似zip的实现
                     MultiSourceRequestableSubscriber<T, R> s = new MultiSourceRequestableSubscriber<T, R>(i, toRequest, child, this);
                     subscribers[i] = s;
                     o.unsafeSubscribe(s);
@@ -190,10 +193,13 @@ public final class OnSubscribeCombineLatest<T, R> implements OnSubscribe<R> {
             synchronized (this) {
                 if (!haveValues.get(index)) {
                     haveValues.set(index);
+                    Log.e("TAG", "CombineLatestSwithStartWithExampleFragment MultiSourceProducer onNext 发送第一个数据 t:"+t);
+                    //没发送过数据的Observable发送第一个数据时会进来
                     haveValuesCount++;
                 }
                 collectedValues[index] = t;
                 if (haveValuesCount != collectedValues.length) {
+                    Log.e("TAG", "CombineLatestSwithStartWithExampleFragment MultiSourceProducer onNext haven't received value from each source yet so won't emit:");
                     // haven't received value from each source yet so won't emit
                     return false;
                 } else {
@@ -275,6 +281,7 @@ public final class OnSubscribeCombineLatest<T, R> implements OnSubscribe<R> {
         public void request(final long n) {
             subscriber.requestMore(n);
             if (started.compareAndSet(false, true)) {
+                //如果source数量为1，这里直接让下层的观察者订阅
                 source.unsafeSubscribe(subscriber);
             }
 

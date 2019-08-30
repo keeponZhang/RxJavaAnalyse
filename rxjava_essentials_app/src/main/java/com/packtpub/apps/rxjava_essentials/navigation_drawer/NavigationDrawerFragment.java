@@ -179,7 +179,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("Merge", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("ZipBufferWindow", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("Join", getResources().getDrawable(R.drawable.ic_action_process_save)));
-        items.add(new NavigationItem("CombineLatest", getResources().getDrawable(R.drawable.ic_action_process_save)));
+        items.add(new NavigationItem("CombineLatestSwitch", getResources().getDrawable(R.drawable.ic_action_process_save)));
         items.add(new NavigationItem("AndThenWhenRetrySubject", getResources().getDrawable(R.drawable.ic_action_process_save)));
 
         items.add(new NavigationItem("SharedPreferences", getResources().getDrawable(R.drawable.ic_action_playback_schuffle)));

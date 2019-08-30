@@ -17,7 +17,7 @@ import com.packtpub.apps.rxjava_essentials.chapter5.MapFlatMapCastSwitchMapFragm
 import com.packtpub.apps.rxjava_essentials.chapter5.ScanExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.AndThenWhenRetrySubjectFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.CombineLatestSwithStartWithExampleFragment;
-import com.packtpub.apps.rxjava_essentials.chapter6.JoinExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter6.JoinSwitchExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.MergeExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter6.ZipBufferWindowExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.LongTaskFragment;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 11:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new JoinExampleFragment())
+                    .replace(R.id.container, new JoinSwitchExampleFragment())
                     .commit();
                 break;
             case 12:

@@ -15,12 +15,12 @@
  */
 package rx.internal.operators;
 
-import java.util.Map;
+import android.util.Log;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
@@ -196,6 +196,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         // If we already have items queued when a request comes in we vend those and decrement the outstanding request count
 
         void requestFromGroupedObservable(long n, GroupState<K, T> group) {
+            Log.e("TAG", "######GroupByConcatExampleFragment GroupBySubscriber 被下层观察者订阅，requested赋值 requestFromGroupedObservable ##### n:"+n);
             group.requested.getAndAdd(n);
             if (group.count.getAndIncrement() == 0) {
                 pollQueue(group);
@@ -223,6 +224,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
                     }
                     group = createNewGroup(key);
                 }
+                //createNewGroup 先发送了Observable,如果这时外面订阅的话，t会通过emitItem方法发送到订阅的那个观察者，否则会加到队列中
                 if (group != null) {
                     emitItem(group, nl.next(t));
                 }
@@ -232,6 +234,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         }
 
         private GroupState<K, T> createNewGroup(final Object key) {
+            Log.e("TAG", "GroupByConcatExampleFragment GroupBySubscriber createNewGroup --------:"+key);
             final GroupState<K, T> groupState = new GroupState<K, T>();
 
             GroupedObservable<K, R> go = GroupedObservable.create(getKey(key), new OnSubscribe<R>() {
@@ -284,6 +287,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
                         @Override
                         public void onNext(T t) {
                             try {
+                                Log.e("TAG", "GroupByConcatExampleFragment GroupBySubscriber onNext 这里发送给下游真正的观察者:"+t);
                                 o.onNext(elementSelector.call(t));
                             } catch (Throwable e) {
                                 onError(OnErrorThrowable.addValueAsLastCause(e, t));
@@ -308,6 +312,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
                 // this shouldn't happen (because we receive onNext sequentially) and would mean we have a bug
                 throw new IllegalStateException("Group already existed while creating a new one");
             }
+            //重点：其实这里发送的是GroupedObservable，这个Observable被下层订阅了,才会触发
             child.onNext(go);
 
             return groupState;
@@ -332,13 +337,17 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
             Queue<Object> q = groupState.buffer;
             AtomicLong keyRequested = groupState.requested;
             REQUESTED.decrementAndGet(this);
+            long keyRequestedCount = keyRequested.get();
             // short circuit buffering
-            if (keyRequested != null && keyRequested.get() > 0 && (q == null || q.isEmpty())) {
+            if (keyRequested != null && keyRequestedCount> 0 && (q == null || q.isEmpty())) {
                 @SuppressWarnings("unchecked")
                 Observer<Object> obs = (Observer<Object>)groupState.getObserver();
+                //groupState.getObserver() =s ，是一个subject，这里充当observer,这里发送的数据通过Subject，然后发送到给下层的观察者
+                Log.w("TAG", "GroupByConcatExampleFragment GroupBySubscriber emitItem  -->>:"+item+" keyRequestedCount="+keyRequestedCount);
                 nl.accept(obs, item);
                 keyRequested.decrementAndGet();
             } else {
+                Log.w("TAG", "GroupByConcatExampleFragment GroupBySubscriber q.add(item)  -->>:"+item+" keyRequestedCount="+keyRequestedCount);
                 q.add(item);
                 BUFFERED_COUNT.incrementAndGet(this);
 
@@ -381,6 +390,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
                 if (t != null) {
                     @SuppressWarnings("unchecked")
                     Observer<Object> obs = (Observer<Object>)groupState.getObserver();
+                    Log.w("TAG", "GroupByConcatExampleFragment GroupBySubscriber drainIfPossible  nl.accept:"+t);
                     nl.accept(obs, t);
                     groupState.requested.decrementAndGet();
                     BUFFERED_COUNT.decrementAndGet(this);

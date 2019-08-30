@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 import rx.Notification.Kind;
@@ -149,7 +151,7 @@ public final class NotificationLite<T> {
                 o.onError(((OnErrorSentinel) n).e);
                 return true;
             }
-            System.out.println("NotificationLite accept Observer "+o);
+            Log.e("TAG","GroupByConcatExampleFragment NotificationLite accept Observer "+o+" n="+n);
             o.onNext((T) n);
             return false;
         } else {

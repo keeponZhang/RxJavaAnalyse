@@ -13,6 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/combinelastest2"
+        android:textAllCaps="false"
+        android:onClick="combinelastest2"
+        android:text="combinelastest2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/switche"
         android:textAllCaps="false"
         android:onClick="switch"

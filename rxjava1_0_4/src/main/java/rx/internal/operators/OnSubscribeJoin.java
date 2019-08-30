@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,6 +115,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
                         complete = true;
                     }
                 }
+                //leftMap.isEmpty() 空了才发送onCompleted事件
                 if (complete) {
                     subscriber.onCompleted();
                     subscriber.unsubscribe();
@@ -128,14 +131,18 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 synchronized (guard) {
                     id = leftId++;
+                    //leftMap会保持
                     leftMap.put(id, args);
                     highRightId = rightId;
                 }
 
                 Observable<TLeftDuration> duration;
                 try {
+                    Log.w("TAG", " JoinExampleFragment LeftSubscriber onNext leftDurationSelector call:"+args);
                     duration = leftDurationSelector.call(args);
 
+                    //duration 一般是个延迟的Observable ,因为LeftDurationSubscriber的onNext方法会调用下游观察者的onComplete方法
+                    //有几个数据就有几个LeftDurationSubscriber
                     Subscriber<TLeftDuration> d1 = new LeftDurationSubscriber(id);
                     group.add(d1);
 
@@ -150,7 +157,9 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
                         }
                     }
                     for (TRight r : rightValues) {
+                        Log.e("TAG", "JoinExampleFragment <LeftSubscriber> onNext resultSelector.call(args, r):");
                         R result = resultSelector.call(args, r);
+                        //最下游的观察者收到转换后的事件
                         subscriber.onNext(result);
                     }
                 } catch (Throwable t) {
@@ -192,6 +201,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 @Override
                 public void onNext(TLeftDuration args) {
+                    Log.e("TAG", "------JoinExampleFragment LeftDurationSubscriber onNext TLeftDuration args:"+args);
                     onCompleted();
                 }
 
@@ -202,6 +212,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 @Override
                 public void onCompleted() {
+                    Log.e("TAG", "JoinExampleFragment LeftDurationSubscriber onCompleted expire once:"+once);
                     if (once) {
                         once = false;
                         expire(id, this);
@@ -243,6 +254,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 Observable<TRightDuration> duration;
                 try {
+                    Log.e("TAG", "JoinExampleFragment RightSubscriber onNext  rightDurationSelector.call TRight:"+args);
                     duration = rightDurationSelector.call(args);
 
                     Subscriber<TRightDuration> d2 = new RightDurationSubscriber(id);
@@ -261,6 +273,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
                     }
                     
                     for (TLeft lv : leftValues) {
+                        Log.e("TAG", "JoinExampleFragment <RightSubscriber> onNext resultSelector.call(args, r):");
                         R result = resultSelector.call(lv, args);
                         subscriber.onNext(result);
                     }
@@ -304,6 +317,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 @Override
                 public void onNext(TRightDuration args) {
+                    Log.e("TAG", "JoinExampleFragment RightDurationSubscriber onNext -----:"+args);
                     onCompleted();
                 }
 
@@ -314,6 +328,7 @@ public final class OnSubscribeJoin<TLeft, TRight, TLeftDuration, TRightDuration,
 
                 @Override
                 public void onCompleted() {
+                    Log.e("TAG", "JoinExampleFragment RightDurationSubscriber onCompleted once:"+once);
                     if (once) {
                         once = false;
                         expire(id, this);

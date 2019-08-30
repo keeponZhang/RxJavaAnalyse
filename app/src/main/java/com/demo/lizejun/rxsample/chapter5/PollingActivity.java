@@ -26,7 +26,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.internal.observers.ToNotificationObserver;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.Subject;
 
 public class PollingActivity extends AppCompatActivity {
 
@@ -219,7 +218,7 @@ public class PollingActivity extends AppCompatActivity {
             @Override
             public ObservableSource<Long> apply(Observable<Object> objectObservable) throws Exception {
                 //最先调用，repeatWhen生成的Observable会最放到最前面去
-                Log.e("TAG", "PollingActivity apply Object:" + objectObservable + "--------------");
+                Log.e("TAG", "PollingActivity apply 1.3 我是repeatWhen handler 的 apply方法  参数objectObservable:" + objectObservable + "--------------");
 
                 return objectObservable.flatMap(new Function<Object, ObservableSource<Long>>() {
                     @Override
@@ -341,12 +340,14 @@ public class PollingActivity extends AppCompatActivity {
         mCompositeDisposable.add(disposableObserver);
     }
 
+    //这里repeatWhen生成的Observable会主动发射
     private void startAdvancePolling3() {
         Log.d(TAG, "startAdvancePolling click3");
         Observable<Long> observable = Observable.create(new ObservableOnSubscribe<Long>() {
             @Override
             public void subscribe(ObservableEmitter<Long> e) throws Exception {
                 long l = System.currentTimeMillis();
+                Log.e("TAG", "-----------PollingActivity subscribe 发送数据啦  e.onNext="+l+" ---------------");
                 e.onNext(l);
                 //没有onComplete，只会发送一次
                 e.onComplete();
@@ -356,14 +357,14 @@ public class PollingActivity extends AppCompatActivity {
 
             @Override
             public ObservableSource<Long> apply(Observable<Object> objectObservable) throws Exception {
-                //最先调用，repeatWhen生成的Observable会最放到最前面去
-                Log.e("TAG", "PollingActivity apply Object:" + objectObservable + "--------------"+(objectObservable instanceof Subject));
+                //最先调用，repeatWhen生成的Observable会最放到最前面去 ,objectObservable其实是一个Subject
+                Log.e("TAG", "PollingActivity apply 1.3 我是repeatWhen handler 的 apply方法  参数objectObservable:" + objectObservable + "--------------");
                 return Observable.create(new ObservableOnSubscribe<Long>() {
                     @Override
                     public void subscribe(ObservableEmitter<Long> e) throws Exception {
                         //发送一次就 会触发一次订阅；Observable.just(0L)也会重新发送一遍
-                        Log.e("TAG", "PollingActivity subscribe  e.onNext(120L):");
-                        e.onNext(3L);
+                        Log.e("TAG", "PollingActivity subscribe 1.4  中间层主动发射 e.onNext(120L):");
+//                        e.onNext(3L);
 //                        e.onComplete();
                     }
                 });
@@ -426,7 +427,7 @@ public class PollingActivity extends AppCompatActivity {
 
             @Override
             public void onNext(Long aLong) {
-                Log.e("TAG", "PollingActivity onNext:" + aLong);
+                Log.e("TAG", "PollingActivity onNext 收到数据啦:" + aLong);
             }
 
             @Override

@@ -19,14 +19,28 @@
         android:text="concat2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <Button
-        android:id="@+id/concatMap"
+        android:id="@+id/groupBy"
         android:textAllCaps="false"
-        android:onClick="concatMap"
-        android:text="concatMap"
+        android:onClick="groupBy"
+        android:text="groupBy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
+    <Button
+        android:id="@+id/groupBy2"
+        android:textAllCaps="false"
+        android:onClick="groupBy2"
+        android:text="groupBy2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/groupBy3"
+        android:textAllCaps="false"
+        android:onClick="groupBy3"
+        android:text="groupBy3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 

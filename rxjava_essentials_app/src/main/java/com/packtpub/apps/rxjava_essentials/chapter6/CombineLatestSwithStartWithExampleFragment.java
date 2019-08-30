@@ -132,6 +132,8 @@ public class CombineLatestSwithStartWithExampleFragment extends Fragment {
 		return appInfo;
 	}
 
+    //正如我们已经学习的， zip() 作用于最近未打包的两个Observables。相
+    //反， combineLatest() 作用于最近发射的数据项
 	public void combinelastest() {
 		Observable<Integer> just = Observable.just(1, 2, 3, 4);
 		Observable<String> just1 = Observable.just("zhangsan", "lisi", "wangwu");
@@ -166,11 +168,13 @@ public class CombineLatestSwithStartWithExampleFragment extends Fragment {
 		unbinder.unbind();
 	}
 
-	@OnClick({R.id.combinelastest, R.id.switche, R.id.startwith})
+	@OnClick({R.id.combinelastest,R.id.combinelastest2 ,R.id.switche, R.id.startwith})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.combinelastest:
-//				combinelastest();
+				combinelastest();
+				break;
+			case R.id.combinelastest2:
 				combinelastest2();
 				break;
 			case R.id.switche:
@@ -182,6 +186,7 @@ public class CombineLatestSwithStartWithExampleFragment extends Fragment {
 		}
 	}
 
+	//当有多个Observable发送数据时，下一个Observable发送数据时，会取消上一个订阅
 	private void SwitchOnNext() {
 		//每隔500ms产生一个Observable
 		Observable<Observable<Long>> observable = Observable.interval(500, TimeUnit.MILLISECONDS)
@@ -208,6 +213,7 @@ public class CombineLatestSwithStartWithExampleFragment extends Fragment {
 				});
 	}
 
+	//原理就是使用concat保证startWith后面的先发送
 	private void startwith() {
 		Observable.just(4, 5, 6, 7)
 				//startwith的实现很简单，是调用 concat(just(t1, t2, t3), this);

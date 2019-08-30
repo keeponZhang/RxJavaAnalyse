@@ -3,6 +3,7 @@ package com.packtpub.apps.rxjava_essentials.chapter6;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,13 +31,14 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import timber.log.Timber;
 
 
-public class JoinExampleFragment extends Fragment {
+public class JoinSwitchExampleFragment extends Fragment {
 
 	@BindView(R.id.fragment_first_example_list)
 	RecyclerView mRecyclerView;
@@ -53,7 +55,7 @@ public class JoinExampleFragment extends Fragment {
 
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
 
-	public JoinExampleFragment() {
+	public JoinSwitchExampleFragment() {
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class JoinExampleFragment extends Fragment {
 
 		List<AppInfo> apps = ApplicationsList.getInstance().getList();
 
-		loadList(apps);
+//		loadList(apps);
 	}
 
 	private void loadList(List<AppInfo> apps) {
@@ -158,10 +160,20 @@ public class JoinExampleFragment extends Fragment {
 
 	private void join() {
 
-		Observable<Integer> observableA = Observable.range(1, 5);
+		Observable<Integer> observableA = Observable.range(1, 4);
 
-		List<Integer> data = Arrays.asList(6, 7, 8, 9, 10);
-		Observable<Integer> observableB = Observable.from(data);
+		Observable<Integer> observableB = Observable.create(new Observable.OnSubscribe<Integer>() {
+			@Override
+			public void call(Subscriber<? super Integer> subscriber) {
+				for (int i = 6; i < 11; i++) {
+					if(i ==10){
+						SystemClock.sleep(1000);
+					}
+					subscriber.onNext(i);
+				}
+				subscriber.onCompleted();
+			}
+		});
         /* Join(Observable,Func1,Func1,Func2) 需要传递四个参数
 		join操作符的用法如下： observableA.join(observableB, observableA产生结果生命周期控制函数，
 		 observableB产生结果生命周期控制函数， observableA产生的结果与observableB产生的结果的合并规则）*/
@@ -173,7 +185,7 @@ public class JoinExampleFragment extends Fragment {
 			@Override
 			public Observable<Integer> call(Integer value) {
 				//return Observable.just(value);
-				Log.d("TAG", "JoinExampleFragment call 1 Func1:"+value);
+				Log.e("TAG", "JoinSwitchExampleFragment call A Func1 value:"+value+"  time="+ System.currentTimeMillis());
 				//这里规定了observableA发出来的数据1s内都是有效的，所以可以join
 				return Observable.just(value).delay(1, TimeUnit.SECONDS);
 				//用下面这个，不会结合
@@ -182,19 +194,20 @@ public class JoinExampleFragment extends Fragment {
 		}, new Func1<Integer, Observable<Integer>>() {
 			@Override
 			public Observable<Integer> call(Integer value) {
-				Log.w("TAG", "JoinExampleFragment call 2 Func1:"+value);
+				Log.w("TAG", "JoinSwitchExampleFragment call B Func1 value:"+value+"  time="+ System.currentTimeMillis());
 				return Observable.just(value);
+//				return Observable.just(value).delay(1, TimeUnit.SECONDS);
 			}
 		}, new Func2<Integer, Integer, Integer>() {
 			@Override
-			public Integer call(Integer value1, Integer value2) {
-				Log.w("TAG", "JoinExampleFragment  join Func2 call:"+"left: " + value1 + "  right:" + value2);
+			public Integer call(Integer value1, Integer value2  ) {
+				Log.w("TAG", "JoinSwitchExampleFragment  join Func2 call:"+"left value1: " + value1 + "  right value2:" + value2 +"  time="+ System.currentTimeMillis());
 				return value1 + value2;
 			}
 		}).subscribe(new Observer<Integer>() {
 			@Override
 			public void onCompleted() {
-				Log.e("TAG", "JoinExampleFragment join onCompleted:");
+				Log.e("TAG", "JoinSwitchExampleFragment join onCompleted:");
 			}
 
 			@Override
@@ -203,7 +216,7 @@ public class JoinExampleFragment extends Fragment {
 
 			@Override
 			public void onNext(Integer value) {
-				Log.e("TAG", "JoinExampleFragment join Observer onNext:"+value);
+				Log.e("TAG", "JoinSwitchExampleFragment join Observer 收到 onNext:"+value);
 			}
 		});
 

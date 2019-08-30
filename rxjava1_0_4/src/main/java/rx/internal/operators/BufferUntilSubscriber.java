@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -184,7 +186,7 @@ public final class BufferUntilSubscriber<T> extends Subject<T, T> {
             state.observerRef.onNext(t);
         }
         else {
-            System.out.println("BufferUntilSubscriber subject onNext "+t);
+            Log.w("TAG","GroupByConcatExampleFragment BufferUntilSubscriber 作为中介 subject onNext "+t);
             emit(state.nl.next(t));
         }
     }

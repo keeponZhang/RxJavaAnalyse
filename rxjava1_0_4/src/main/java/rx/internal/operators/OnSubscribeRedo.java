@@ -289,7 +289,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onNext(Notification<?> t) {
-                       //这里也是重点
+                       //这里也是重点（retry :stopOnError true ; repeat :stopOnComplete true）
                         Log.e("TAG", "OnSubscribeRedo 1.95 重点 terminalslift call   onNext t:"+t);
                         if (t.isOnCompleted() && stopOnComplete) {
                             System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext <<  if >>" + this+"  Notification.getKind="+t.getKind());

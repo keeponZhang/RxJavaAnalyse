@@ -47,8 +47,7 @@ public class GroupByConcatExampleFragment extends Fragment {
 	SwipeRefreshLayout mSwipeRefreshLayout;
 	@BindView(R.id.concat)
 	Button             mConcat;
-	@BindView(R.id.concatMap)
-	Button             mConcatMap;
+
 	Unbinder unbinder;
 
 	private ApplicationAdapter mAdapter;
@@ -82,18 +81,68 @@ public class GroupByConcatExampleFragment extends Fragment {
 
 		// Progress
 		mSwipeRefreshLayout.setEnabled(false);
-		mSwipeRefreshLayout.setRefreshing(true);
 		mRecyclerView.setVisibility(View.GONE);
 
 		mApps = ApplicationsList.getInstance().getList();
+		mRecyclerView.setVisibility(View.VISIBLE);
 
-		loadList(mApps);
 	}
 
 	private void loadList(List<AppInfo> apps) {
-		mRecyclerView.setVisibility(View.VISIBLE);
 
-		Observable<GroupedObservable<String, AppInfo>> groupedItems = Observable.from(apps)
+
+
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		unbinder.unbind();
+	}
+
+	@OnClick({R.id.concat,R.id.concat2, R.id.groupBy, R.id.groupBy2,R.id.groupBy3})
+	public void onViewClicked(View view) {
+		switch (view.getId()) {
+			case R.id.concat:
+				concat();
+				break;
+			case R.id.concat2:
+			    concat2();
+				break;
+			case R.id.groupBy:
+				groupBy();
+				break;
+			case R.id.groupBy2:
+				groupBy2();
+				break;
+			case R.id.groupBy3:
+				groupBy3();
+				break;
+		}
+	}
+
+	private void groupBy3() {
+		Observable<GroupedObservable<String, String>> groupedObservableObservable = getGroupedObservableObservable();
+		Observable.concat(groupedObservableObservable).subscribe(new Subscriber<String>() {
+			@Override
+			public void onCompleted() {
+
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e("TAG", "GroupByConcatExampleFragment 收到 onNext:"+s);
+			}
+		});
+	}
+
+	private void groupBy() {
+		Observable<GroupedObservable<String, AppInfo>> groupedItems = Observable.from(mApps)
 				.groupBy(new Func1<AppInfo, String>() {
 					@Override
 					public String call(AppInfo appInfo) {
@@ -123,28 +172,77 @@ public class GroupByConcatExampleFragment extends Fragment {
 					}
 				});
 	}
+	private  int i = 0;
+	private void groupBy2() {
+		i = 0;
+		Observable<GroupedObservable<String, String>> groupedObservableObservable = getGroupedObservableObservable();
+		groupedObservableObservable.subscribe(new Subscriber<GroupedObservable<String, String>>() {
+			@Override
+			public void onCompleted() {
+				
+			}
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		unbinder.unbind();
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(GroupedObservable<String, String> stringStringGroupedObservable) {
+				Log.e("TAG", "GroupByConcatExampleFragment onNext:"+stringStringGroupedObservable);
+
+				if(i < 4){
+					stringStringGroupedObservable.subscribe(new Subscriber<String>() {
+						@Override
+						public void onCompleted() {
+
+						}
+
+						@Override
+						public void onError(Throwable e) {
+
+						}
+
+						@Override
+						public void onNext(String s) {
+							Log.e("TAG", "GroupByConcatExampleFragment 收到 onNext:" + s);
+						}
+					});
+				}
+
+				i++;
+			}
+		});
+
 	}
 
-	@OnClick({R.id.concat,R.id.concat2, R.id.concatMap})
-	public void onViewClicked(View view) {
-		switch (view.getId()) {
-			case R.id.concat:
-				concat();
-				break;
-			case R.id.concat2:
-			    concat2();
-				break;
-			case R.id.concatMap:
-				break;
-		}
+	private Observable<GroupedObservable<String, String>> getGroupedObservableObservable() {
+		return Observable.create(new Observable.OnSubscribe<String>() {
+				@Override
+				public void call(Subscriber<? super String> subscriber) {
+					for (int i = 1; i < 5; i++) {
+						for (int j = 1; j < 2; j++) {
+							String s = i + "班;我是学员编号：" + j;
+							Log.w("TAG", "GroupByConcatExampleFragment call 发送:"+s);
+							subscriber.onNext(s);
+						}
+					}
+					subscriber.onNext("1班;我是学员编号：100");
+					//没有onCompleted只有一组,如果使用concat的话
+	//    			subscriber.onCompleted();
+
+				}
+			}).groupBy(new Func1<String, String>() {
+				@Override
+				public String call(String s) {
+
+					return s.substring(0,2);
+	//				return s;
+				}
+			});
 	}
 
-    private void concat2() {
+	private void concat2() {
         Observable<String> stringObservable = Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {

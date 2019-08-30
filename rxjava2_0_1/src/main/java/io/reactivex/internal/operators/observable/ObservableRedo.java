@@ -1,11 +1,11 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
@@ -39,9 +39,10 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
     final boolean retryMode;
 
     public ObservableRedo(ObservableSource<T> source,
-            Function<? super Observable<Notification<Object>>, ? extends ObservableSource<?>> manager,
-                    boolean retryMode) {
+                          Function<? super Observable<Notification<Object>>, ? extends ObservableSource<?>> manager,
+                          boolean retryMode) {
         super(source);
+        //retry 时，manager = RetryWhenInner
         this.manager = manager;
         this.retryMode = retryMode;
     }
@@ -60,7 +61,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
             public void accept(Notification<Object> o) {
                 //其实这里是由ToNotificationObserver的onNext方法调用的
                 // 这里其实比parent.handle(Notification.<Object>createOnNext(0))晚调用，等发送了数据才会到这里
-                Log.w("TAG", "<<<<<<<ObservableRedo PollingActivity ToNotificationObserver aceept 被调用:"+o);
+                Log.w("TAG", "<<<<<<<ObservableRedo PollingActivity ToNotificationObserver aceept 被调用:" + o);
                 // 主要作用:retrywhen上游的Observable订阅RedoObserver
                 parent.handle(o);
 
@@ -73,9 +74,9 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
 
         try {
 
-            Log.e("TAG", "PollingActivity ObservableRedo subscribeActual subject:"+subject);
-            //这里传入的是subject，不是source 特别注意  manager：ObservableInternalHelper
-            //handler:repeatWhen中的 function   no :Observable<Notification<Object>> handler:
+            Log.e("TAG", "PollingActivity 1.0 准备调用 manager.apply(subject） ObservableRedo subscribeActual subject:" + subject);
+            //<<特别注意 >> 这里传入的是subject，不是source   manager：ObservableInternalHelper
+            //handler:repeatWhen中的 function(RepeatWhenOuterHandler)   no :Observable<Notification<Object>> handler:
 //            handler.apply(no.map(ObservableInternalHelper.MapToInt.INSTANCE));
             action = ObjectHelper.requireNonNull(manager.apply(subject), "The function returned a null ObservableSource");
         } catch (Throwable ex) {
@@ -84,7 +85,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
             return;
         }
 
-        //action:repeatWhen生成的Observable  接着会走到ToNotificationObserver的accept方法
+        //action:repeatWhen是repeat方法handler参数调用handler.apply生成的Observable  接着会走到ToNotificationObserver的accept方法
         //分析:如果action是flatMapObservable ，如果是这样处理的repeatWhen的Function的apply方法是下面这样的， parent.handle(Notification.<Object>createOnNext(0))方法调用后
         //相当于repeatWhen前面的Observable被actionObserver（ToNotificationObserver）和RedoObserver两个订阅，所以最原始发送的消息除了RedoObserver的onNext收的到，
         // ToNotificationObserver的onNext也收的到，onNext调用accept,而ToNotificationObserver的accept调用source.subscribe(this)，重新订阅，
@@ -104,9 +105,9 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         // trigger 触发 first subscription
         //handle一次， source.subscribe(this);  source: retrywhen上游的Observable ,this :RedoObserver
         //action有主动发射，这里触发的是第二次重复；如果没有则触发第一次，一般来说，中间层不会主动发射
-        //  parent.handle(Notification.<Object>createOnNext(0))可以调用  source.subscribe(this);诱发最顶层被观察者发射 ,从而不仅RedoObserver可以收到，ToNotificationObserver也可以收到
         Log.w("TAG", "PollingActivity ObservableRedo subscribeActual handle 第一次 before#########################");
-       parent.handle(Notification.<Object>createOnNext(0));
+        //  parent.handle(Notification.<Object>createOnNext(0))可以调用  source.subscribe(this);诱发最顶层被观察者发射 ,从而不仅RedoObserver可以收到，ToNotificationObserver也可以收到
+        parent.handle(Notification.<Object>createOnNext(0));
         Log.w("TAG", "PollingActivity ObservableRedo subscribeActual handle 第一次 #################end");
     }
 
@@ -138,7 +139,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
 
         @Override
         public void onNext(T t) {
-            Log.e("TAG", "PollingActivity 发送给真正的观察者 RedoObserver onNext:"+t);
+            Log.e("TAG", "PollingActivity 发送给真正的观察者 RedoObserver onNext:" + t);
             //下游真正的观察者
             actual.onNext(t);
         }
@@ -169,7 +170,7 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
         }
 
         void handle(Notification<Object> notification) {
-            Log.e("TAG", "<<<<<<<ObservableRedo PollingActivity Notification handle 被调用:"+notification);
+            Log.e("TAG", "<<<<<<<ObservableRedo PollingActivity Notification handle 被调用:" + notification);
             //如果发送第一次事件是error的，第二次重复的时候是进不来的
             if (compareAndSet(true, false)) {
                 if (notification.isOnError()) {
@@ -179,14 +180,14 @@ public final class ObservableRedo<T> extends AbstractObservableWithUpstream<T, T
                     if (notification.isOnNext()) {
                         if (wip.getAndIncrement() == 0) {
                             int missed = 1;
-                            for (;;) {
-                                Log.e("TAG", " PollingActivity RedoObserver handle arbiter.isDisposed():"+arbiter.isDisposed());
+                            for (; ; ) {
+                                Log.e("TAG", " PollingActivity RedoObserver handle arbiter.isDisposed():" + arbiter.isDisposed());
                                 if (arbiter.isDisposed()) {
                                     return;
                                 }
 //                                source: retrywhen上游的Observable ,this :RedoObserver
                                 //如果发送的事件时onNext的，会一直重复订阅
-                                Log.e("TAG", "PollingActivity RedoObserver handle repeat 上游订阅 source.subscribe(this)++++source =="+source);
+                                Log.e("TAG", "PollingActivity RedoObserver handle repeat 上游订阅 source.subscribe(this)++++source ==" + source);
                                 source.subscribe(this);
 
                                 missed = wip.addAndGet(-missed);
