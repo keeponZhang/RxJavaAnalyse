@@ -292,13 +292,13 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                        //这里也是重点（retry :stopOnError true ; repeat :stopOnComplete true）
                         Log.e("TAG", "OnSubscribeRedo 1.95 重点 terminalslift call   onNext t:"+t);
                         if (t.isOnCompleted() && stopOnComplete) {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext <<  if >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", "OnSubscribeRedo  1.98 onNext   Subscriber terminals.lift onNext <<  if stopOnComplete >>" + this+"  Notification.getKind="+t.getKind());
                             child.onCompleted();
                         } else if (t.isOnError() && stopOnError) {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext << else if >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", "OnSubscribeRedo onNext   1.98 Subscriber terminals.lift onNext << else if stopOnError >>" + this+"  Notification.getKind="+t.getKind());
                             child.onError(t.getThrowable());
                         } else {
-                            System.out.println("OnSubscribeRedo onNext   Subscriber terminals.lift onNext << else  >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", "OnSubscribeRedo onNext  1.98   Subscriber terminals.lift onNext << else  >>" + this+"  Notification.getKind="+t.getKind());
                             isLocked.set(false);
                             filteredTerminals.onNext(t);
                         }
@@ -311,11 +311,11 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 };
             }
         });
-        Log.e("TAG", "OnSubscribeRedo call   0.1 terminals.lift:");
+        Log.e("TAG", "OnSubscribeRedo call   0.1 terminals.lift 准备调用fun1.call方法:");
         //  controlHandlerFunction: RedoFinite  terminalslift作为controlHandlerFunction.call的方法参数
         //相当于terminalslift.map.lift ,terminals.lift.map.  lift所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
         final Observable<?> restarts = controlHandlerFunction.call(terminalslift);
-
+        Log.e("TAG", "OnSubscribeRedo call   0.8 terminals.lift fun1.call方法调用完毕:");
         // subscribe to the restarts observable to know when to schedule the next redo.
         //worker经过一系列调用会调到call方法
         worker.schedule(new Action0() {

@@ -35,14 +35,14 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
 
     @Override
     public Subscriber<? super Notification<T>> call(final Subscriber<? super T> child) {
-        Log.e("TAG", "OperatorDematerialize call OnSubscribeRedo 1.1:");
+        Log.e("TAG", "OnSubscribeRedo OperatorDematerialize call OnSubscribeRedo 1.1:");
         return new Subscriber<Notification<T>>(child) {
             /** Do not send two onCompleted events. */
             boolean terminated;
             @Override
             public void onNext(Notification<T> t) {
                 //这里的child是OnSubscribeRedo workerSubscriber
-                System.out.println("OperatorDematerialize OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child+ " t.getKind()="+t.getKind());
+                Log.e("TAG","OnSubscribeRedo OperatorDematerialize  2.2 OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child+ " t.getKind()="+t.getKind());
                 switch (t.getKind()) {
                 case OnNext:
                     if (!terminated) {
