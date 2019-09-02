@@ -6419,9 +6419,11 @@ public class Observable<T> {
         Func1<? super Observable<? extends Notification<?>>, ? extends Observable<?>> dematerializedNotificationHandler = new Func1<Observable<? extends Notification<?>>, Observable<?>>() {
             @Override
             public Observable<?> call(Observable<? extends Notification<?>> notifications) {
+                Log.e("TAG", "OnSubscribeRedo  Observable call <<-----------------retrywhen notifications:"+notifications);
                 return notificationHandler.call(notifications.map(new Func1<Notification<?>, Throwable>() {
                     @Override
                     public Throwable call(Notification<?> notification) {
+                        Log.e("TAG", "OnSubscribeRedo Observable call  notificationHandler.call <<-----------------retrywhen notification :"+notification);
                         return notification.getThrowable();
                     }
                 }));

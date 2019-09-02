@@ -225,8 +225,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     @Override
                     public void onCompleted() {
                         unsubscribe();
-
+                        Log.e("TAG", "OnSubscribeRedo onCompleted (PublishSubject)terminals.onNext:"+Notification.createOnCompleted());
                         terminals.onNext(Notification.createOnCompleted());
+
                     }
 
                     @Override
@@ -235,7 +236,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         //onError跟onCompleted terminals ，经过此时terminals充当observer，terminals.lift创建的subsrciber
                         //触发三次lift生成的Observable的最顶层Observable发送事件，调用的是PublishSubject的onNext,接着调用SubjectSubscriptionManager的SubjectObserver的onNext
                         //terminals相当于充当最顶层Observer和Observable
-                        System.out.println("OnSubscribeRedo  onError");
+                        Log.e("TAG", "OnSubscribeRedo  收到错事件了 onError:");
                         terminals.onNext(Notification.createOnError(e));
                     }
                     //onNext方法直接接受source发送的事件，进而转发给child,不经过terminals，所以next事件跟后面lift生成的Observable无关
@@ -284,6 +285,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.w("TAG", "OnSubscribeRedo  filteredTerminals.onError(e):"+e);
                         filteredTerminals.onError(e);
                     }
 
@@ -313,7 +315,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         });
         Log.e("TAG", "OnSubscribeRedo call   0.1 terminals.lift 准备调用fun1.call方法:");
         //  controlHandlerFunction: RedoFinite  terminalslift作为controlHandlerFunction.call的方法参数
-        //相当于terminalslift.map.lift ,terminals.lift.map.  lift所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
+        //相当于terminalslift.map ,相当于terminals.lift.map.  lift所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
         final Observable<?> restarts = controlHandlerFunction.call(terminalslift);
         Log.e("TAG", "OnSubscribeRedo call   0.8 terminals.lift fun1.call方法调用完毕:");
         // subscribe to the restarts observable to know when to schedule the next redo.
@@ -333,7 +335,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onError(Throwable e) {
-                        System.out.println("OnSubscribeRedo workerSubscriber onError" );
+                        Log.e("TAG", "OnSubscribeRedo workerSubscriber onError" );
                         child.onError(e);
                     }
 

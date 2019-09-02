@@ -187,10 +187,12 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 		observable.retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
 			@Override
 			public Observable<?> call(Observable<? extends Throwable> throwableObservable) {
+				Log.e("TAG", "OnSubscribeRedo retryWhen 第一层 AndThenWhenRetrySubjectFragment call:"+throwableObservable);
 				//这里可以发送新的被观察者 Observable
 				return throwableObservable.flatMap(new Func1<Throwable, Observable<?>>() {
 					@Override
 					public Observable<?> call(Throwable throwable) {
+						Log.e("TAG", "OnSubscribeRedo AndThenWhenRetrySubjectFragment call 第二层:");
 						//如果发射的onError就终止
 						return Observable.error(new Throwable("retryWhen终止啦"));
 					}
@@ -257,6 +259,36 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 
 	private void andthenwhen() {
 	}
+	//实现很简单，创建了一个Observable，让下游观察者订阅
+	private void onErrorResumeNext() {
+		Observable.create(new Observable.OnSubscribe<String>() {
+			@Override
+			public void call(Subscriber<? super String> subscriber) {
+				subscriber.onNext("keepon");
+				subscriber.onError(new Throwable("keepon"));
+			}
+		}).onErrorResumeNext(new Func1<Throwable, Observable<? extends String>>() {
+			@Override
+			public Observable<? extends String> call(Throwable throwable) {
+				return Observable.just(" on onErrorResumeNext");
+			}
+		}).subscribe(new Subscriber<String>() {
+			@Override
+			public void onCompleted() {
+
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onNext(String s) {
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment onNext:"+s);
+			}
+		});
+	}
 //	相对比其他Subject常用，它的Observer只会接收到PublishSubject被订阅之后发送的数据
 	private void publishSubject() {
 		PublishSubject<String> publishSubject = PublishSubject.create();
@@ -282,11 +314,14 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 		publishSubject.onNext("publishSubject4");
 	}
 
-	@OnClick({R.id.andthenwhen, R.id.retry, R.id.retryWhen, R.id.asyncSubject, R.id.behaviorSubject, R.id.publishSubject, R.id.replaySubject})
+	@OnClick({R.id.andthenwhen, R.id.retry, R.id.retryWhen, R.id.asyncSubject, R.id.behaviorSubject, R.id.publishSubject, R.id.replaySubject,R.id.onResumeOnNext})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.andthenwhen:
 				andthenwhen();
+				break;
+			case R.id.onResumeOnNext:
+				onErrorResumeNext();
 				break;
 			case R.id.retry:
 				retry();

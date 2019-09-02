@@ -28,7 +28,13 @@
 		android:onClick="retryWhen"
 		android:text="retryWhen"
 		android:textAllCaps="false"/>
-
+	<Button
+		android:id="@+id/onResumeOnNext"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="onResumeOnNext"
+		android:text="onResumeOnNext"
+		android:textAllCaps="false"/>
 	<Button
 		android:id="@+id/asyncSubject"
 		android:layout_width="match_parent"
