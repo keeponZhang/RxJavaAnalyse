@@ -92,13 +92,27 @@ public class HotObservableActivity extends AppCompatActivity {
         });
         mTvSource = (TextView) findViewById(R.id.tv_source);
         mMainHandler = new Handler(Looper.getMainLooper());
-        createObservable();
-    }
 
+    }
+    public void createColdSource(View view){
+        createColdSource();
+    }
+    public void createPublishSource(View view){
+        createPublishSource();
+    }
+    public void createReplySource(View view){
+        createReplySource();
+    }
+    public void createShareSource(View view){
+        createShareSource();
+    }
+    public void createAutoConnectSource(View view){
+        createAutoConnectSource();
+    }
     private void createObservable() {
         createColdSource(); //(1)订阅到cold;
-        createPublishSource(); //(2)订阅到cold.publish();
-        createShareSource(); //(3)订阅到cold.share();
+        // createPublishSource(); //(2)订阅到cold.publish();
+        // createShareSource(); //(3)订阅到cold.share();
         //createAutoConnectSource(); //(4)订阅到cold.publish().autoConnect(2);
 //        createReplySource(); //(5)订阅到cold.reply(3);
     }

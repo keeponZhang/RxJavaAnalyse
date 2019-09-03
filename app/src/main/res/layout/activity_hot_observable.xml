@@ -1,57 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.demo.lizejun.rxsample.chapter12.HotObservableActivity">
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createColdSource"
+            android:text="createColdSource"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createPublishSource"
+            android:text="createPublishSource"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createReplySource"
+            android:text="createReplySource"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createShareSource"
+            android:text="createShareSource"
+            android:textAllCaps="false" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createAutoConnectSource"
+            android:text="createAutoConnectSource"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/bt_subscribe_1"
-            android:text="开始第1个订阅"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="开始第1个订阅" />
+
         <Button
             android:id="@+id/bt_dispose_1"
-            android:text="取消第1个订阅"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="取消第1个订阅" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_subscribe_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/bt_subscribe_2"
-            android:text="开始第2个订阅"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="开始第2个订阅" />
+
         <Button
             android:id="@+id/bt_dispose_2"
-            android:text="取消第2个订阅"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="取消第2个订阅" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_subscribe_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/bt_dispose"
-        android:text="取消被订阅者"
         android:layout_width="match_parent"
-        android:layout_height="40dp" />
+        android:layout_height="40dp"
+        android:text="取消被订阅者" />
+
     <TextView
         android:id="@+id/tv_source"
         android:layout_width="match_parent"
