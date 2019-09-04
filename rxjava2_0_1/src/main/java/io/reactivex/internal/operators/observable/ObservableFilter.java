@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import io.reactivex.*;
 import io.reactivex.functions.Predicate;
 import io.reactivex.internal.observers.BasicFuseableObserver;
@@ -26,6 +28,7 @@ public final class ObservableFilter<T> extends AbstractObservableWithUpstream<T,
 
     @Override
     public void subscribeActual(Observer<? super T> s) {
+        Log.e("TAG", "ObservableFilter subscribeActual CacheActivity ---s>>:"+s+"  source="+source);
         source.subscribe(new FilterObserver<T>(s, predicate));
     }
 

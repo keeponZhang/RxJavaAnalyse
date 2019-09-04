@@ -30,6 +30,7 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
     }
     @Override
     public void subscribeActual(Observer<? super T> child) {
+        Log.w("TAG", "CacheActivity ObservableTakeUntil subscribeActual -------------- child:"+child);
         final SerializedObserver<T> serial = new SerializedObserver<T>(child);
 
         final ArrayCompositeDisposable frc = new ArrayCompositeDisposable(2);
@@ -45,7 +46,7 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
             }
             @Override
             public void onNext(U t) {
-                Log.e("TAG", "ObservableTakeUntil onNext:" + t);
+                Log.w("TAG", "CacheActivity ObservableTakeUntil 不允许再发射数据了 onNext:" + t);
                 //重点是这里，当otherObservable发射数据之后，取消订阅，就不允许再发射数据了
                 frc.dispose();
                 serial.onComplete();
@@ -61,7 +62,7 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
                 serial.onComplete();
             }
         });
-
+        //Observable.merge(networkArticle , getCacheArticle(2000)
         source.subscribe(tus);
     }
 
@@ -88,7 +89,7 @@ public final class ObservableTakeUntil<T, U> extends AbstractObservableWithUpstr
 
         @Override
         public void onNext(T t) {
-            Log.e("TAG", "ObservableTakeUntil TakeUntilObserver onNext:" + t);
+            Log.e("TAG", "CacheActivity ObservableTakeUntil TakeUntilObserver onNext:" + t);
             actual.onNext(t);
         }
 

@@ -86,7 +86,7 @@ public final class SerializedObserver<T> implements Observer<T>, Disposable {
 
     @Override
     public void onNext(T t) {
-        Log.e("TAG", "ObservableTakeUntil SerializedObserver onNext:"+t);
+        Log.e("TAG", "CacheActivity ObservableTakeUntil SerializedObserver onNext:"+t);
         if (done) {
             return;
         }

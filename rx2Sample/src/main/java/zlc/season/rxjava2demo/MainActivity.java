@@ -41,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                testChapter1();
+//                testChapter1();
 //                testChapter2();
+                testChapter3();
 //                                testChapter4();
                 //              testChapter5();
 //                testChapter6();

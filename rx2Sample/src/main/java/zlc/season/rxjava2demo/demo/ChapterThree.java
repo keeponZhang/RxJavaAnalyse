@@ -15,6 +15,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import zlc.season.rxjava2demo.Api;
 import zlc.season.rxjava2demo.RetrofitProvider;
@@ -54,6 +55,13 @@ public class ChapterThree {
     }
 
     public static void demo2() {
+        Consumer<String> consumer = new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.e("TAG", "ChapterThree accept:" + s);
+            }
+        };
+        Log.e("TAG", "CacheActivity ChapterThree demo2 consumer:"+consumer);
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
@@ -68,14 +76,17 @@ public class ChapterThree {
                 for (int i = 0; i < 3; i++) {
                     list.add("I am value " + integer);
                 }
-                return Observable.fromIterable(list).delay(10, TimeUnit.MILLISECONDS);
+                return Observable.fromIterable(list);
+//                return Observable.fromIterable(list).delay(10, TimeUnit.MILLISECONDS);
             }
-        }).subscribe(new Consumer<String>() {
+        }).filter(new Predicate<String>() {
             @Override
-            public void accept(String s) throws Exception {
-                Log.e("TAG", "ChapterThree accept:" + s);
+            public boolean test(String s) throws Exception {
+                return false;
             }
-        });
+        })
+                .subscribe(consumer);
+
     }
 
     public static void demo3() {

@@ -24,7 +24,12 @@
             android:onClick="createPublishSource"
             android:text="createPublishSource"
             android:textAllCaps="false" />
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="reconnectPublishSource"
+            android:text="reconnectPublishSource"
+            android:textAllCaps="false" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.demo.lizejun.rxsample.R;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,6 +102,11 @@ public class HotObservableActivity extends AppCompatActivity {
     public void createPublishSource(View view){
         createPublishSource();
     }
+    public void reconnectPublishSource(View view){
+         if(mConvertObservable!=null){
+             mConvertDisposable = ((ConnectableObservable<Integer>) mConvertObservable).connect();
+         }
+    }
     public void createReplySource(View view){
         createReplySource();
     }
@@ -138,7 +145,7 @@ public class HotObservableActivity extends AppCompatActivity {
     //.autoConnect在有指定个订阅者时开始让源Observable发送消息，但是订阅者是否取消订阅不会影响到源Observable的发射。
     private void createAutoConnectSource() {
         mColdObservable = getSource();
-        mConvertObservable = mColdObservable.publish().autoConnect(1, new Consumer<Disposable>() {
+        mConvertObservable = mColdObservable.publish().autoConnect(2, new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 mConvertDisposable = disposable;
@@ -201,6 +208,8 @@ public class HotObservableActivity extends AppCompatActivity {
         if (mConvertDisposable != null) {
             mConvertDisposable.dispose();
             mConvertDisposable = null;
+        }else{
+            Toast.makeText(this,"mConvertDisposable == null",Toast.LENGTH_LONG).show();
         }
     }
 

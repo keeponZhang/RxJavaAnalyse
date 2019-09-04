@@ -50,7 +50,7 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
 
     @Override
     public void subscribeActual(Observer<? super U> t) {
-
+        Log.e("TAG", "CacheActivity ObservableFlatMap subscribeActual  --------------t:"+t+" source="+source);
         if (ObservableScalarXMap.tryScalarXMapSubscribe(source, t, mapper)) {
             return;
         }
@@ -122,7 +122,7 @@ public final class ObservableFlatMap<T, U> extends AbstractObservableWithUpstrea
             if (done) {
                 return;
             }
-            System.out.println("-----------ObservableFlatMap收到一个上游发送来的消息------------"+t);
+            Log.d("TAG","CacheActivity-----------ObservableFlatMap收到一个上游发送来的消息------------"+t);
             ObservableSource<? extends U> p;
             try {
                 p = ObjectHelper.requireNonNull(mapper.apply(t), "The mapper returned a null ObservableSource");
