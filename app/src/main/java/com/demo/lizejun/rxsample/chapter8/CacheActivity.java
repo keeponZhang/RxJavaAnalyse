@@ -27,6 +27,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 
 public class CacheActivity extends AppCompatActivity {
 
@@ -126,8 +127,10 @@ public class CacheActivity extends AppCompatActivity {
     private void refreshArticleUsePublish() {
         Observable<List<NewsResultEntity>> publishObservable = getNetworkArticle(500).subscribeOn(Schedulers.io()).publish(new Function<Observable<List<NewsResultEntity>>, ObservableSource<List<NewsResultEntity>>>() {
 
+            //其实此时的network是个PublishSubject
             @Override
             public ObservableSource<List<NewsResultEntity>> apply(Observable<List<NewsResultEntity>> network) throws Exception {
+                Log.e("TAG", "CacheActivity apply (network instanceof PublishSubject)=:" + (network instanceof PublishSubject));
                 return Observable.merge(network, getCacheArticle(2000).subscribeOn(Schedulers.io()).takeUntil(network));
             }
 
