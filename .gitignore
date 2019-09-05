@@ -11,3 +11,4 @@ rxjava_essentials_app/build
 /captures
 .externalNativeBuild
 rxandroid2_0_1/build/
+.gitignore

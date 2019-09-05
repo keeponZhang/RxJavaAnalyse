@@ -18,6 +18,10 @@
             <option value="$PROJECT_DIR$/rxjava1_0_4" />
             <option value="$PROJECT_DIR$/rxjava2_0_1" />
             <option value="$PROJECT_DIR$/rxjava_essentials_app" />
+            <option value="$PROJECT_DIR$/rxlifecycle-android2" />
+            <option value="$PROJECT_DIR$/rxlifecycle-components2" />
+            <option value="$PROJECT_DIR$/rxlifecycle-sample2.0" />
+            <option value="$PROJECT_DIR$/rxlifecycle2" />
             <option value="$PROJECT_DIR$/shouxie_rxjava" />
           </set>
         </option>

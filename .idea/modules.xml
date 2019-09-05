@@ -13,6 +13,10 @@
       <module fileurl="file://$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" filepath="$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" filepath="$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" filepath="$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" filepath="$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" filepath="$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" filepath="$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" filepath="$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" />
       <module fileurl="file://$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" filepath="$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" />
     </modules>
   </component>
