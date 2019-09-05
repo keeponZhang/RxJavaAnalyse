@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.tbruyelle.rxpermissions.sample"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion 25
+
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    compile project(':rxpermissions')
+
+    compile "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+    compile ('com.jakewharton.rxbinding:rxbinding:0.4.0',{
+        exclude group: 'io.reactivex', module: 'rxjava'
+        exclude group: 'io.reactivex', module: 'rxandroid'
+    }
+    )
+}

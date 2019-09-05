@@ -1,4 +1,4 @@
-include ':app', ':rxjava2_0_1', ':rxandroid2_0_1', ':rx2Sample', ':atomiclearn'
+include ':app', ':rxjava2_0_1', ':rxandroid2_0_1', ':rx2Sample', ':atomiclearn', ':RxpermissionSample', ':rxpermissions'
 include ':rxlifecycle-sample2.0', ':rxlifecycle-components2', ':rxlifecycle2', ':rxlifecycle-android2'
 
 include  ':rxjava_essentials_app'

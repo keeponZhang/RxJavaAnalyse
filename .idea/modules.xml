@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RxJavaAnalyse.iml" filepath="$PROJECT_DIR$/RxJavaAnalyse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" filepath="$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/atomiclearn/atomiclearn.iml" filepath="$PROJECT_DIR$/atomiclearn/atomiclearn.iml" />
       <module fileurl="file://$PROJECT_DIR$/rx2Sample/rx2Sample.iml" filepath="$PROJECT_DIR$/rx2Sample/rx2Sample.iml" />
@@ -17,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" filepath="$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" filepath="$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" filepath="$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxpermissions/rxpermissions.iml" filepath="$PROJECT_DIR$/rxpermissions/rxpermissions.iml" />
       <module fileurl="file://$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" filepath="$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" />
     </modules>
   </component>
