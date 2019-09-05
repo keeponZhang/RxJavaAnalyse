@@ -1,9 +1,10 @@
 include ':app', ':rxjava2_0_1', ':rxandroid2_0_1', ':rx2Sample', ':atomiclearn', ':RxpermissionSample', ':rxpermissions'
 include ':rxlifecycle-sample2.0', ':rxlifecycle-components2', ':rxlifecycle2', ':rxlifecycle-android2'
-
+include ':rxbinding0_4_0'
 include  ':rxjava_essentials_app'
 include ':rxjava1Sample'
 include ':rxjava1_0_4'
 include ':rxandroid1_0_1'
+include ':rxandroid1_2_1'
 include ':rxJavaJoins_22'
 include   'shouxie_rxjava'

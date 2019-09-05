@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Action1<Permission>() {
                                @Override
                                public void call(Permission permission) {
-                                   Log.i(TAG, "Permission result " + permission);
+                                   Log.e("TAG", "RxPermissions Permission result " + permission);
                                    if (permission.granted) {
                                        releaseCamera();
                                        camera = Camera.open(0);

@@ -111,7 +111,7 @@ public class RxPermissions {
         return new Observable.Transformer<Object, Permission>() {
             @Override
             public Observable<Permission> call(Observable<Object> o) {
-                Log.e("TAG", "RxPermissions call request(o, permissions):");
+                Log.w("TAG", "RxPermissions call request(o, permissions)第一步:");
                 return request(o, permissions);
             }
         };
@@ -143,7 +143,8 @@ public class RxPermissions {
                 .flatMap(new Func1<Object, Observable<Permission>>() {
                     @Override
                     public Observable<Permission> call(Object o) {
-                        Log.e("TAG", "RxPermissions call flatMap o:"+o);
+                        //有权限,o == null
+                        Log.e("TAG", "------RxPermissions call flatMap --------------o:"+o+"  requestImplementation(permissions)");
                         return requestImplementation(permissions);
                     }
                 });
@@ -182,17 +183,21 @@ public class RxPermissions {
                 // Already granted, or not Android M
                 // Return a granted Permission object.
                 list.add(Observable.just(new Permission(permission, true, false)));
+                Log.w("TAG", "RxPermissions requestImplementation isGranted(permission):"+permission);
                 continue;
             }
 
             if (isRevoked(permission)) {
                 // Revoked by a policy, return a denied Permission object.
                 list.add(Observable.just(new Permission(permission, false, false)));
+                Log.w("TAG", "RxPermissions requestImplementation isRevoked(permission):"+permission);
+
                 continue;
             }
 
             PublishSubject<Permission> subject = mRxPermissionsFragment.getSubjectByPermission(permission);
             // Create a new subject if not exists
+            Log.w("TAG", "RxPermissions requestImplementation subject == null:"+(subject == null));
             if (subject == null) {
                 unrequestedPermissions.add(permission);
                 subject = PublishSubject.create();
@@ -202,10 +207,12 @@ public class RxPermissions {
             list.add(subject);
         }
 
+//        如果unrequestedPermissions不为空，表示存在需要请求的权限，会调用requestPermissionsFromFragment()去请求权限。
         if (!unrequestedPermissions.isEmpty()) {
             String[] unrequestedPermissionsArray = unrequestedPermissions.toArray(new String[unrequestedPermissions.size()]);
             requestPermissionsFromFragment(unrequestedPermissionsArray);
         }
+        Log.e("TAG", "RxPermissions requestImplementation list:" + list.size()+"  unrequestedPermissions.size="+unrequestedPermissions.size());
         return Observable.concat(Observable.from(list));
     }
 
