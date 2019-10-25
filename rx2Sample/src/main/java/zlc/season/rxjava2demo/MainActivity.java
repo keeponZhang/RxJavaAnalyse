@@ -15,7 +15,6 @@ import zlc.season.rxjava2demo.demo.ChapterFour;
 import zlc.season.rxjava2demo.demo.ChapterNine;
 import zlc.season.rxjava2demo.demo.ChapterOne;
 import zlc.season.rxjava2demo.demo.ChapterSeven;
-import zlc.season.rxjava2demo.demo.ChapterSix;
 import zlc.season.rxjava2demo.demo.ChapterThree;
 import zlc.season.rxjava2demo.demo.ChapterTwo;
 
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                testChapter1();
-//                testChapter2();
-                testChapter3();
+                testChapter2();
+//                testChapter3();
 //                                testChapter4();
                 //              testChapter5();
 //                testChapter6();
@@ -74,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
     private void testChapter2() {
 //        ChapterTwo.demo1();
 //        ChapterTwo.demo2();
-        ChapterTwo.demo3();
+//        ChapterTwo.demo3();
+        ChapterTwo.demo4();
     }
 
     private void testChapter3() {
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 //       ChapterSix.demo1();
         //  ChapterSix.demo2();
 //           ChapterSix.demo3();
-        ChapterSix.demo4();
+//        ChapterSix.demo4();
 //           ChapterSix.demo5();
 //           ChapterSix.demo6();
     }

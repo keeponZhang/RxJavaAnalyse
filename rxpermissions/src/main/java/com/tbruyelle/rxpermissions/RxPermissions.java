@@ -111,7 +111,7 @@ public class RxPermissions {
         return new Observable.Transformer<Object, Permission>() {
             @Override
             public Observable<Permission> call(Observable<Object> o) {
-                Log.w("TAG", "RxPermissions call request(o, permissions)第一步:");
+                Log.w("TAG", "RxPermissions call request(o, permissions)第一步 o:"+o);
                 return request(o, permissions);
             }
         };
@@ -165,6 +165,7 @@ public class RxPermissions {
 
     private Observable<?> oneOf(Observable<?> trigger, Observable<?> pending) {
         if (trigger == null) {
+            Log.e("TAG", "RxPermissions oneOf trigger == null:");
             return Observable.just(null);
         }
         return Observable.merge(trigger, pending);
@@ -203,7 +204,7 @@ public class RxPermissions {
                 subject = PublishSubject.create();
                 mRxPermissionsFragment.setSubjectForPermission(permission, subject);
             }
-
+            //这里充当Observable
             list.add(subject);
         }
 

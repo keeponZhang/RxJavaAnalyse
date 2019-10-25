@@ -41,6 +41,7 @@ public final class ObservableObserveOn<T> extends AbstractObservableWithUpstream
         } else {
             Scheduler.Worker w = scheduler.createWorker();
 
+            //到source的subscribeActual方法
             source.subscribe(new ObserveOnObserver<T>(observer, w, delayError, bufferSize));
         }
     }

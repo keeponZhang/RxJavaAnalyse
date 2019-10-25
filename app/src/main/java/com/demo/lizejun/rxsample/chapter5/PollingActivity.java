@@ -281,7 +281,6 @@ public class PollingActivity extends AppCompatActivity {
             }
 
         }).repeatWhen(new Function<Observable<Object>, ObservableSource<Long>>() {
-
             private long mRepeatCount;
 
             @Override
