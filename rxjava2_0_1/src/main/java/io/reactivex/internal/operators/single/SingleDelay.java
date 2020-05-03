@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.single;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.*;
@@ -38,21 +40,29 @@ public final class SingleDelay<T> extends Single<T> {
     protected void subscribeActual(final SingleObserver<? super T> s) {
 
         final SequentialDisposable sd = new SequentialDisposable();
+        Log.w("TAG", "SingleDelay subscribeActual SequentialDisposable sd:" +sd);
+        //这个是传给下游的Disposable
         s.onSubscribe(sd);
         source.subscribe(new SingleObserver<T>() {
+            //这个是上游just传来的
             @Override
             public void onSubscribe(Disposable d) {
+                Log.e("TAG", "SingleDelay onSubscribe sd:"+sd +" d="+d);
                 sd.replace(d);
+                Log.w("TAG", "SingleDelay after onSubscribe sd:"+sd +" d="+d);
             }
 
             @Override
             public void onSuccess(final T value) {
-                sd.replace(scheduler.scheduleDirect(new Runnable() {
+                Disposable disposable = scheduler.scheduleDirect(new Runnable() {
                     @Override
                     public void run() {
                         s.onSuccess(value);
                     }
-                }, time, unit));
+                }, time, unit);
+                Log.e("TAG", "SingleDelay onSuccess sd ="+sd+" disposable=" +disposable );
+                sd.replace(disposable);
+                Log.w("TAG", "SingleDelay after onSuccess sd ="+sd+" disposable=" +disposable );
             }
 
             @Override

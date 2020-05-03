@@ -2,6 +2,7 @@ package com.demo.lizejun.rxsample.simple;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -107,7 +108,8 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 //		getObservableCreate()
 
 
-		tes2();
+		// tes2();
+		tes3();
 
 // 		Observable.just("Keepon")
 // 				.subscribeOn(Schedulers.io())
@@ -171,6 +173,8 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 				.subscribe(new SingleObserver<String>() {
 					@Override
 					public void onSubscribe(Disposable d) {
+						//这个是会变的
+						Log.e("TAG", "Rx2SimpleActivity onSubscribe disposable:"+d );
 						mDisposable2 = d;
 					}
 
@@ -186,6 +190,8 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 
 
 				});
+		SystemClock.sleep(100);
+		Log.e("TAG", "--------Rx2SimpleActivity tes3 mDisposable2:"+mDisposable2 );
 	}
 
 

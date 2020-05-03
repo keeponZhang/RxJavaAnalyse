@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.single;
 
+import android.util.Log;
+
 import io.reactivex.*;
 import io.reactivex.disposables.Disposables;
 
@@ -26,6 +28,7 @@ public final class SingleJust<T> extends Single<T> {
 
     @Override
     protected void subscribeActual(SingleObserver<? super T> s) {
+        Log.e("TAG", "SingleJust subscribeActual onSubscribe:"+Disposables.disposed() );
         s.onSubscribe(Disposables.disposed());
         s.onSuccess(value);
     }
