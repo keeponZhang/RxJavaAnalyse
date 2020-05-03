@@ -12,6 +12,9 @@ import com.demo.lizejun.rxsample.ZeMaoRx2Activity;
 import com.demo.lizejun.rxsample.simple.bean.Course;
 import com.demo.lizejun.rxsample.simple.bean.Student;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,6 +25,8 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
@@ -52,7 +57,6 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 	private static final String TAG = "Rx2SimpleActivity";
 	Observer<String> observer = new Observer<String>() {
 
-		private Disposable mD;
 
 		@Override
 		public void onComplete() {
@@ -101,28 +105,90 @@ public class Rx2SimpleActivity extends AppCompatActivity {
 //	}).subscribe(observer);
 
 //		getObservableCreate()
-		Observable.just("Keepon")
-				.subscribeOn(Schedulers.io())
-				.doOnSubscribe(new Consumer<Disposable>() {
-			@Override
-			//doOnSubscribe会创建DisposableLambdaObserver，DisposableLambdaObserver的onSubscribe方调用了Consumer.accept
-			public void accept(Disposable disposable) throws Exception {
-				Log.e("TAG", "Rx2SimpleActivity accept:" + Thread.currentThread().getName());
-				mDisposable2 = disposable;
-				Log.e(TAG, "accept disposable:"+disposable.getClass().getName());
-//				mDisposable2.dispose();
-			}
-		}).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.computation()).doOnSubscribe(new Consumer<Disposable>() {
-			@Override
-			public void accept(Disposable disposable) throws Exception {
-				Log.e("TAG", "Rx2SimpleActivity accept doOnSubscribe2:"+Thread.currentThread().getName());
-			}
-		}).subscribe(observer);
+
+
+		tes2();
+
+// 		Observable.just("Keepon")
+// 				.subscribeOn(Schedulers.io())
+// 				.doOnSubscribe(new Consumer<Disposable>() {
+// 			@Override
+// 			//doOnSubscribe会创建DisposableLambdaObserver，DisposableLambdaObserver的onSubscribe方调用了Consumer.accept
+// 			public void accept(Disposable disposable) throws Exception {
+// 				Log.e("TAG", "Rx2SimpleActivity accept:" + Thread.currentThread().getName());
+// 				mDisposable2 = disposable;
+// 				Log.e(TAG, "accept disposable:"+disposable.getClass().getName());
+// //				mDisposable2.dispose();
+// 			}
+// 		}).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.computation()).doOnSubscribe(new Consumer<Disposable>() {
+// 			@Override
+// 			public void accept(Disposable disposable) throws Exception {
+// 				Log.e("TAG", "Rx2SimpleActivity accept doOnSubscribe2:"+Thread.currentThread().getName());
+// 			}
+// 		}).subscribe(observer);
 
 //	getObservableCreate().subscribe(observer);
 //		getObservableJust().subscribe(observer);
 //		getObservableFrom().subscribe(observer);
 	}
+
+	private void tes2() {
+		Observable.create(new ObservableOnSubscribe<String>() {
+			@Override
+			public void subscribe(ObservableEmitter<String> e) throws Exception {
+				e.onNext("1");
+				e.onNext("2");
+				e.onNext("3");
+				Log.e("TAG", "Rx2SimpleActivity subscribe e.onNext:" );
+			}//delay其实上游已经发射了
+		}).
+				delay(5, TimeUnit.SECONDS)
+				.subscribe(new Observer<String>() {
+			@Override
+			public void onSubscribe(Disposable d) {
+				mDisposable2 = d;
+			}
+
+			@Override
+			public void onNext(String value) {
+				Log.e("TAG", "Rx2SimpleActivity onNext:"+value );
+			}
+
+			@Override
+			public void onError(Throwable e) {
+
+			}
+
+			@Override
+			public void onComplete() {
+
+			}
+		});
+	}
+	private void tes3() {
+		Single.just("1")
+				.delay(5, TimeUnit.SECONDS)
+				.subscribe(new SingleObserver<String>() {
+					@Override
+					public void onSubscribe(Disposable d) {
+						mDisposable2 = d;
+					}
+
+					@Override
+					public void onSuccess(String value) {
+						Log.e("TAG", "Rx2SimpleActivity onNext:"+value );
+					}
+
+					@Override
+					public void onError(Throwable e) {
+
+					}
+
+
+				});
+	}
+
+
 	private Observable<String> getObservableJust() {
 		//数量大于1的just会封装成fromArray
 		Observable observable = Observable.just("Hello", "Hi", "Aloha");

@@ -103,17 +103,29 @@ public enum DisposableHelper implements Disposable {
      * @return true if the curren thread managed to dispose the Disposable
      */
     public static boolean dispose(AtomicReference<Disposable> field) {
+        //1、获取当前传递进来的对象所持有的disposable对象
         Disposable current = field.get();
+        //2、终止标识
         Disposable d = DISPOSED;
+        //3、当前current不等于终止标识（dispose()方法还未被调用）
         if (current != d) {
+            //4、使用AtomicReference的原子方法将终止标识设置到field对象中，并返回field对象中的旧值
+                    //并将其保存在current中
             current = field.getAndSet(d);
+            //5、current仍旧不等于终止标识
+            //备注：当第一次调用dispose()方法时，此时current为空，满足这个条件，下面的current != null为false，直接返回true；
+            //另外一种情况就是程序多次调用了dispose()方法，但是disposable值不等于终止标识，说明之前的设置失败了，
+            //此时current不为空，再次调用dispose()方法
             if (current != d) {
                 if (current != null) {
                     current.dispose();
                 }
+                //7、返回true，表示当前线程成功的设置了终止标识
                 return true;
             }
         }
+        ///8、之前已经调用过dispose()方法，并且已经正确设置了disposable终止标识，
+        //订阅事件已经被终止了，再次调用该方法时直接返回false，表示设置终止标识失败
         return false;
     }
 
