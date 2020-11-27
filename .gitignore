@@ -14,3 +14,8 @@ rxandroid2_0_1/build/
 build.gradle
 gradle.properties
 src/
+.idea/jarRepositories.xml
+.idea/dbnavigator.xml
+.idea/caches/gradle_models.ser
+.idea/checkstyle-idea.xml
+.idea/inspectionProfiles/Project_Default.xml
