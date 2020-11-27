@@ -34,6 +34,13 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:onClick="merge3"
+		android:textAllCaps="false"
+		android:text="merge3"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:onClick="map"
 		android:textAllCaps="false"
 		android:text="map"

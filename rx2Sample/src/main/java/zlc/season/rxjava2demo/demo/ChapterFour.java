@@ -52,8 +52,8 @@ public class ChapterFour {
                 emitter.onNext("A");
                 Log.d(TAG, "emit B");
                 emitter.onNext("B");
-                Log.d(TAG, "emit C");
-                emitter.onNext("C");
+                // Log.d(TAG, "emit C");
+                // emitter.onNext("C");
                 Log.d(TAG, "emit complete2");
                 emitter.onComplete();
             }

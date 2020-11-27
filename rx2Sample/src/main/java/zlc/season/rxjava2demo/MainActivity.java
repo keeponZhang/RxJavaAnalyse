@@ -22,14 +22,15 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "TAG";
 
     static {
-        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                if (throwable instanceof InterruptedIOException) {
-                    Log.d(TAG, "Io interrupted");
-                }
-            }
-        });
+        // RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+        //     @Override
+        //     public void accept(Throwable throwable) throws Exception {
+        //         if (throwable instanceof InterruptedIOException) {
+        //             Log.d(TAG, "Io interrupted");
+        //         }
+        //         Log.e("TAG", "MainActivity accept Throwable:");
+        //     }
+        // });
     }
 
     @Override
@@ -40,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                testChapter1();
-                testChapter2();
-//                testChapter3();
-//                                testChapter4();
+               // testChapter1();
+               //  testChapter2();
+               // testChapter3();
+                               testChapter4();
                 //              testChapter5();
 //                testChapter6();
                 //  testChapter7();
@@ -73,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
     private void testChapter2() {
 //        ChapterTwo.demo1();
 //        ChapterTwo.demo2();
-//        ChapterTwo.demo3();
-        ChapterTwo.demo4();
+       ChapterTwo.demo3();
+//         ChapterTwo.demo4();
     }
 
     private void testChapter3() {
@@ -84,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testChapter4() {
-//           ChapterFour.demo1();
+          ChapterFour.demo1();
 //        ChapterFour.demo2();
-        ChapterFour.demo3();
+//         ChapterFour.demo3();
     }
 
     private void testChapter5() {

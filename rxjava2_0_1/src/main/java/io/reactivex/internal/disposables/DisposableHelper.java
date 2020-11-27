@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.disposables;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.disposables.Disposable;
@@ -65,6 +67,7 @@ public enum DisposableHelper implements Disposable {
     public static boolean setOnce(AtomicReference<Disposable> field, Disposable d) {
         ObjectHelper.requireNonNull(d, "d is null");
         if (!field.compareAndSet(null, d)) {
+            Log.e("TAG", "---DisposableHelper setOnce .dispose():");
             d.dispose();
             if (field.get() != DISPOSED) {
                 reportDisposableSet();

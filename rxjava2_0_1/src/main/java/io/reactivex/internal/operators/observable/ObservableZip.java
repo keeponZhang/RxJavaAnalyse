@@ -1,11 +1,11 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
@@ -39,10 +39,10 @@ public final class ObservableZip<T, R> extends Observable<R> {
     final boolean delayError;
 
     public ObservableZip(ObservableSource<? extends T>[] sources,
-            Iterable<? extends ObservableSource<? extends T>> sourcesIterable,
-            Function<? super Object[], ? extends R> zipper,
-            int bufferSize,
-            boolean delayError) {
+                         Iterable<? extends ObservableSource<? extends T>> sourcesIterable,
+                         Function<? super Object[], ? extends R> zipper,
+                         int bufferSize,
+                         boolean delayError) {
         this.sources = sources;
         this.sourcesIterable = sourcesIterable;
         this.zipper = zipper;
@@ -88,19 +88,21 @@ public final class ObservableZip<T, R> extends Observable<R> {
         final boolean delayError;
 
         volatile boolean cancelled;
-//        构造函数中初始化了一个和上游 ObservableSource 一样数量大小（在本案例中是2） 的 ZipObserver 数组
+
+        //        构造函数中初始化了一个和上游 ObservableSource 一样数量大小（在本案例中是2） 的 ZipObserver 数组
 //        和 T 类型(Observable的类型)的数组。
         @SuppressWarnings("unchecked")
         ZipCoordinator(Observer<? super R> actual,
-                Function<? super Object[], ? extends R> zipper,
-                int count, boolean delayError) {
+                       Function<? super Object[], ? extends R> zipper,
+                       int count, boolean delayError) {
             this.actual = actual;
             this.zipper = zipper;
             this.observers = new ZipObserver[count];
-            this.row = (T[])new Object[count];
+            this.row = (T[]) new Object[count];
             this.delayError = delayError;
         }
-//        初始化了 ZipObserver 数组并让上游 ObservableSource 分别订阅了对应的 ZipObserver。
+
+        //        初始化了 ZipObserver 数组并让上游 ObservableSource 分别订阅了对应的 ZipObserver。
         public void subscribe(ObservableSource<? extends T>[] sources, int bufferSize) {
             ZipObserver<T, R>[] s = observers;
             int len = s.length;
@@ -153,11 +155,11 @@ public final class ObservableZip<T, R> extends Observable<R> {
             final T[] os = row;
             final boolean delayError = this.delayError;
 //            zip发送的事件数量跟上游中发送事件最少的那一根水管的事件数量是有关的
-            for (;;) {
+            for (; ; ) {
 
-                for (;;) {
+                for (; ; ) {
                     int i = 0;
-                    Log.e("TAG", "ZipCoordinator drain for (;;) i:"+i);
+                    Log.e("TAG", "ZipCoordinator drain for (;;) i:" + i);
                     int emptyCount = 0;
                     for (ZipObserver<T, R> z : zs) {
                         //不等于空才会进来
@@ -167,17 +169,23 @@ public final class ObservableZip<T, R> extends Observable<R> {
                             T v = z.queue.poll();
                             boolean empty = v == null;
                             boolean checkTerminated = checkTerminated(d, empty, a, delayError, z);
-                            Log.e("TAG", "ZipCoordinator drain checkTerminated:"+checkTerminated+" v="+v+"   i ="+i);
+                            Log.e("TAG",
+                                    "ZipCoordinator drain os[i]为空i = " + "icheckTerminated=" +
+                                            checkTerminated +
+                                            " v=" + v + " delayError=" + delayError);
                             //返回true，表示发送事件少的那方已经发送完成了
                             if (checkTerminated) {
                                 return;
                             }
                             if (!empty) {
                                 os[i] = v;
+                                Log.d("TAG", "ZipCoordinator drain os[i]:" + i + " 设置为=" + v);
                             } else {
                                 emptyCount++;
                             }
                         } else {
+                            Log.e("TAG",
+                                    "ZipCoordinator drain os[i] 不为空:" + i + " z.done=" + z.done);
                             if (z.done && !delayError) {
                                 Throwable ex = z.error;
                                 if (ex != null) {
@@ -189,8 +197,8 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         }
                         i++;
                     }
-                    Log.w("TAG", "ZipCoordinator drain emptyCount:"+emptyCount);
-                    //有一个empty就不会真正转换事件
+                    Log.w("TAG", "ZipCoordinator drain emptyCount!=0:" + (emptyCount != 0));
+                    //有一个empty就不会真正转换事件,emptyCount!=0,表示有一方是没有发送的
                     if (emptyCount != 0) {
                         break;
                     }
@@ -198,7 +206,8 @@ public final class ObservableZip<T, R> extends Observable<R> {
                     R v;
                     try {
                         //这个是zip中的apply方法
-                        v = ObjectHelper.requireNonNull(zipper.apply(os.clone()), "The zipper returned a null value");
+                        v = ObjectHelper.requireNonNull(zipper.apply(os.clone()),
+                                "The zipper returned a null value");
                     } catch (Throwable ex) {
                         Exceptions.throwIfFatal(ex);
                         clear();
@@ -208,18 +217,20 @@ public final class ObservableZip<T, R> extends Observable<R> {
 
                     //转换后发送给下游真正的观察者;发送下去表示这个循环还得继续
                     a.onNext(v);
+                    Log.w("TAG", "ZipCoordinator drain 转换后发送给下游真正的观察者------------------:" + v);
                     Arrays.fill(os, null);
                 }
 
                 missing = addAndGet(-missing);
-                Log.e("TAG", "ZipCoordinator drain missing:"+missing);
+                Log.e("TAG", "ZipCoordinator drain missing:" + missing);
                 if (missing == 0) {
                     return;
                 }
             }
         }
 
-        boolean checkTerminated(boolean d, boolean empty, Observer<? super R> a, boolean delayError, ZipObserver<?, ?> source) {
+        boolean checkTerminated(boolean d, boolean empty, Observer<? super R> a, boolean delayError,
+                                ZipObserver<?, ?> source) {
             if (cancelled) {
                 clear();
                 return true;
@@ -244,8 +255,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
                         clear();
                         a.onError(e);
                         return true;
-                    } else
-                    if (empty) {
+                    } else if (empty) {
                         clear();
                         a.onComplete();
                         return true;
@@ -271,16 +281,19 @@ public final class ObservableZip<T, R> extends Observable<R> {
             this.parent = parent;
             this.queue = new SpscLinkedArrayQueue<T>(bufferSize);
         }
+
         @Override
         public void onSubscribe(Disposable s) {
             DisposableHelper.setOnce(this.s, s);
         }
-//        一是入队，二是调用 ZipCoordinator#drain() 方法
+
+        //        一是入队，二是调用 ZipCoordinator#drain() 方法
         @Override
         public void onNext(T t) {
             //offer相当于add，不抛异常
             queue.offer(t);
 //  parent:  ZipCoordinator
+            Log.d("TAG", "ZipObserver drain onNext:" + t);
             parent.drain();
         }
 

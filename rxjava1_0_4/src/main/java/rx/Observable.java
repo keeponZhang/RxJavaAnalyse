@@ -264,6 +264,7 @@ public class Observable<T> {
      */
     //lift会创造一个Observable，使用lift操作符的，下一层Subscriber订阅的Observable是该Observable，最后subscribe触发订阅后,会调用上层Observable的OnSubscribe的call方法，传入Subscriber
     //一般来说，lift中不但会创建Observable，还会创建一个Subscriber，然后调用上一层的Observable的OnSubscribe的call方法，把新创建的Subscriber传入
+    //重要：lift会创建一个Observable，下层的subscriber触发订阅后，会先通过call传到该层，
     public final <R> Observable<R> lift(final Operator<? extends R, ? super T> lift) {
         OnSubscribe<R> onSubscribe = new OnSubscribe<R>() {
             @Override
@@ -274,8 +275,10 @@ public class Observable<T> {
                     //map的话，看OperatorMap的call
                     //merge操作生成的是Subscriber<Observable<? extends T>>，对
 //                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
+                    //注意，这里是lift.call
+                    //会创建对上层感兴趣的的Subscriber，让他做一层代理
                     Subscriber<? super T> st = hook.onLift(lift).call(o);
-                    Log.d("TAG", "Observable call:OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this+"  转化后st="+st);
+                    Log.d("TAG", "Observable call:  1.1--------- lift  call------------》》》》》onSubscribe=" + this+"  转化后st="+st);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
                         st.onStart();
@@ -5107,6 +5110,7 @@ public class Observable<T> {
      */
     public final <R> Observable<R> map(Func1<? super T, ? extends R> func) {
         System.out.println("-------------------Observable map func-------------"+func);
+        //lift创建的observable是跟Operator的第一个泛型类型参数一样
         return lift(new OperatorMap<T, R>(func));
     }
     
@@ -7461,6 +7465,7 @@ public class Observable<T> {
      *         before the Observable has completed
      */
     public final Subscription unsafeSubscribe(Subscriber<? super T> subscriber) {
+        Log.e("TAG", "Observable unsafeSubscribe:");
         try {
             // new Subscriber so onStart it
             subscriber.onStart();

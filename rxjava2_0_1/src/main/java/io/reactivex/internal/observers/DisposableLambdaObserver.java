@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.observers;
 
+import android.util.Log;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
@@ -37,6 +39,7 @@ public final class DisposableLambdaObserver<T> implements Observer<T>, Disposabl
 
     @Override
     public void onSubscribe(Disposable s) {
+        Log.d("TAG", "DisposableLambdaObserver onSubscribe:");
         // this way, multiple calls to onSubscribe can show up in tests that use doOnSubscribe to validate behavior
         try {
             onSubscribe.accept(s);

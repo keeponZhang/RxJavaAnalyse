@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import io.reactivex.*;
 import io.reactivex.internal.fuseable.ScalarCallable;
 import io.reactivex.internal.operators.observable.ObservableScalarXMap.ScalarDisposable;
@@ -31,6 +33,7 @@ public final class ObservableJust<T> extends Observable<T> implements ScalarCall
     @Override
     protected void subscribeActual(Observer<? super T> s) {
         ScalarDisposable<T> sd = new ScalarDisposable<T>(s, value);
+        Log.d("TAG", "ObservableJust subscribeActual onSubscribe 最上层订阅开始:");
         s.onSubscribe(sd);
         sd.run();
     }

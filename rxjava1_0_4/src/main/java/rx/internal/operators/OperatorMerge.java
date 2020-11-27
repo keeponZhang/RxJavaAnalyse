@@ -150,7 +150,8 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         @Override
         //MergeSubscriber接收到的是Observable
         public void onNext(Observable<? extends T> t) {
-            System.out.println("------------OperatorMerge.MergeSubscriber onNext ---------------"+t);
+            System.out.println("------------OperatorMerge.MergeSubscriber 收到的Observeable onNext " +
+                    "---------------"+t);
             //just操作符创建的Observable
             if (t instanceof ScalarSynchronousObservable) {
                 ScalarSynchronousObservable<? extends T> t2 = (ScalarSynchronousObservable<? extends T>)t;
@@ -559,7 +560,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         @Override
         public void onNext(T t) {
             //收到要发送的数据，也是merge里面的每个Observable要发送的事件类型
-            System.out.println("OperatorMerge  InnerSubscriber"+InnerSubscriber.this+" onNext="+t);
+            System.out.println("OperatorMerge  InnerSubscriber "+InnerSubscriber.this+" onNext="+t);
             emit(t, false);
 
         }

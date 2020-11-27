@@ -21,6 +21,7 @@
 		android:textAllCaps="false"
 		android:text="observer"
 		/>
+
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -45,6 +46,13 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:onClick="map2"
+		android:textAllCaps="false"
+		android:text="map2"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:onClick="flatMap"
 		android:textAllCaps="false"
 		android:text="flatMap"
@@ -55,6 +63,13 @@
 		android:onClick="flatMap2"
 		android:textAllCaps="false"
 		android:text="flatMap2"
+		/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:onClick="flatMap22"
+		android:textAllCaps="false"
+		android:text="flatMap22"
 		/>
 	<Button
 		android:layout_width="wrap_content"

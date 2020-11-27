@@ -28,8 +28,13 @@ public class ChapterOne {
                 emitter.onNext(1);
                 emitter.onNext(2);
                 emitter.onNext(3);
+                //多个onComplete不会崩溃
                 emitter.onComplete();
-                emitter.onNext(4);
+                emitter.onComplete();
+                // emitter.onNext(4);
+                //多个onError但是没有RxJavaPlugins.setErrorHandler，会奔溃
+                // emitter.onError(new RuntimeException("keepon"));
+                // emitter.onError(new RuntimeException("keepon2"));
             }
         });
         //创建一个下游 Observer

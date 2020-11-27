@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.observers;
 
+import android.util.Log;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
@@ -54,6 +56,7 @@ public abstract class BasicFuseableObserver<T, R> implements Observer<T>, QueueD
     @SuppressWarnings("unchecked")
     @Override
     public final void onSubscribe(Disposable s) {
+        Log.w("TAG", "BasicFuseableObserver onSubscribe:");
         if (DisposableHelper.validate(this.s, s)) {
 
             this.s = s;

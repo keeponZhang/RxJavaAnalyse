@@ -13,6 +13,8 @@
 
 package io.reactivex.internal.operators.observable;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.*;
@@ -31,8 +33,10 @@ public final class ObservableSubscribeOn<T> extends AbstractObservableWithUpstre
     public void subscribeActual(final Observer<? super T> s) {
         final SubscribeOnObserver<T> parent = new SubscribeOnObserver<T>(s);
 
+        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe before:");
         s.onSubscribe(parent);
-
+        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe after:");
+        //如果Observer被代理了，一般代理的那个变量会叫parent，持有真正的observer
         parent.setDisposable(scheduler.scheduleDirect(new Runnable() {
             @Override
             public void run() {
@@ -55,6 +59,8 @@ public final class ObservableSubscribeOn<T> extends AbstractObservableWithUpstre
 
         @Override
         public void onSubscribe(Disposable s) {
+            //这个是上层的Obserable调用的
+            Log.d("TAG", "ObservableSubscribeOn subscribeActual  SubscribeOnObserver onSubscribe:");
             DisposableHelper.setOnce(this.s, s);
         }
 

@@ -37,6 +37,7 @@ public final class ObservableCreate<T> extends Observable<T> {
     protected void subscribeActual(Observer<? super T> observer) {
         CreateEmitter<T> parent = new CreateEmitter<T>(observer);
         //表示订阅开始（这里会调用下一个observer.onSubsribe）
+        //传给onSubscribe的跟传给ObservableOnSubscribe的subscribe方法的，都是一样的，只是不是接口或者继承
         observer.onSubscribe(parent);
 
         try {
