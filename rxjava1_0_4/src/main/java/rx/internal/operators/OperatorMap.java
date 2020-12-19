@@ -27,6 +27,7 @@ import rx.functions.Func1;
  * <p>
  * <img width="640" height="305" src="https://raw.githubusercontent.com/wiki/ReactiveX/RxJava/images/rx-operators/map.png" alt="">
  */
+//这的OperatorMap没有把订阅过程也做了，放在了lift，这里这是有创建了一个新的Subscriber
 public final class OperatorMap<T, R> implements Operator<R, T> {
 
     private final Func1<? super T, ? extends R> transformer;
