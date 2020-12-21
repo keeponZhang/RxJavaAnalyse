@@ -196,7 +196,8 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
             }
             InnerSubscriber<T> i = new InnerSubscriber<T>(this, producerIfNeeded);
             i.sindex = childrenSubscribers.add(i);
-            //其他类型的Observabale,生成一个InnerSubscriber订阅它，因为可知的是ObservabaleJust数据才一开始知道，可以用get获取，其他不知道
+            //其他类型的Observabale,生成一个InnerSubscriber订阅它，因为可知的是ObservabaleJust数据才一开始知道，可以用get（270行
+            // ）获取，其他不知道
             //如果发来的Observable是在同一个线程的，或者最后面的才切换了线程，这里订阅后，前面的Observable会先发送完事件
             t.unsafeSubscribe(i);
             if (!isUnsubscribed()) {
