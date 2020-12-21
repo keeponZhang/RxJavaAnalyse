@@ -30,7 +30,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //    compile 'org.reactivestreams:reactive-streams:1.0.0'
-//    implementation files('C:\\Program Files\\Java\\jdk1.8.0_212\\jre\\lib\\rt.jar')
 }
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"

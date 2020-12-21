@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RxJavaAnalyse.iml" filepath="$PROJECT_DIR$/RxJavaAnalyse.iml" group="RxJavaAnalyse" />
+      <module fileurl="file://$PROJECT_DIR$/RxJavaAnalyse.iml" filepath="$PROJECT_DIR$/RxJavaAnalyse.iml" />
       <module fileurl="file://$PROJECT_DIR$/RxpermissionSample/RxJavaAnalyse-RxpermissionSample.iml" filepath="$PROJECT_DIR$/RxpermissionSample/RxJavaAnalyse-RxpermissionSample.iml" group="RxJavaAnalyse/RxpermissionSample" />
       <module fileurl="file://$PROJECT_DIR$/app/RxJavaAnalyse-app.iml" filepath="$PROJECT_DIR$/app/RxJavaAnalyse-app.iml" group="RxJavaAnalyse/app" />
       <module fileurl="file://$PROJECT_DIR$/atomiclearn/RxJavaAnalyse-atomiclearn.iml" filepath="$PROJECT_DIR$/atomiclearn/RxJavaAnalyse-atomiclearn.iml" group="RxJavaAnalyse/atomiclearn" />
@@ -20,26 +20,26 @@
       <module fileurl="file://$PROJECT_DIR$/rxlifecycle2/RxJavaAnalyse-rxlifecycle2.iml" filepath="$PROJECT_DIR$/rxlifecycle2/RxJavaAnalyse-rxlifecycle2.iml" group="RxJavaAnalyse/rxlifecycle2" />
       <module fileurl="file://$PROJECT_DIR$/rxpermissions/RxJavaAnalyse-rxpermissions.iml" filepath="$PROJECT_DIR$/rxpermissions/RxJavaAnalyse-rxpermissions.iml" group="RxJavaAnalyse/rxpermissions" />
       <module fileurl="file://$PROJECT_DIR$/shouxie_rxjava/RxJavaAnalyse-shouxie_rxjava.iml" filepath="$PROJECT_DIR$/shouxie_rxjava/RxJavaAnalyse-shouxie_rxjava.iml" group="RxJavaAnalyse/shouxie_rxjava" />
-      <module fileurl="file://$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" filepath="$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" group="RxJavaAnalyse/RxpermissionSample" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="RxJavaAnalyse/app" />
-      <module fileurl="file://$PROJECT_DIR$/atomiclearn/atomiclearn.iml" filepath="$PROJECT_DIR$/atomiclearn/atomiclearn.iml" group="RxJavaAnalyse/atomiclearn" />
+      <module fileurl="file://$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" filepath="$PROJECT_DIR$/RxpermissionSample/RxpermissionSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atomiclearn/atomiclearn.iml" filepath="$PROJECT_DIR$/atomiclearn/atomiclearn.iml" />
       <module fileurl="file://$PROJECT_DIR$/keeponGitgub-RxJavaAnalyse.iml" filepath="$PROJECT_DIR$/keeponGitgub-RxJavaAnalyse.iml" group="RxJavaAnalyse" />
-      <module fileurl="file://$PROJECT_DIR$/rx2Sample/rx2Sample.iml" filepath="$PROJECT_DIR$/rx2Sample/rx2Sample.iml" group="RxJavaAnalyse/rx2Sample" />
-      <module fileurl="file://$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" filepath="$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" group="RxJavaAnalyse/rxJavaJoins_22" />
-      <module fileurl="file://$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" filepath="$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" group="RxJavaAnalyse/rxandroid1_0_1" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rxandroid1_2_1/rxandroid1_2_1.iml" filepath="$PROJECT_DIR$/.idea/modules/rxandroid1_2_1/rxandroid1_2_1.iml" group="RxJavaAnalyse/rxandroid1_2_1" />
-      <module fileurl="file://$PROJECT_DIR$/rxandroid2_0_1/rxandroid2_0_1.iml" filepath="$PROJECT_DIR$/rxandroid2_0_1/rxandroid2_0_1.iml" group="RxJavaAnalyse/rxandroid2_0_1" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rxbinding0_4_0/rxbinding0_4_0.iml" filepath="$PROJECT_DIR$/.idea/modules/rxbinding0_4_0/rxbinding0_4_0.iml" group="RxJavaAnalyse/rxbinding0_4_0" />
-      <module fileurl="file://$PROJECT_DIR$/rxjava1Sample/rxjava1Sample.iml" filepath="$PROJECT_DIR$/rxjava1Sample/rxjava1Sample.iml" group="RxJavaAnalyse/rxjava1Sample" />
-      <module fileurl="file://$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" filepath="$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" group="RxJavaAnalyse/rxjava1_0_4" />
-      <module fileurl="file://$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" filepath="$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" group="RxJavaAnalyse/rxjava2_0_1" />
-      <module fileurl="file://$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" filepath="$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" group="RxJavaAnalyse/rxjava_essentials_app" />
-      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" filepath="$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" group="RxJavaAnalyse/rxlifecycle-android2" />
-      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" filepath="$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" group="RxJavaAnalyse/rxlifecycle-components2" />
-      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" filepath="$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" group="RxJavaAnalyse/rxlifecycle-sample2.0" />
-      <module fileurl="file://$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" filepath="$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" group="RxJavaAnalyse/rxlifecycle2" />
-      <module fileurl="file://$PROJECT_DIR$/rxpermissions/rxpermissions.iml" filepath="$PROJECT_DIR$/rxpermissions/rxpermissions.iml" group="RxJavaAnalyse/rxpermissions" />
-      <module fileurl="file://$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" filepath="$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" group="RxJavaAnalyse/shouxie_rxjava" />
+      <module fileurl="file://$PROJECT_DIR$/rx2Sample/rx2Sample.iml" filepath="$PROJECT_DIR$/rx2Sample/rx2Sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" filepath="$PROJECT_DIR$/rxJavaJoins_22/rxJavaJoins_22.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" filepath="$PROJECT_DIR$/rxandroid1_0_1/rxandroid1_0_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxandroid1_2_1/rxandroid1_2_1.iml" filepath="$PROJECT_DIR$/rxandroid1_2_1/rxandroid1_2_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxandroid2_0_1/rxandroid2_0_1.iml" filepath="$PROJECT_DIR$/rxandroid2_0_1/rxandroid2_0_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxbinding0_4_0/rxbinding0_4_0.iml" filepath="$PROJECT_DIR$/rxbinding0_4_0/rxbinding0_4_0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxjava1Sample/rxjava1Sample.iml" filepath="$PROJECT_DIR$/rxjava1Sample/rxjava1Sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" filepath="$PROJECT_DIR$/rxjava1_0_4/rxjava1_0_4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" filepath="$PROJECT_DIR$/rxjava2_0_1/rxjava2_0_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" filepath="$PROJECT_DIR$/rxjava_essentials_app/rxjava_essentials_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" filepath="$PROJECT_DIR$/rxlifecycle-android2/rxlifecycle-android2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" filepath="$PROJECT_DIR$/rxlifecycle-components2/rxlifecycle-components2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" filepath="$PROJECT_DIR$/rxlifecycle-sample2.0/rxlifecycle-sample2.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" filepath="$PROJECT_DIR$/rxlifecycle2/rxlifecycle2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxpermissions/rxpermissions.iml" filepath="$PROJECT_DIR$/rxpermissions/rxpermissions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" filepath="$PROJECT_DIR$/shouxie_rxjava/shouxie_rxjava.iml" />
     </modules>
   </component>
 </project>
