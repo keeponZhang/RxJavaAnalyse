@@ -16,6 +16,8 @@ public class ObservableMap<T,R> extends Observable<R> {
         this.function = function;
     }
 
+    //其实Rx1和Rx2的原理是一样的，都是创建一个Observable，下层触发订阅的时候，通过下游的observer创建一个新的Observer
+    // ，触发上层的订阅，传入新创建的Observer,再次触发上层的订阅
     @Override
     protected void subscribeActual(Observer<R> observer) {
         // 对 observer 包裹了一层，静态代理包裹 source 永远是上游的 Observable 对象

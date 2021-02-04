@@ -51,4 +51,5 @@ public abstract class Subject<T, R> extends Observable<R> implements Observer<T>
     public final SerializedSubject<T, R> toSerialized() {
         return new SerializedSubject<T, R>(this);
     }
+
 }

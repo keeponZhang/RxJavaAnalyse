@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import rx.Observable.Operator;
 import rx.Subscriber;
 import rx.exceptions.Exceptions;
@@ -39,6 +41,7 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
     @Override
     public Subscriber<? super T> call(final Subscriber<? super R> o) {
         //这里也是代理模式,这个subscriber会发送给上层，订阅后会调用该subscriber的onNext方法，把事件往下传递
+        Log.w("TAG", "OperatorMap call 1.12 调用call方法:");
         return new Subscriber<T>(o) {
 
             @Override

@@ -26,6 +26,20 @@
         android:text="just"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/subscribeon"
+        android:textAllCaps="false"
+        android:onClick="subscribeon"
+        android:text="subscribeon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/repeat"
+        android:textAllCaps="false"
+        android:onClick="repeat"
+        android:text="repeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

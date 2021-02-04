@@ -26,7 +26,7 @@ import com.packtpub.apps.rxjava_essentials.chapter7.SharedPreferencesListFragmen
 import com.packtpub.apps.rxjava_essentials.chapter8.SoActivity;
 import com.packtpub.apps.rxjava_essentials.example1.CreateFragment;
 import com.packtpub.apps.rxjava_essentials.example2.FromFragment;
-import com.packtpub.apps.rxjava_essentials.example3.JustTimerExampleFragment;
+import com.packtpub.apps.rxjava_essentials.example3.JustTimerSubscribeOnRepeatExampleFragment;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerCallbacks;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerFragment;
 
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new JustTimerExampleFragment())
+                    .replace(R.id.container, new JustTimerSubscribeOnRepeatExampleFragment())
                     .commit();
                 break;
             case 3:

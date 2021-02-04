@@ -35,7 +35,7 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
 
     @Override
     public Subscriber<? super Notification<T>> call(final Subscriber<? super T> child) {
-        Log.e("TAG", "OnSubscribeRedo OperatorDematerialize call OnSubscribeRedo 1.1:");
+        Log.w("TAG", "OnSubscribeRedo OperatorDematerialize call OnSubscribeRedo 调用call方法 1.1:");
         return new Subscriber<Notification<T>>(child) {
             /** Do not send two onCompleted events. */
             boolean terminated;

@@ -88,17 +88,20 @@ public class ChapterTwo {
                 .subscribe(observer);
     }
 
+    //如果把subscribeOn券不注释掉，doOnSubscribe1，会在doOnSubscribe2之前，因为不是每个Observable订阅前都会触发下层observer
+    // .onSubscribe
     public static void demo4() {
         Observer<Integer> observer = getIntegerObserver();
         Observable.just(100)
-                .subscribeOn(Schedulers.newThread())
+                // .subscribeOn(Schedulers.newThread())
                 .doOnSubscribe(new Consumer<Disposable>() {
                     //                    accept()是在onSubscribe
                     @Override
                     public void accept(Disposable disposable) throws Exception {
                         //需要在computation线程执行
                         Log.e("TAG",
-                                "ChapterTwo doOnSubscribe1 accept Thread.currentThread().getName():" +
+                                "ChapterTwo ObservableSubscribeOn doOnSubscribe1 accept Thread" +
+                                        ".currentThread().getName():" +
                                         Thread.currentThread().getName());
                     }
                 })
@@ -107,18 +110,20 @@ public class ChapterTwo {
 
                 //这个subscribeOn的意思是，上面的订阅在遇到上面一个subscribeOn时，发生订阅的线程都是在Schedulers.computation()线程，doOnSubscribe是在订阅过程中的onSubscribe方法调用的，换句话说doOnSubscribe会被下面最近的subscribeOn影响
                 //如果没有一个subscribeOn，就是上面的订阅在遇到上面一个subscribeOn时，发生订阅的线程都是在调用demo3线程
-                .subscribeOn(Schedulers.computation())
+                // .subscribeOn(Schedulers.computation()) //1.22 上一层发生订阅前，会调用下一层Observer
+                // .onSubscribe，所以这个实际是上一个Observable真正订阅前
                 //上面触发调用的onSubscribe，遇到doOnSubscribe会停止往下传递
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
                         Log.e("TAG",
-                                "ChapterTwo doOnSubscribe2 accept Thread.currentThread().getName():" +
+                                "ChapterTwo ObservableSubscribeOn doOnSubscribe2 accept Thread.currentThread().getName" +
+                                        "():" +
                                         Thread.currentThread().getName());
 
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                // .subscribeOn(Schedulers.newThread())
                 //observeOn 本质是发送事件给最近一个观察者是做线程切换；还会把onSubscribe的调用链往下走
                 .observeOn(Schedulers.io())
                 .subscribe(observer);

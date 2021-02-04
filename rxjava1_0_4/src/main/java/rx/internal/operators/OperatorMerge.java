@@ -141,6 +141,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
         public void onStart() {
             // we request backpressure so we can handle long-running Observables that are enqueueing, such as flatMap use cases
             // we decouple the Producer chain while keeping the Subscription chain together (perf benefit) via super(actual)
+            //调用Subscriber的request，然后调用MergeProducer的request
             request(RxRingBuffer.SIZE);
         }
 
@@ -173,6 +174,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
 
             if (childrenSubscribers == null) {
                 // lazily create this only if we receive Observables we need to subscribe to
+                //childrenSubscribers:Subscription
                 childrenSubscribers = new SubscriptionIndexedRingBuffer<InnerSubscriber<T>>();
                 add(childrenSubscribers);
             }
@@ -324,6 +326,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
             }
         }
 
+        //drain 排水
         private boolean drainQueuesIfNeeded() {
             while (true) {
                 if (getEmitLock()) {

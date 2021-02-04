@@ -54,14 +54,18 @@ import rx.subscriptions.Subscriptions;
     Action1<SubjectObserver<T>> onTerminated = Actions.empty();
     /** The notification lite. */
     public final NotificationLite<T> nl = NotificationLite.instance();
+    //作为SubjectSubscriptionManager的OnSubscribe
     @Override
     public void call(final Subscriber<? super T> child) {
         SubjectObserver<T> bo = new SubjectObserver<T>(child);
-        Log.e("TAG","SubjectSubscriptionManager OnSubscribeRedo  1.3 最顶层OnSubscribe call childsubscriber= "+child+"  SubjectObserver="+bo);
+        Log.w("TAG","SubjectSubscriptionManager OnSubscribeRedo  1.3 最顶层OnSubscribe 调用call方法 " +
+                "childsubscriber= "+child.getClass()+"  SubjectObserver="+bo);
 
         addUnsubscriber(child, bo);
         onStart.call(bo);
         if (!child.isUnsubscribed()) {
+            Log.e("TAG","SubjectSubscriptionManager OnSubscribeRedo  1.33 把Observer加入state" +
+                    ".observers");
             if (add(bo) && child.isUnsubscribed()) {
                 remove(bo);
             }
@@ -72,6 +76,8 @@ import rx.subscriptions.Subscriptions;
         child.add(Subscriptions.create(new Action0() {
             @Override
             public void call() {
+                Log.e("TAG", "-----------------------------------------SubjectSubscriptionManager " +
+                        "call-----------------------------------------:");
                 remove(bo);
             }
         }));
@@ -227,7 +233,7 @@ import rx.subscriptions.Subscriptions;
         }
         @Override
         public void onNext(T t) {
-            Log.w("TAG","OnSubscribeRedo 1.9 最顶层 SubjectObserver onNext "+t);
+            Log.w("TAG","OnSubscribeRedo 1.9 最顶层 SubjectObserver onNext "+t+" actual="+actual);
             actual.onNext(t);
         }
         @Override

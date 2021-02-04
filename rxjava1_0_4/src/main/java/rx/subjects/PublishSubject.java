@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
+import rx.Subscriber;
+import rx.Subscription;
 import rx.exceptions.CompositeException;
 import rx.exceptions.Exceptions;
 import rx.functions.Action1;
@@ -37,18 +39,18 @@ import rx.subjects.SubjectSubscriptionManager.SubjectObserver;
  * <p>
  * <pre> {@code
 
-  PublishSubject<Object> subject = PublishSubject.create();
-  // observer1 will receive all onNext and onCompleted events
-  subject.subscribe(observer1);
-  subject.onNext("one");
-  subject.onNext("two");
-  // observer2 will only receive "three" and onCompleted
-  subject.subscribe(observer2);
-  subject.onNext("three");
-  subject.onCompleted();
+PublishSubject<Object> subject = PublishSubject.create();
+// observer1 will receive all onNext and onCompleted events
+subject.subscribe(observer1);
+subject.onNext("one");
+subject.onNext("two");
+// observer2 will only receive "three" and onCompleted
+subject.subscribe(observer2);
+subject.onNext("three");
+subject.onCompleted();
 
-  } </pre>
- * 
+} </pre>
+ *
  * @param <T>
  *          the type of items observed and emitted by the Subject
  */
@@ -68,14 +70,14 @@ public final class PublishSubject<T> extends Subject<T, T> {
             public void call(SubjectObserver<T> o) {
                 o.emitFirst(state.get(), state.nl);
             }
-            
+
         };
         return new PublishSubject<T>(state, state);
     }
 
     final SubjectSubscriptionManager<T> state;
     private final NotificationLite<T> nl = NotificationLite.instance();
-    
+
     protected PublishSubject(OnSubscribe<T> onSubscribe, SubjectSubscriptionManager<T> state) {
         super(onSubscribe);
         this.state = state;
@@ -111,7 +113,8 @@ public final class PublishSubject<T> extends Subject<T, T> {
                 if (errors.size() == 1) {
                     Exceptions.propagate(errors.get(0));
                 } else {
-                    throw new CompositeException("Errors while emitting PublishSubject.onError", errors);
+                    throw new CompositeException("Errors while emitting PublishSubject.onError",
+                            errors);
                 }
             }
         }
@@ -120,7 +123,8 @@ public final class PublishSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         for (SubjectObserver<T> bo : state.observers()) {
-            Log.w("TAG","PublishSubject 1.8 OnSubscribeRedo 启动重新订阅 onNext "+bo);
+            Log.w("TAG", "PublishSubject 1.8 OnSubscribeRedo 启动重新订阅 onNext " + bo);
+            //bo：SubjectSubscriptionManager。SubjectObserver
             bo.onNext(v);
         }
     }
@@ -128,5 +132,10 @@ public final class PublishSubject<T> extends Subject<T, T> {
     @Override
     public boolean hasObservers() {
         return state.observers().length > 0;
+    }
+
+    public Subscription subscribe(Subscriber<? super T> subscriber) {
+        Log.e("TAG", "PublishSubject subscribe 开始调用subscribe方法 subscriber:"+subscriber);
+        return super.subscribe(subscriber);
     }
 }

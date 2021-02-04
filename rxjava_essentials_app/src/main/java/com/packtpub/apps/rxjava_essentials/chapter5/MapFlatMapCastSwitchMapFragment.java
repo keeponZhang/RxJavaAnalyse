@@ -51,6 +51,7 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
 	private ApplicationAdapter mAdapter;
 
 	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
+	private List<AppInfo> mApps;
 
 	public MapFlatMapCastSwitchMapFragment() {
 	}
@@ -81,9 +82,9 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
 		mSwipeRefreshLayout.setRefreshing(true);
 		mRecyclerView.setVisibility(View.GONE);
 
-		List<AppInfo> apps = ApplicationsList.getInstance().getList();
+		mApps = ApplicationsList.getInstance().getList();
 
-		loadList(apps);
+		loadList(mApps);
 	}
 
 	private void loadList(List<AppInfo> apps) {
@@ -129,6 +130,7 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.map:
+				loadList(mApps);
 				break;
 			case R.id.flatmap:
 				flatmap();

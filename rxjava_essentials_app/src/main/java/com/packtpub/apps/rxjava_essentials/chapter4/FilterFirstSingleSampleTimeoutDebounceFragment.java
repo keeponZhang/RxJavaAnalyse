@@ -1,6 +1,5 @@
 package com.packtpub.apps.rxjava_essentials.chapter4;
 
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,7 +38,6 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-
 public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
     @BindView(R.id.fragment_first_example_list)
@@ -76,8 +74,10 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_example_fliter_first_single, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view =
+                inflater.inflate(R.layout.fragment_example_fliter_first_single, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -94,7 +94,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
         mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics()));
 
         // Progress
         mSwipeRefreshLayout.setEnabled(false);
@@ -119,7 +120,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -150,13 +152,15 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                        Log.e("TAG",
+                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -170,7 +174,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 .first(new Func1<AppInfo, Boolean>() {
                     @Override
                     public Boolean call(AppInfo appInfo) {
-                        return null;
+                        return false;
                     }
                 })
                 .subscribe(new Observer<AppInfo>() {
@@ -181,13 +185,17 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment onError:" +
+                                e.getMessage());
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                        Log.e("TAG",
+                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -196,6 +204,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
     //获取第一个发送的数据
     private void first() {
+        mApps.clear();
         Observable.from(mApps)
                 //take(1),只会取第一个
                 //first()==take(1).single()
@@ -208,21 +217,23 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                        Log.e("TAG",
+                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
                 });
     }
 
-
-    @OnClick({R.id.first, R.id.firstFun, R.id.single, R.id.elementAt, R.id.sample, R.id.debounce, R.id.timeout, R.id.throttleFirst, R.id.unsubscribe})
+    @OnClick({R.id.first, R.id.firstFun, R.id.single, R.id.elementAt, R.id.sample, R.id.debounce,
+            R.id.timeout, R.id.throttleFirst, R.id.unsubscribe})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.first:
@@ -267,7 +278,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                         SystemClock.sleep(2000);
                         break;
                     }
-                    Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call 发射:" + mApps.get(i));
+                    Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call 发射:" +
+                            mApps.get(i));
                     subscriber.onNext(mApps.get(i));
                 }
                 subscriber.onCompleted();
@@ -283,14 +295,19 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError", Toast.LENGTH_SHORT).show();
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment 收到 OperatorTimeoutBase onError:" + e);
+                        Toast.makeText(getActivity(), "Something onError", Toast.LENGTH_SHORT)
+                                .show();
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment 收到 OperatorTimeoutBase onError:" +
+                                        e);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment 收到 OperatorTimeoutBase onNext:" + appInfo.getName() + " " + System.currentTimeMillis());
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment 收到 OperatorTimeoutBase onNext:" +
+                                        appInfo.getName() + " " + System.currentTimeMillis());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -302,7 +319,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
         Subscription subscription = Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call subscriber.onNext keepon:");
+                Log.e("TAG",
+                        "FilterFirstSingleSampleTimeoutDebounceFragment call subscriber.onNext keepon:");
                 subscriber.onNext("keepon");
             }
         })
@@ -317,16 +335,17 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 });
 
         //默认subscription 调用完
-        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment unsubscribe:" + subscription.isUnsubscribed());
+        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment unsubscribe:" +
+                subscription.isUnsubscribed());
         try {
             Thread.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         subscription.unsubscribe();
-        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment unsubscribe:" + subscription.isUnsubscribed());
+        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment unsubscribe:" +
+                subscription.isUnsubscribed());
     }
-
 
     //去抖动，一段时间后只发送一个数据(其实是这段时间发送的最后一个数据)
     private void debounce() {
@@ -335,9 +354,10 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
             @Override
             public void call(Subscriber<? super AppInfo> subscriber) {
                 for (int i = 0; i < mApps.size(); i++) {
-                    Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call onNext 发送:" + mApps.get(i));
+                    Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call onNext 发送:" +
+                            mApps.get(i));
                     subscriber.onNext(mApps.get(i));
-                    if(i == 1){
+                    if (i == 1) {
                         SystemClock.sleep(1500);
                     }
                 }
@@ -354,13 +374,15 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something onError", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment onNext:" + appInfo.getName() + " " + System.currentTimeMillis());
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment onNext:" +
+                                appInfo.getName() + " " + System.currentTimeMillis());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -376,7 +398,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 return;
             }
             mSampleSubscriber.onNext(mApps.get(count));
-            Log.d("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment handleMessage onNext:" + mApps.get(count) + "  " + System.currentTimeMillis());
+            Log.d("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment handleMessage onNext:" +
+                    mApps.get(count) + "  " + System.currentTimeMillis());
             count++;
             mHandler.sendMessageDelayed(Message.obtain(), 200);
         }
@@ -391,7 +414,9 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
             @Override
             public void call(Subscriber<? super AppInfo> subscriber) {
                 for (int i = 0; i < mApps.size(); i++) {
-                    Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment  sample call onNext:" + mApps.get(i));
+                    Log.w("TAG",
+                            "FilterFirstSingleSampleTimeoutDebounceFragment  sample call onNext:" +
+                                    mApps.get(i));
                     subscriber.onNext(mApps.get(i));
                     if (i == 3) {
                         SystemClock.sleep(1000);
@@ -411,13 +436,16 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment sample onNext:" + appInfo.getName());
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment sample onNext:" +
+                                        appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -432,7 +460,9 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
             @Override
             public void call(Subscriber<? super AppInfo> subscriber) {
                 for (int i = 0; i < mApps.size(); i++) {
-                    Log.d("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst call onNext:" + mApps.get(i));
+                    Log.d("TAG",
+                            "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst call onNext:" +
+                                    mApps.get(i));
                     subscriber.onNext(mApps.get(i));
                 }
                 subscriber.onCompleted();
@@ -448,13 +478,16 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst onNext 收到:" + appInfo.getName() + " " + System.currentTimeMillis());
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst onNext 收到:" +
+                                        appInfo.getName() + " " + System.currentTimeMillis());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -473,13 +506,16 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment  elementAt onNext:" + appInfo.getName());
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment  elementAt onNext:" +
+                                        appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -506,13 +542,15 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment skip onNext:" + appInfo.getName());
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment skip onNext:" +
+                                appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }

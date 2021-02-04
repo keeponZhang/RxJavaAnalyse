@@ -33,7 +33,7 @@ public final class ObservableJust<T> extends Observable<T> implements ScalarCall
     @Override
     protected void subscribeActual(Observer<? super T> s) {
         ScalarDisposable<T> sd = new ScalarDisposable<T>(s, value);
-        Log.d("TAG", "ObservableJust subscribeActual onSubscribe 最上层订阅开始:");
+        Log.d("TAG", "ObservableJust ObservableSubscribeOn subscribeActual onSubscribe 最上层订阅开始:");
         s.onSubscribe(sd);
         sd.run();
     }

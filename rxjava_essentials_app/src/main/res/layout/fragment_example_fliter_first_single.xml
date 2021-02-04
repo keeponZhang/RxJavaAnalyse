@@ -16,7 +16,7 @@
         android:id="@+id/firstFun"
         android:textAllCaps="false"
         android:onClick="firstFun"
-        android:text="distinctFun"
+        android:text="firstFun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button

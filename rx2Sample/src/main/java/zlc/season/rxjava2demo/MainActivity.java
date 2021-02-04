@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                // testChapter1();
-               //  testChapter2();
+                testChapter2();
                // testChapter3();
-                               testChapter4();
+               //                 testChapter4();
                 //              testChapter5();
 //                testChapter6();
                 //  testChapter7();
@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
     private void testChapter2() {
 //        ChapterTwo.demo1();
 //        ChapterTwo.demo2();
-       ChapterTwo.demo3();
-//         ChapterTwo.demo4();
+//        ChapterTwo.demo3();
+        ChapterTwo.demo4();
     }
 
     private void testChapter3() {

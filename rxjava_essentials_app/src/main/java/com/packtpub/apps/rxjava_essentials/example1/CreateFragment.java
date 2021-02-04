@@ -36,7 +36,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class CreateFragment extends Fragment {
@@ -55,7 +57,8 @@ public class CreateFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_example_1, container, false);
     }
 
@@ -77,7 +80,8 @@ public class CreateFragment extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
         mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics()));
 
         // Progress
         mSwipeRefreshLayout.setEnabled(false);
@@ -105,15 +109,18 @@ public class CreateFragment extends Fragment {
         getApps()
                 //toSortedList也是自带的一个操作符
                 .toSortedList()
+                //toSortedList发送的是一个集合
                 .subscribe(new Observer<List<AppInfo>>() {
                     @Override
                     public void onCompleted() {
-                        Toast.makeText(getActivity(), "Here is the list!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Here is the list!", Toast.LENGTH_LONG)
+                                .show();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -140,13 +147,48 @@ public class CreateFragment extends Fragment {
     }
 
     private Observable<AppInfo> getApps() {
+        Observable<Object> empty = Observable.empty();
+        empty.subscribe(new Subscriber<Object>() {
+            @Override
+            public void onCompleted() {
+                Log.e("TAG", "CreateFragment onCompleted:");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG", "CreateFragment onError:");
+            }
+
+            @Override
+            public void onNext(Object o) {
+                Log.e("TAG", "CreateFragment onNext:");
+            }
+        });
+        Observable<String>.never().subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(String o) {
+
+            }
+        });
+
         return Observable.create(subscriber -> {
             List<AppInfoRich> apps = new ArrayList<>();
 
             final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-            List<ResolveInfo> infos = getActivity().getPackageManager().queryIntentActivities(mainIntent, 0);
+            List<ResolveInfo> infos =
+                    getActivity().getPackageManager().queryIntentActivities(mainIntent, 0);
             for (ResolveInfo info : infos) {
                 apps.add(new AppInfoRich(getActivity(), info));
             }
@@ -166,6 +208,9 @@ public class CreateFragment extends Fragment {
                 subscriber.onCompleted();
             }
         });
+
+
+
     }
 
     @Override

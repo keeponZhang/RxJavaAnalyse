@@ -33,9 +33,9 @@ public final class ObservableSubscribeOn<T> extends AbstractObservableWithUpstre
     public void subscribeActual(final Observer<? super T> s) {
         final SubscribeOnObserver<T> parent = new SubscribeOnObserver<T>(s);
 
-        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe before:");
+        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe before:"+scheduler.getClass());
         s.onSubscribe(parent);
-        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe after:");
+        Log.e("TAG", "ObservableSubscribeOn subscribeActual onSubscribe after:"+scheduler.getClass());
         //如果Observer被代理了，一般代理的那个变量会叫parent，持有真正的observer
         parent.setDisposable(scheduler.scheduleDirect(new Runnable() {
             @Override
