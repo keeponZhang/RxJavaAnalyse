@@ -57,6 +57,7 @@ import rx.internal.operators.OnSubscribeJoin;
 import rx.internal.operators.OnSubscribeMulticastSelector;
 import rx.internal.operators.OnSubscribeRange;
 import rx.internal.operators.OnSubscribeRedo;
+import rx.internal.operators.OnSubscribeRedo;
 import rx.internal.operators.OnSubscribeTimerOnce;
 import rx.internal.operators.OnSubscribeTimerPeriodically;
 import rx.internal.operators.OnSubscribeToObservableFuture;
@@ -155,6 +156,9 @@ import rx.schedulers.Timestamped;
 import rx.subjects.ReplaySubject;
 import rx.subjects.Subject;
 import rx.subscriptions.Subscriptions;
+
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoDebugTag;
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoTag;
 
 /**
  * The Observable class that implements the Reactive Pattern.
@@ -271,21 +275,23 @@ public class Observable<T> {
                     Type[] types = analysisClazzInfo(o);
                     //map的话，看OperatorMap的call
                     //merge操作生成的是Subscriber<Observable<? extends T>>，对
-//                    System.out.println("OnSubscribeRedo  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
+//                    System.out.println(getOnSubscribeRedoTag()+"  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
                     //注意，这里是lift.call
                     //会创建对上层感兴趣的的Subscriber，让他做一层代理
                     Subscriber<? super T> st = hook.onLift(lift).call(o);
                     Log.d("TAG",
-                            "Observable call:  1.1--------- lift 调用call方法 后" +
-                                    "------------》》》》》onSubscribe=" +
-                                    this + "  转化后st=" + st);
+                            getOnSubscribeRedoDebugTag() + "Observable call: 向上触发第一步--------- " +
+                                    "lift " + lift +
+                                    "  调用call方法后生成新的Subscriber  转化后Subscriber=" + st);
                     try {
                         // new Subscriber created and being subscribed with so 'onStart' it
                         st.onStart();
                         //map又会往上订阅，map上层Observable正是Observable.this,其持有的OnSubscribe就是onSubscribe，但是两个感兴趣的subscriber不一定一样
                         //所以会经过一个lift变换，调用lift.call(originalSubscriber)创建一个新的Subscriber
-                        Log.d("TAG", "Observable call 准备调用上一个Observable.onSubscribe 传入新创建的 " +
-                                "Subscriber st:"+st);
+                        Log.d("TAG", getOnSubscribeRedoDebugTag() +
+                                "Observable call 准备调用上一个Observable.onSubscribe 向上触发第二步 " +
+                                "传入新创建的Subscriber : " +
+                                st + " 上一层的Observable=" + this);
                         Observable.this.onSubscribe.call(st);
 
                     } catch (Throwable e) {
@@ -308,9 +314,10 @@ public class Observable<T> {
             }
         };
         Observable rObservable = new Observable<R>(onSubscribe);
-        System.out.println(
-                "------Observable OnSubscribeRedo lift    -------" + lift + " liftObservable=" +
-                        rObservable + "  onSubscribe=" + onSubscribe);
+        Log.d("TAG",
+                getOnSubscribeRedoDebugTag() + "------Observable  向下触发 lift    -------" + lift +
+                        "   原来的Observable=" + this +
+                        "   新生成Observable=" + rObservable + "  onSubscribe=" + onSubscribe);
         return rObservable;
     }
 
@@ -6094,14 +6101,16 @@ public class Observable<T> {
                     @Override
                     public Observable<?> call(Observable<? extends Notification<?>> notifications) {
                         Log.e("TAG",
-                                "OnSubscribeRedo  Observable call <<-----------------retrywhen notifications:" +
+                                getOnSubscribeRedoTag() +
+                                        "  Observable call <<-----------------retrywhen notifications:" +
                                         notifications);
                         return notificationHandler
                                 .call(notifications.map(new Func1<Notification<?>, Throwable>() {
                                     @Override
                                     public Throwable call(Notification<?> notification) {
                                         Log.e("TAG",
-                                                "OnSubscribeRedo Observable call  notificationHandler.call <<-----------------retrywhen notification :" +
+                                                getOnSubscribeRedoTag() +
+                                                        " Observable call  notificationHandler.call <<-----------------retrywhen notification :" +
                                                         notification);
                                         return notification.getThrowable();
                                     }
@@ -7116,7 +7125,7 @@ public class Observable<T> {
      * @throws RuntimeException               if the {@link Subscriber}'s {@code onError} method itself threw a {@code Throwable}
      */
     //这里是final，暂时去掉final，方便追踪源码
-    public  Subscription subscribe(Subscriber<? super T> subscriber) {
+    public Subscription subscribe(Subscriber<? super T> subscriber) {
         // validate and proceed
         if (subscriber == null) {
             throw new IllegalArgumentException("observer can not be null");

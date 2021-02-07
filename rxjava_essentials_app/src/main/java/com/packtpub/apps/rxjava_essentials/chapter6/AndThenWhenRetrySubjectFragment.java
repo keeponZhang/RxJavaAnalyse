@@ -42,6 +42,7 @@ import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoTag;
 
 public class AndThenWhenRetrySubjectFragment extends Fragment {
 
@@ -187,12 +188,12 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 		observable.retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
 			@Override
 			public Observable<?> call(Observable<? extends Throwable> throwableObservable) {
-				Log.e("TAG", "OnSubscribeRedo retryWhen 第一层 AndThenWhenRetrySubjectFragment call:"+throwableObservable);
+				Log.e("TAG", getOnSubscribeRedoTag()+" retryWhen 第一层 AndThenWhenRetrySubjectFragment call:"+throwableObservable);
 				//这里可以发送新的被观察者 Observable
 				return throwableObservable.flatMap(new Func1<Throwable, Observable<?>>() {
 					@Override
 					public Observable<?> call(Throwable throwable) {
-						Log.e("TAG", "OnSubscribeRedo AndThenWhenRetrySubjectFragment call 第二层:");
+						Log.e("TAG", getOnSubscribeRedoTag()+" AndThenWhenRetrySubjectFragment call 第二层:");
 						//如果发射的onError就终止
 						return Observable.error(new Throwable("retryWhen终止啦"));
 					}
@@ -207,12 +208,12 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen  OnSubscribeRedo onError:");
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen  "+getOnSubscribeRedoTag()+" onError:");
 			}
 
 			@Override
 			public void onNext(Integer value) {
-				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen OnSubscribeRedo onNext:" + value);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retryWhen "+getOnSubscribeRedoTag()+" onNext:" + value);
 			}
 		});
 	}
@@ -246,12 +247,12 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 
 			@Override
 			public void onError(Throwable e) {
-				Log.e("TAG", "AndThenWhenRetrySubjectFragment retry OnSubscribeRedo onError:");
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment retry "+getOnSubscribeRedoTag()+" onError:");
 			}
 
 			@Override
 			public void onNext(Integer value) {
-				Log.e("TAG", "AndThenWhenRetrySubjectFragment  retry OnSubscribeRedo onNext:" + value);
+				Log.e("TAG", "AndThenWhenRetrySubjectFragment  retry "+getOnSubscribeRedoTag()+" onNext:" + value);
 			}
 		});
 
@@ -341,6 +342,8 @@ public class AndThenWhenRetrySubjectFragment extends Fragment {
 			case R.id.replaySubject:
 				replaySubject();
 				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + view.getId());
 		}
 	}
 //	ReplaySubject会发射所有数据给观察者，无论它们是何时订阅的。也有其它版本的ReplaySubject，在重放缓存增长到一定大小的时候或过了一段时间后会丢弃旧的数据

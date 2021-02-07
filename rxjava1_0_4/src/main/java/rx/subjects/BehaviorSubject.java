@@ -16,6 +16,8 @@
 package rx.subjects;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,10 +101,13 @@ public final class BehaviorSubject<T> extends Subject<T, T> {
         if (hasDefault) {
             state.set(NotificationLite.instance().next(defaultValue));
         }
+        //注意这里
         state.onAdded = new Action1<SubjectObserver<T>>() {
 
             @Override
             public void call(SubjectObserver<T> o) {
+                //获取的是最新的值
+                Log.e("TAG", "BehaviorSubject call:"+state.get());
                 o.emitFirst(state.get(), state.nl);
             }
             
@@ -160,6 +165,7 @@ public final class BehaviorSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         Object last = state.get();
+        Log.e("TAG", "BehaviorSubject onNext last:"+last);
         if (last == null || state.active) {
             Object n = nl.next(v);
             for (SubjectObserver<T> bo : state.next(n)) {

@@ -15,6 +15,8 @@
  */
 package rx;
 
+import android.util.Log;
+
 import rx.internal.util.SubscriptionList;
 
 /**
@@ -33,7 +35,7 @@ import rx.internal.util.SubscriptionList;
 public abstract class Subscriber<T> implements Observer<T>, Subscription {
 
     private final SubscriptionList cs;
-    private final Subscriber<?> op;
+    protected final Subscriber<?> op;
     /* protected by `this` */
     private Producer p;
     /* protected by `this` */
@@ -94,6 +96,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
      *           {@code Long.MAX_VALUE} if you want the Observable to emit items at its own pace
      */
     protected final void request(long n) {
+        Log.e("TAG", "Subscriber request:");
         Producer shouldRequest = null;
         synchronized (this) {
             if (p != null) {
@@ -121,7 +124,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
             //toRequest表示下游请求接收的数量，默认Long.MIN_VALUE
             toRequest = requested;
             p = producer;
-//  op是否为null，跟使用哪个Subscriber构造函数有关
+//  op是否为null，跟使用哪个Subscriber构造函数有关，无参数构造函数就是空的
             if (op != null) {
                 // middle operator ... we pass thru unless a request has been made
                 if (toRequest == Long.MIN_VALUE) {
@@ -131,6 +134,8 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
 
             }
         }
+        Log.e("TAG", "Subscriber setProducer:" + producer+"  "+this+" setProducer="+setProducer+
+                " "+getName());
         // do after releasing lock
         if (setProducer) {
             op.setProducer(p);
@@ -142,5 +147,9 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
                 p.request(toRequest);
             }
         }
+    }
+
+    public String getName(){
+        return "";
     }
 }

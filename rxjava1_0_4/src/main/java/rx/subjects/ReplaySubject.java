@@ -15,6 +15,8 @@
  */
 package rx.subjects;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -96,9 +98,11 @@ public final class ReplaySubject<T> extends Subject<T, T> {
             @Override
             public void call(SubjectObserver<T> o) {
                 // replay history for this observer using the subscribing thread
+                //从0开始一一发送，注意
                 int lastIndex = state.replayObserverFromIndex(0, o);
 
                 // now that it is caught up add to observers
+                //上面改成1后，这里lastIndex会返回1，这样第一个onNext的就会发射不出去
                 o.index(lastIndex);
             }
         };
@@ -117,6 +121,7 @@ public final class ReplaySubject<T> extends Subject<T, T> {
                     for (;;) {
                         int idx = o.index();
                         int sidx = state.index;
+                        Log.e("TAG", "ReplaySubject call idx:"+idx+"  sidx="+sidx);
                         if (idx != sidx) {
                             Integer j = state.replayObserverFromIndex(idx, o);
                             o.index(j);
@@ -359,6 +364,7 @@ public final class ReplaySubject<T> extends Subject<T, T> {
     ReplaySubject(OnSubscribe<T> onSubscribe, SubjectSubscriptionManager<T> ssm, ReplayState<T, ?> state) {
         super(onSubscribe);
         this.ssm = ssm;
+        //UnboundedReplayState
         this.state = state;
     }
     
@@ -367,7 +373,10 @@ public final class ReplaySubject<T> extends Subject<T, T> {
         if (ssm.active) {
             state.next(t);
             for (SubjectSubscriptionManager.SubjectObserver<? super T> o : ssm.observers()) {
-                if (caughtUp(o)) {
+                boolean caughtUp = caughtUp(o);
+                Log.e("TAG", "ReplaySubject onNext caughtUp:"+caughtUp);
+                //true的话直接发送，false的话在caughtUp方法内可能发送
+                if (caughtUp) {
                     o.onNext(t);
                 }
             }
@@ -431,9 +440,11 @@ public final class ReplaySubject<T> extends Subject<T, T> {
                 o.caughtUp = true;
                 o.index(null); // once caught up, no need for the index anymore
             }
+            Log.w("TAG", "ReplaySubject caughtUp return false:"+this);
             return false;
         } else {
             // it was caught up so proceed the "raw route"
+            Log.w("TAG", "ReplaySubject caughtUp return true:"+this);
             return true;
         }
     }
@@ -463,6 +474,7 @@ public final class ReplaySubject<T> extends Subject<T, T> {
 
         @Override
         public void next(T n) {
+            Log.e("TAG", "SubjectFragment UnboundedReplayState next n:"+n);
             if (!terminated) {
                 list.add(nl.next(n));
                 INDEX_UPDATER.getAndIncrement(this);
@@ -556,6 +568,7 @@ public final class ReplaySubject<T> extends Subject<T, T> {
         }
         @Override
         public void next(T value) {
+            Log.e("TAG", "BoundedState next value:"+value);
             if (!terminated) {
                 list.addLast(enterTransform.call(nl.next(value)));
                 evictionPolicy.evict(list);

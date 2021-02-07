@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
@@ -46,6 +48,7 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
         System.out.println("------------OnSubscribeFromIterable call---------------");
         final Iterator<? extends T> it = is.iterator();
         //Subscriber的setProducer方法里面会触发IterableProducer的request方法
+        //Producer生产者
         o.setProducer(new IterableProducer<T>(o, it));
     }
 
@@ -65,12 +68,14 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
 
         @Override
         public void request(long n) {
+
             if (REQUESTED_UPDATER.get(this) == Long.MAX_VALUE) {
                 //已经在发射数据了，这里注解返回
                 // already started with fast-path
                 return;
             }
             if (n == Long.MAX_VALUE) {
+                Log.e("TAG", "IterableProducer request Long.MAX_VALUE:");
                 REQUESTED_UPDATER.set(this, n);
                 // fast-path without backpressure
                 while (it.hasNext()) {
@@ -83,6 +88,7 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
                     o.onCompleted();
                 }
             } else if(n > 0) {
+                Log.e("TAG", "IterableProducer request n:"+n);
                 // backpressure is requested
                 long _c = REQUESTED_UPDATER.getAndAdd(this, n);
                 if (_c == 0) {

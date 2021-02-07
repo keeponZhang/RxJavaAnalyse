@@ -58,7 +58,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
     static final Func1<Observable<? extends Notification<?>>, Observable<?>> REDO_INIFINITE = new Func1<Observable<? extends Notification<?>>, Observable<?>>() {
         @Override
         public Observable<?> call(Observable<? extends Notification<?>> ts) {
-            System.out.println("OnSubscribeRedo  1.1--------- REDO_INIFINITE  call------------》》》》》");
+            System.out.println(getOnSubscribeRedoTag()+"  1.1--------- REDO_INIFINITE  call------------》》》》》");
             return ts.map(new Func1<Notification<?>, Notification<?>>() {
                 @Override
                 public Notification<?> call(Notification<?> terminal) {
@@ -69,6 +69,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
     };
 
     public static final class RedoFinite implements Func1<Observable<? extends Notification<?>>, Observable<?>> {
+        //表示要重复多少次
         private final long count;
 
         public RedoFinite(long count) {
@@ -78,7 +79,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
         //ts:前面 terminals.lift创建的一个Observable
         @Override
         public Observable<?> call(Observable<? extends Notification<?>> ts) {
-            Log.e("TAG", "OnSubscribeRedo RedoFinite  0.6---------  map  Observable<? extends Notification<?>> call------------》》》》》:");
+            Log.e("TAG", getOnSubscribeRedoTag()+" RedoFinite  0.6 (准备lift 2次，map，OperatorDematerialize)---------  map" +
+                    "  " +
+                    "Observable<? extends Notification<?>> call------------》》》》》:");
             //这里通过先map后lift再次创建Observable返回，相当于lift两次
             Observable<?> dematerialize = ts.map(new Func1<Notification<?>, Notification<?>>() {
 
@@ -101,7 +104,9 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 }
 
             }).lift(new OperatorDematerialize());;
-            Log.e("TAG", "OnSubscribeRedo  0.7--------- RedoFinite  return------------》》》》》 Observable dematerialize="+dematerialize);
+            Log.e("TAG", getOnSubscribeRedoTag()+"  0.7--------- RedoFinite  " +
+                    "return------------》》》》》 " +
+                    "Observable dematerialize="+dematerialize);
             return dematerialize;
         }
     }
@@ -226,7 +231,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     @Override
                     public void onCompleted() {
                         unsubscribe();
-                        Log.e("TAG", "OnSubscribeRedo onCompleted (PublishSubject)terminals.onNext:"+Notification.createOnCompleted());
+                        Log.e("TAG", getOnSubscribeRedoTag()+" onCompleted (PublishSubject)terminals.onNext:"+Notification.createOnCompleted());
                         terminals.onNext(Notification.createOnCompleted());
 
                     }
@@ -239,7 +244,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         //terminals相当于充当最顶层Observer和Observable
                         //2.1增加注释：触发订阅一般会触发到最顶层onSubscribe.call(subscriber),
                         // call里面有触发发送的话才会发送，这里的话是触发到SubjectSubscriptionManager的call，会触发增加观察者的逻辑,
-                        Log.e("TAG", "OnSubscribeRedo  收到错事件了 onError:");
+                        Log.e("TAG", getOnSubscribeRedoTag()+"  收到错事件了 onError:");
                         terminals.onNext(Notification.createOnError(e));
                     }
                     //onNext方法直接接受source发送的事件，进而转发给child,不经过terminals，所以next事件跟后面lift生成的Observable无关
@@ -248,7 +253,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                         if (consumerCapacity.get() != Long.MAX_VALUE) {
                             consumerCapacity.decrementAndGet();
                         }
-                        Log.e("TAG","OnSubscribeRedo terminalDelegatingSubscriber 1.5 接送到source 发送来的事件 onNext="+v);
+                        Log.e("TAG",getOnSubscribeRedoTag()+" terminalDelegatingSubscriber 1.5 接送到source 发送来的事件 onNext="+v);
                         //调用该方法把事件发给下层的订阅者
                         child.onNext(v);
                     }
@@ -265,7 +270,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 // new subscription each time so if it unsubscribes itself it does not prevent retries
                 // by unsubscribing the child subscription
                 sourceSubscriptions.set(terminalDelegatingSubscriber);
-                Log.e("TAG", "OnSubscribeRedo  subscribeToSource ---soure订阅开始喽 source.unsafeSubscribe(terminalDelegatingSubscriber)"+terminalDelegatingSubscriber);
+                Log.e("TAG", getOnSubscribeRedoTag()+"  subscribeToSource ---soure订阅开始喽 source.unsafeSubscribe(terminalDelegatingSubscriber)"+terminalDelegatingSubscriber);
                 source.unsafeSubscribe(terminalDelegatingSubscriber);
             }
         };
@@ -279,7 +284,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
             @Override
             public Subscriber<? super Notification<?>> call(final Subscriber<? super Notification<?>> filteredTerminals) {
                 //启动订阅后，会OnSubscribe的call方法，一层一层上去，这里就是其中几个lift的一层
-                Log.w("TAG", "OnSubscribeRedo  1.2--------- 调用call方法 restarts Operator " +
+                Log.w("TAG", getOnSubscribeRedoTag()+"  1.2--------- 调用call方法 restarts Operator " +
                         "call------------filteredTerminals 》》》》》" + filteredTerminals + " subsriber= " + this);
                 return new Subscriber<Notification<?>>(filteredTerminals) {
                     @Override
@@ -289,7 +294,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.w("TAG", "OnSubscribeRedo  Notification filteredTerminals.onError(e)" +
+                        Log.w("TAG", getOnSubscribeRedoTag()+"  Notification filteredTerminals.onError(e)" +
                                 ":"+e);
                         filteredTerminals.onError(e);
                     }
@@ -297,15 +302,15 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     @Override
                     public void onNext(Notification<?> t) {
                        //这里也是重点（retry :stopOnError true ; repeat :stopOnComplete true）
-                        Log.e("TAG", "OnSubscribeRedo 1.95 重点 terminalslift call   onNext t:"+t);
+                        Log.e("TAG", getOnSubscribeRedoTag()+" 1.95 重点 terminalslift call   onNext t:"+t);
                         if (t.isOnCompleted() && stopOnComplete) {
-                            Log.e("TAG", "OnSubscribeRedo  1.98 onNext   Subscriber terminals.lift onNext <<  if stopOnComplete >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", getOnSubscribeRedoTag()+"  1.98 onNext   Subscriber terminals.lift onNext <<  if stopOnComplete >>" + this+"  Notification.getKind="+t.getKind());
                             child.onCompleted();
                         } else if (t.isOnError() && stopOnError) {
-                            Log.e("TAG", "OnSubscribeRedo onNext   1.98 Subscriber terminals.lift onNext << else if stopOnError >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", getOnSubscribeRedoTag()+" onNext   1.98 Subscriber terminals.lift onNext << else if stopOnError >>" + this+"  Notification.getKind="+t.getKind());
                             child.onError(t.getThrowable());
                         } else {
-                            Log.e("TAG", "OnSubscribeRedo onNext  1.98   Subscriber terminals.lift onNext << else  >>" + this+"  Notification.getKind="+t.getKind());
+                            Log.e("TAG", getOnSubscribeRedoTag()+" onNext  1.98   Subscriber terminals.lift onNext << else  >>" + this+"  Notification.getKind="+t.getKind());
                             isLocked.set(false);
                             filteredTerminals.onNext(t);
                         }
@@ -318,12 +323,12 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 };
             }
         });
-        Log.e("TAG", "OnSubscribeRedo call   0.1 terminals.lift 准备调用fun1.call方法:");
+        Log.e("TAG", getOnSubscribeRedoTag()+" call   0.1 terminals.lift 准备调用fun1.call方法:");
         //  controlHandlerFunction: RedoFinite  terminalslift作为controlHandlerFunction.call的方法参数
         //相当于terminalslift.map ,相当于terminals.lift.map.  lift所以terminalslift是比较上层，terminals为最上层Observable,restarts为底层Observable,restarts调用subscribe开始一层层订阅
         //其实这里面实质就是调用call生成Observable，就是lift
         final Observable<?> restarts = controlHandlerFunction.call(terminalslift);
-        Log.e("TAG", "OnSubscribeRedo call   0.8 terminals.lift fun1.call(controlHandlerFunction.call)方法调用完毕:");
+        Log.e("TAG", getOnSubscribeRedoTag()+" call   0.8 terminals.lift fun1.call(controlHandlerFunction.call)方法调用完毕:");
         // subscribe to the restarts observable to know when to schedule the next redo.
         //worker经过一系列调用会调到call方法
         worker.schedule(new Action0() {
@@ -331,17 +336,17 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
             public void call() {
                 //1.call方法通过worker调用，restarts作为Obesrvable订阅,workerSubscriber作为参数传到lift
                 // Observable的OnSubscribe的call方法中，restarts的call方法中,再调到上面2中Operator的call方法中
-                Log.i("TAG", "OnSubscribeRedo  0.9--------- worker.schedule call------------》》》》》");
+                Log.i("TAG", getOnSubscribeRedoTag()+"  0.9--------- worker.schedule call------------》》》》》");
                 Subscriber<Object> workerSubscriber = new Subscriber<Object>(child) {
                     @Override
                     public void onCompleted() {
-                        System.out.println("OnSubscribeRedo workerSubscriber onCompleted" );
+                        System.out.println(getOnSubscribeRedoTag()+" workerSubscriber onCompleted" );
                         child.onCompleted();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("TAG", "OnSubscribeRedo workerSubscriber onError" );
+                        Log.e("TAG", getOnSubscribeRedoTag()+" workerSubscriber onError" );
                         child.onError(e);
                     }
 
@@ -363,12 +368,12 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                     @Override
                     public void setProducer(Producer producer) {
-                        System.out.println("OnSubscribeRedo   worker.schedule setProducer ");
+                        System.out.println(getOnSubscribeRedoTag()+"   worker.schedule setProducer ");
                         producer.request(Long.MAX_VALUE);
                     }
                 };
-                Log.e("TAG", "OnSubscribeRedo 1 (负责重复发送的Observable开始订阅，实际发送需要触发terminals" +
-                        ".onNext方法)" +
+                Log.e("TAG", getOnSubscribeRedoTag()+" 1 (负责重复发送的Observable开始订阅，实际发送需要触发terminals" +
+                        ".onNext方法(因为最顶层Observable是PublishObservable))" +
                         "---------" +
                         "  restarts" +
                         ".unsafeSubscribe" +
@@ -383,7 +388,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                 restarts.unsafeSubscribe(workerSubscriber);
             }
         });
-        Log.i("TAG", "OnSubscribeRedo call setProducer");
+        Log.i("TAG", getOnSubscribeRedoTag()+" OnSubscribeRedo OnSubscribe方法call setProducer");
         child.setProducer(new Producer() {
 
             @Override
@@ -394,13 +399,19 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     producer.request(n);
                 } else
                 if (c == 0 && resumeBoundary.compareAndSet(true, false)) {
-                    Log.e("TAG", "OnSubscribeRedo request ----------开始调用Action0的call方法，call方法中 " +
+                    Log.e("TAG", getOnSubscribeRedoTag() +"  request ----------开始调用Action0的call" +
+                            "方法，call方法中 " +
                             "source.unsafeSubscribe,启动发射");
                     //第一次启动：重点
                     worker.schedule(subscribeToSource);
                 }
             }
         });
-        
+    }
+    public static String getOnSubscribeRedoTag(){
+        return "OnSubscribeRedoTAG ";
+    }
+    public static String getOnSubscribeRedoDebugTag(){
+        return "OnSubscribeRedoTAG ";
     }
 }

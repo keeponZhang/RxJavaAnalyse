@@ -12,34 +12,7 @@
         android:text="takeLast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/repeat"
-        android:textAllCaps="false"
-        android:onClick="repeat"
-        android:text="repeat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/range"
-        android:textAllCaps="false"
-        android:onClick="range"
-        android:text="range"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/defer"
-        android:textAllCaps="false"
-        android:onClick="defer"
-        android:text="defer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/interval"
-        android:textAllCaps="false"
-        android:onClick="interval"
-        android:text="interval"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

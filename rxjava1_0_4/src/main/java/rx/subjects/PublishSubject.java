@@ -27,7 +27,10 @@ import rx.exceptions.CompositeException;
 import rx.exceptions.Exceptions;
 import rx.functions.Action1;
 import rx.internal.operators.NotificationLite;
+import rx.internal.operators.OnSubscribeRedo;
 import rx.subjects.SubjectSubscriptionManager.SubjectObserver;
+
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoDebugTag;
 
 /**
  * Subject that, once an {@link Observer} has subscribed, emits all subsequently observed items to the
@@ -63,6 +66,8 @@ public final class PublishSubject<T> extends Subject<T, T> {
      * @return the new {@code PublishSubject}
      */
     public static <T> PublishSubject<T> create() {
+        //这个是重点，SubjectSubscriptionManager是OnSubscribe，下层往上触发的时候，OnSubscribe的call
+        // 并没有触发发送数据，而是天剑观察者，需要调用PublishSubject的onNext方法
         final SubjectSubscriptionManager<T> state = new SubjectSubscriptionManager<T>();
         state.onTerminated = new Action1<SubjectObserver<T>>() {
 
@@ -72,6 +77,9 @@ public final class PublishSubject<T> extends Subject<T, T> {
             }
 
         };
+        //state也是OnSubscribe
+        //真正订阅的时候才添加观察者
+        Log.d("TAG", getOnSubscribeRedoDebugTag()+"PublishSubject create:");
         return new PublishSubject<T>(state, state);
     }
 

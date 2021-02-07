@@ -4,28 +4,6 @@
              android:layout_height="match_parent"
               android:orientation="vertical"
              tools:context="com.packtpub.apps.rxjava_essentials.example1.CreateFragment">
-
-    <Button
-        android:id="@+id/timer"
-        android:textAllCaps="false"
-        android:onClick="timer"
-        android:text="timer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/timer2"
-        android:textAllCaps="false"
-        android:onClick="timer2"
-        android:text="timer2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/just"
-        android:textAllCaps="false"
-        android:onClick="just"
-        android:text="just"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/subscribeon"
         android:textAllCaps="false"
@@ -33,13 +11,7 @@
         android:text="subscribeon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/repeat"
-        android:textAllCaps="false"
-        android:onClick="repeat"
-        android:text="repeat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"

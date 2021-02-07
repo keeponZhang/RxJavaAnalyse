@@ -97,6 +97,8 @@ public class CreateFragment extends Fragment {
                 });
     }
 
+
+
     private Observable<File> getFileDir() {
         return Observable.create(subscriber -> {
             //一开始是空的
@@ -147,39 +149,6 @@ public class CreateFragment extends Fragment {
     }
 
     private Observable<AppInfo> getApps() {
-        Observable<Object> empty = Observable.empty();
-        empty.subscribe(new Subscriber<Object>() {
-            @Override
-            public void onCompleted() {
-                Log.e("TAG", "CreateFragment onCompleted:");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e("TAG", "CreateFragment onError:");
-            }
-
-            @Override
-            public void onNext(Object o) {
-                Log.e("TAG", "CreateFragment onNext:");
-            }
-        });
-        Observable<String>.never().subscribe(new Subscriber<String>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(String o) {
-
-            }
-        });
 
         return Observable.create(subscriber -> {
             List<AppInfoRich> apps = new ArrayList<>();
@@ -208,7 +177,6 @@ public class CreateFragment extends Fragment {
                 subscriber.onCompleted();
             }
         });
-
 
 
     }

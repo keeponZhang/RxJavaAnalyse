@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,23 +35,23 @@ import rx.subjects.SubjectSubscriptionManager.SubjectObserver;
  * <p>
  * <pre> {@code
 
-  // observer will receive no onNext events because the subject.onCompleted() isn't called.
-  AsyncSubject<Object> subject = AsyncSubject.create();
-  subject.subscribe(observer);
-  subject.onNext("one");
-  subject.onNext("two");
-  subject.onNext("three");
+// observer will receive no onNext events because the subject.onCompleted() isn't called.
+AsyncSubject<Object> subject = AsyncSubject.create();
+subject.subscribe(observer);
+subject.onNext("one");
+subject.onNext("two");
+subject.onNext("three");
 
-  // observer will receive "three" as the only onNext event.
-  AsyncSubject<Object> subject = AsyncSubject.create();
-  subject.subscribe(observer);
-  subject.onNext("one");
-  subject.onNext("two");
-  subject.onNext("three");
-  subject.onCompleted();
+// observer will receive "three" as the only onNext event.
+AsyncSubject<Object> subject = AsyncSubject.create();
+subject.subscribe(observer);
+subject.onNext("one");
+subject.onNext("two");
+subject.onNext("three");
+subject.onCompleted();
 
-  } </pre>
- * 
+} </pre>
+ *
  * @param <T>
  *          the type of item expected to be observed by the Subject
  */
@@ -89,13 +89,14 @@ public final class AsyncSubject<T> extends Subject<T, T> {
 
     @Override
     public void onCompleted() {
-	    System.out.println("AsyncSubject  onCompleted:");
+        System.out.println("AsyncSubject  onCompleted:");
         if (state.active) {
             Object last = lastValue;
             if (last == null) {
                 last = nl.completed();
             }
             for (SubjectObserver<T> bo : state.terminate(last)) {
+                //如果onCompleted有发送其他数据，就发送其他数据
                 if (last == nl.completed()) {
                     bo.onCompleted();
                 } else {
@@ -108,7 +109,7 @@ public final class AsyncSubject<T> extends Subject<T, T> {
 
     @Override
     public void onError(final Throwable e) {
-	    System.out.println("AsyncSubject  onError:");
+        System.out.println("AsyncSubject  onError:");
         if (state.active) {
             Object n = nl.error(e);
             List<Throwable> errors = null;
@@ -127,7 +128,8 @@ public final class AsyncSubject<T> extends Subject<T, T> {
                 if (errors.size() == 1) {
                     Exceptions.propagate(errors.get(0));
                 } else {
-                    throw new CompositeException("Errors while emitting AsyncSubject.onError", errors);
+                    throw new CompositeException("Errors while emitting AsyncSubject.onError",
+                            errors);
                 }
             }
         }
@@ -136,7 +138,7 @@ public final class AsyncSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         lastValue = nl.next(v);
-        System.out.println("AsyncSubject  onNext:"+v+" lastValue="+lastValue);
+        System.out.println("AsyncSubject  onNext:" + v + " lastValue=" + lastValue);
     }
 
     @Override

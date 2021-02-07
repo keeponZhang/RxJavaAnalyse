@@ -30,6 +30,8 @@ import rx.functions.Actions;
 import rx.internal.operators.NotificationLite;
 import rx.subscriptions.Subscriptions;
 
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoTag;
+
 /**
  * Represents the typical state and OnSubscribe logic for a Subject implementation.
  * @param <T> the source and return value type
@@ -54,6 +56,9 @@ import rx.subscriptions.Subscriptions;
     Action1<SubjectObserver<T>> onTerminated = Actions.empty();
     /** The notification lite. */
     public final NotificationLite<T> nl = NotificationLite.instance();
+    public SubjectSubscriptionManager(){
+
+    }
     //作为SubjectSubscriptionManager的OnSubscribe
     @Override
     public void call(final Subscriber<? super T> child) {
@@ -61,6 +66,7 @@ import rx.subscriptions.Subscriptions;
         Log.w("TAG","SubjectSubscriptionManager OnSubscribeRedo  1.3 最顶层OnSubscribe 调用call方法 " +
                 "childsubscriber= "+child.getClass()+"  SubjectObserver="+bo);
 
+        //为了解注册用的
         addUnsubscriber(child, bo);
         onStart.call(bo);
         if (!child.isUnsubscribed()) {
@@ -84,6 +90,7 @@ import rx.subscriptions.Subscriptions;
     }    
     /** Set the latest NotificationLite value. */
     void set(Object value) {
+        Log.e("TAG", "SubjectSubscriptionManager set:"+value);
         latest = value;
     }
     /** @return Retrieve the latest NotificationLite value */
@@ -102,6 +109,7 @@ import rx.subscriptions.Subscriptions;
     boolean add(SubjectObserver<T> o) {
         do {
             State oldState = state;
+            Log.e("TAG", "SubjectSubscriptionManager add oldState.terminated:"+oldState.terminated);
             if (oldState.terminated) {
                 onTerminated.call(o);
                 return false;
@@ -145,6 +153,8 @@ import rx.subscriptions.Subscriptions;
      * @return the last active SubjectObservers
      */
     SubjectObserver<T>[] terminate(Object n) {
+        Log.e("TAG", "老哥，看这里啦------------------SubjectSubscriptionManager " +
+                "terminate------------------------------------------------------------:");
         //设置最近一个latest
         set(n);
         active = false;
@@ -233,7 +243,7 @@ import rx.subscriptions.Subscriptions;
         }
         @Override
         public void onNext(T t) {
-            Log.w("TAG","OnSubscribeRedo 1.9 最顶层 SubjectObserver onNext "+t+" actual="+actual);
+            Log.w("TAG",getOnSubscribeRedoTag()+" 1.9 最顶层 SubjectObserver onNext "+t+" actual="+actual);
             actual.onNext(t);
         }
         @Override

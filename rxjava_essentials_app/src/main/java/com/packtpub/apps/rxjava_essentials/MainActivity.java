@@ -11,7 +11,7 @@ import android.view.Menu;
 
 import com.packtpub.apps.rxjava_essentials.chapter4.DistinctExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleSampleTimeoutDebounceFragment;
-import com.packtpub.apps.rxjava_essentials.chapter4.TakeRepeatRangeDeferExampleFragment;
+import com.packtpub.apps.rxjava_essentials.chapter4.TakeExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.GroupByConcatExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.MapFlatMapCastSwitchMapFragment;
 import com.packtpub.apps.rxjava_essentials.chapter5.ScanExampleFragment;
@@ -25,14 +25,16 @@ import com.packtpub.apps.rxjava_essentials.chapter7.NetworkTaskFragment;
 import com.packtpub.apps.rxjava_essentials.chapter7.SharedPreferencesListFragment;
 import com.packtpub.apps.rxjava_essentials.chapter8.SoActivity;
 import com.packtpub.apps.rxjava_essentials.example1.CreateFragment;
+import com.packtpub.apps.rxjava_essentials.example1.EmptyNeverThrowFragment;
+import com.packtpub.apps.rxjava_essentials.example1.JustDeferTimerIntervalFragment;
+import com.packtpub.apps.rxjava_essentials.example1.SubjectFragment;
 import com.packtpub.apps.rxjava_essentials.example2.FromFragment;
-import com.packtpub.apps.rxjava_essentials.example3.JustTimerSubscribeOnRepeatExampleFragment;
+import com.packtpub.apps.rxjava_essentials.example3.SubscribtionExampleFragment;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerCallbacks;
 import com.packtpub.apps.rxjava_essentials.navigation_drawer.NavigationDrawerFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 
 public class MainActivity extends AppCompatActivity implements NavigationDrawerCallbacks {
 
@@ -53,18 +55,19 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
+                .findFragmentById(R.id.fragment_drawer);
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, mDrawerLayout, mToolbar);
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
         }
     }
 
@@ -80,91 +83,106 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         switch (position) {
             case 0:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new CreateFragment())
-                    .commit();
+                        .replace(R.id.container, new CreateFragment())
+                        .commit();
                 break;
             case 1:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new FromFragment())
-                    .commit();
+                        .replace(R.id.container, new FromFragment())
+                        .commit();
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new JustTimerSubscribeOnRepeatExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new SubscribtionExampleFragment())
+                        .commit();
                 break;
             case 3:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new FilterFirstSingleSampleTimeoutDebounceFragment())
-                    .commit();
+                        .replace(R.id.container,
+                                new FilterFirstSingleSampleTimeoutDebounceFragment())
+                        .commit();
                 break;
             case 4:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new TakeRepeatRangeDeferExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new TakeExampleFragment())
+                        .commit();
                 break;
             case 5:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new DistinctExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new DistinctExampleFragment())
+                        .commit();
                 break;
             case 6:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new MapFlatMapCastSwitchMapFragment())
-                    .commit();
+                        .replace(R.id.container, new MapFlatMapCastSwitchMapFragment())
+                        .commit();
                 break;
             case 7:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new ScanExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new ScanExampleFragment())
+                        .commit();
                 break;
             case 8:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new GroupByConcatExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new GroupByConcatExampleFragment())
+                        .commit();
                 break;
             case 9:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new MergeExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new MergeExampleFragment())
+                        .commit();
                 break;
             case 10:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new ZipBufferWindowExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new ZipBufferWindowExampleFragment())
+                        .commit();
                 break;
             case 11:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new JoinSwitchExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new JoinSwitchExampleFragment())
+                        .commit();
                 break;
             case 12:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new CombineLatestSwithStartWithExampleFragment())
-                    .commit();
+                        .replace(R.id.container, new CombineLatestSwithStartWithExampleFragment())
+                        .commit();
                 break;
             case 13:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new AndThenWhenRetrySubjectFragment())
-                    .commit();
+                        .replace(R.id.container, new AndThenWhenRetrySubjectFragment())
+                        .commit();
                 break;
             case 14:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new SharedPreferencesListFragment())
-                    .commit();
+                        .replace(R.id.container, new SharedPreferencesListFragment())
+                        .commit();
                 break;
             case 15:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new LongTaskFragment())
-                    .commit();
+                        .replace(R.id.container, new LongTaskFragment())
+                        .commit();
                 break;
             case 16:
                 fragmentManager.beginTransaction()
-                    .replace(R.id.container, new NetworkTaskFragment())
-                    .commit();
+                        .replace(R.id.container, new NetworkTaskFragment())
+                        .commit();
                 break;
             case 17:
                 startActivity(new Intent(this, SoActivity.class));
+                break;
+            case 18:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new SubjectFragment())
+                        .commit();
+                break;
+            case 19:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new EmptyNeverThrowFragment())
+                        .commit();
+                break;
+            case 20:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new JustDeferTimerIntervalFragment()).commit();
                 break;
         }
     }

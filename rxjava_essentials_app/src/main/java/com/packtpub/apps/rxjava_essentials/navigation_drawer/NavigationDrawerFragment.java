@@ -169,7 +169,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("JustTimer", getResources().getDrawable(R.drawable.ic_action_android)));
 
         items.add(new NavigationItem("FilterFirstSingle", getResources().getDrawable(R.drawable.ic_action_filter)));
-        items.add(new NavigationItem("Take and TakeLast RepeatRangeDefer", getResources().getDrawable(R.drawable.ic_action_filter)));
+        items.add(new NavigationItem("Take and TakeLast", getResources().getDrawable(R.drawable.ic_action_filter)));
         items.add(new NavigationItem("Distinct abd DistinctUntilChanged", getResources().getDrawable(R.drawable.ic_action_filter)));
 
         items.add(new NavigationItem("MapFlatMapCastSwitchMap", getResources().getDrawable(R.drawable.ic_action_wizard)));
@@ -187,7 +187,12 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem("Network task", getResources().getDrawable(R.drawable.ic_action_playback_schuffle)));
 
         items.add(new NavigationItem("Stack Overflow", getResources().getDrawable(R.drawable.ic_action_android)));
-
+        items.add(new NavigationItem("subject",
+                getResources().getDrawable(R.drawable.ic_action_android)));
+        items.add(new NavigationItem("empty_never_error",
+                getResources().getDrawable(R.drawable.ic_action_android)));
+        items.add(new NavigationItem("just_repeat_defer_interval",
+                getResources().getDrawable(R.drawable.ic_action_android)));
         return items;
     }
 
