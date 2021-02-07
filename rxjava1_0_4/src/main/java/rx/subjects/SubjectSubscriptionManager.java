@@ -243,7 +243,10 @@ import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoTag;
         }
         @Override
         public void onNext(T t) {
-            Log.w("TAG",getOnSubscribeRedoTag()+" 1.9 最顶层 SubjectObserver onNext "+t+" actual="+actual);
+            Log.w("TAG",
+                    getOnSubscribeRedoTag()+" 1.9 最顶层 SubjectObserver onNext 发送的数据 "+t+" " +
+                            "原来的Observer actual" +
+                            "="+actual);
             actual.onNext(t);
         }
         @Override

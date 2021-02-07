@@ -131,7 +131,9 @@ public final class PublishSubject<T> extends Subject<T, T> {
     @Override
     public void onNext(T v) {
         for (SubjectObserver<T> bo : state.observers()) {
-            Log.w("TAG", "PublishSubject 1.8 OnSubscribeRedo 启动重新订阅 onNext " + bo);
+            Log.i("TAG",
+                    getOnSubscribeRedoDebugTag()+"PublishSubject 1.8 OnSubscribeRedo 启动重新订阅 " +
+                            "onNext " + bo+" 发送的数据="+v);
             //bo：SubjectSubscriptionManager。SubjectObserver
             bo.onNext(v);
         }

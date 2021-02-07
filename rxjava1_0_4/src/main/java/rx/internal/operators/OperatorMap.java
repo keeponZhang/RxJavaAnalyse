@@ -23,6 +23,8 @@ import rx.exceptions.Exceptions;
 import rx.exceptions.OnErrorThrowable;
 import rx.functions.Func1;
 
+import static rx.internal.operators.OnSubscribeRedo.getOnSubscribeRedoTag;
+
 /**
  * Applies a function of your choosing to every item emitted by an {@code Observable}, and emits the results of
  * this transformation as a new {@code Observable}.
@@ -59,10 +61,10 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
                 try {
                     //接收到事件时，会用func1函数进行下转换
                     //把上层的T转换成R在发送给下层订阅者
-                    System.out.println("Observable------- OperatorMap  Subscriber onNext 前 ---------"+t);
+                    Log.i("TAG", getOnSubscribeRedoTag()+"OperatorMap onNext 调用 transformer" +
+                            ".call方法:");
                     R call = transformer.call(t);
                     o.onNext(call);
-                    System.out.println("------- OperatorMap  Subscriber onNext 后  ---------"+t+"  call="+call);
                 } catch (Throwable e) {
                     Exceptions.throwIfFatal(e);
                     onError(OnErrorThrowable.addValueAsLastCause(e, t));
