@@ -120,6 +120,7 @@ public abstract class Scheduler {
                     if (!mas.isUnsubscribed()) {
                         action.call();
                         long nextTick = startInNanos + (++count * periodInNanos);
+                        //算出下一次的延迟的时间，注意这里用的单位是纳秒
                         mas.set(schedule(this, nextTick - TimeUnit.MILLISECONDS.toNanos(now()), TimeUnit.NANOSECONDS));
                     }
                 }

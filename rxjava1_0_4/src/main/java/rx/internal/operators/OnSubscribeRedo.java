@@ -93,7 +93,7 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
 
                 @Override
                 public Notification<?> call(Notification<?> terminalNotification) {
-                    Log.e("TAG", getOnSubscribeRedoTag() + "  2--------- RedoFinite " +
+                    Log.e("TAG", getOnSubscribeRedoTag() + "  2--------- （是否触发重新订阅的关键）RedoFinite " +
                             "Func1 " +
                             "call------------》》》》》terminalNotification=" + terminalNotification +
                             " terminalNotification.getKind()=" + terminalNotification.getKind());
@@ -102,7 +102,8 @@ public final class OnSubscribeRedo<T> implements OnSubscribe<T> {
                     }
 
                     num++;
-                    //terminalNotification.getKind OnError,下面是否重试会通过判断terminalNotification.getKind 来判断
+                    //terminalNotification.getKind OnError,下面是否重试会通过判断terminalNotification
+                    // .getKind 来判断，num表示第几次,这里才是判断是否已经重复了几次
                     if (num <= count) {
                         return Notification.createOnNext(num);
                     } else {

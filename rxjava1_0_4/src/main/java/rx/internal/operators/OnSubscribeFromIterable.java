@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,8 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
 
         private volatile long requested = 0;
         @SuppressWarnings("rawtypes")
-        private static final AtomicLongFieldUpdater<IterableProducer> REQUESTED_UPDATER = AtomicLongFieldUpdater.newUpdater(IterableProducer.class, "requested");
+        private static final AtomicLongFieldUpdater<IterableProducer> REQUESTED_UPDATER =
+                AtomicLongFieldUpdater.newUpdater(IterableProducer.class, "requested");
 
         private IterableProducer(Subscriber<? super T> o, Iterator<? extends T> it) {
             this.o = o;
@@ -70,25 +71,29 @@ public final class OnSubscribeFromIterable<T> implements OnSubscribe<T> {
         public void request(long n) {
 
             if (REQUESTED_UPDATER.get(this) == Long.MAX_VALUE) {
-                //已经在发射数据了，这里注解返回
+                //已经在发射数据了，这里直接返回
+                Log.e("TAG", "IterableProducer request 已经在发射数据了，这里直接返回:");
                 // already started with fast-path
                 return;
             }
             if (n == Long.MAX_VALUE) {
-                Log.e("TAG", "IterableProducer request Long.MAX_VALUE:");
+                Log.e("TAG", "IterableProducer数据 request Long.MAX_VALUE:" + it + "  n=" + n);
                 REQUESTED_UPDATER.set(this, n);
                 // fast-path without backpressure
                 while (it.hasNext()) {
                     if (o.isUnsubscribed()) {
                         return;
                     }
-                    o.onNext(it.next());
+                    T next = it.next();
+                    Log.d("TAG", "IterableProducer发送给的数据 request:" + next);
+                    o.onNext(next);
                 }
+                //没数据也会发送complete数据
                 if (!o.isUnsubscribed()) {
                     o.onCompleted();
                 }
-            } else if(n > 0) {
-                Log.e("TAG", "IterableProducer request n:"+n);
+            } else if (n > 0) {
+                Log.e("TAG", "数据IterableProducer request n:" + n);
                 // backpressure is requested
                 long _c = REQUESTED_UPDATER.getAndAdd(this, n);
                 if (_c == 0) {

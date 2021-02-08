@@ -4,11 +4,15 @@
              android:layout_height="match_parent"
               android:orientation="vertical"
              tools:context="com.packtpub.apps.rxjava_essentials.example1.CreateFragment">
-
+    <Button
+        android:id="@+id/take"
+        android:textAllCaps="false"
+        android:text="take"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/takeLast"
         android:textAllCaps="false"
-        android:onClick="takeLast"
         android:text="takeLast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -16,6 +16,8 @@
 package rx.internal.operators;
 
 
+import android.util.Log;
+
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
@@ -65,11 +67,13 @@ final class TakeLastQueueProducer<T> implements Producer {
     }
 
     void emit(long previousRequested) {
+        Log.e("TAG", "TakeLastQueueProducer emit:");
         if (requested == Long.MAX_VALUE) {
             // fast-path without backpressure
             if (previousRequested == 0) {
                 try {
                     for (Object value : deque) {
+                        Log.e("TAG", "数据TakeLastQueueProducer emit value:"+value);
                         notification.accept(subscriber, value);
                     }
                 } catch (Throwable e) {
@@ -89,14 +93,18 @@ final class TakeLastQueueProducer<T> implements Producer {
                          * during the loop itself. If it is touched during the loop the performance is impacted significantly.
                          */
                     long numToEmit = requested;
+                    Log.e("TAG", "TakeLastQueueProducer emit requested:"+requested);
                     int emitted = 0;
                     Object o;
+                    //poll跟remvoe一样，但是不会抛异常
                     while (--numToEmit >= 0 && (o = deque.poll()) != null) {
                         if (subscriber.isUnsubscribed()) {
                             return;
                         }
                         //notification会调用subscriber.onNext
-                        if (notification.accept(subscriber, o)) {
+                        boolean accept = notification.accept(subscriber, o);
+                        Log.d("TAG", "TakeLastQueueProducer emit accept:"+accept);
+                        if (accept) {
                             // terminal event
                             return;
                         } else {
@@ -106,6 +114,8 @@ final class TakeLastQueueProducer<T> implements Producer {
                     for (; ; ) {
                         long oldRequested = requested;
                         long newRequested = oldRequested - emitted;
+                        Log.e("TAG", "TakeLastQueueProducer emit requested:"+requested+"  emitted" +
+                                "="+emitted+"  newRequested="+newRequested);
                         if (oldRequested == Long.MAX_VALUE) {
                             // became unbounded during the loop
                             // continue the outer loop to emit the rest events.

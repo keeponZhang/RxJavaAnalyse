@@ -102,35 +102,16 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         mRecyclerView.setVisibility(View.GONE);
 
-        mApps = ApplicationsList.getInstance().getList().subList(0, 3);
+        List<AppInfo> list = ApplicationsList.getInstance().getList();
+        if (mApps == null) {
+            mApps = new ArrayList<>();
+        }
+        mApps.addAll(list);
 
-        loadList(mApps);
     }
 
     private void loadList(List<AppInfo> apps) {
-        mRecyclerView.setVisibility(View.VISIBLE);
 
-        Observable.from(apps)
-                .filter((appInfo) -> appInfo.getName().contains("C"))
-                .subscribe(new Observer<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
-                                .show();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onNext(AppInfo appInfo) {
-                        mAddedApps.add(appInfo);
-                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-                    }
-                });
     }
 
     @Override
@@ -167,16 +148,61 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 });
     }
 
-    //获取第一个符合条件的
-    private void firstFun() {
+    @OnClick({R.id.filter, R.id.first, R.id.last, R.id.firstFun, R.id.skip, R.id.skiplast,
+            R.id.single,
+            R.id.elementAt,
+            R.id.sample,
+            R.id.debounce,
+            R.id.timeout, R.id.throttleFirst, R.id.unsubscribe})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.first:
+                first();
+                break;
+            case R.id.firstFun:
+                firstFun();
+                break;
+            case R.id.last:
+                last();
+                break;
+            case R.id.skip:
+                skip();
+                break;
+            case R.id.skiplast:
+                skipLast();
+                break;
+            case R.id.elementAt:
+                elementAt();
+                break;
+            case R.id.sample:
+                sample();
+                break;
+            case R.id.throttleFirst:
+                throttleFirst();
+                break;
+            case R.id.timeout:
+                timeout();
+                break;
+            case R.id.single:
+                single();
+                break;
+            case R.id.debounce:
+                debounce();
+                break;
+
+            case R.id.unsubscribe:
+                unsubscribe();
+                break;
+            case R.id.filter:
+                filter();
+                break;
+        }
+    }
+
+    private void filter() {
+        mRecyclerView.setVisibility(View.VISIBLE);
         Observable.from(mApps)
-                //first(Func1),会取符合条件的第一个
-                .first(new Func1<AppInfo, Boolean>() {
-                    @Override
-                    public Boolean call(AppInfo appInfo) {
-                        return false;
-                    }
-                })
+                .filter((appInfo) -> appInfo.getName().contains("C"))
                 .subscribe(new Observer<AppInfo>() {
                     @Override
                     public void onCompleted() {
@@ -185,8 +211,6 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment onError:" +
-                                e.getMessage());
                         Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
                                 .show();
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -195,7 +219,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                     @Override
                     public void onNext(AppInfo appInfo) {
                         Log.e("TAG",
-                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                                "FilterFirstSingleSampleTimeoutDebounceFragment onNext:" +
+                                        appInfo.getName());
                         mAddedApps.add(appInfo);
                         mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
                     }
@@ -232,51 +257,255 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 });
     }
 
-    @OnClick({R.id.first, R.id.firstFun, R.id.single, R.id.elementAt, R.id.sample, R.id.debounce,
-            R.id.timeout, R.id.throttleFirst, R.id.unsubscribe})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.first:
-                first();
-                break;
-            case R.id.firstFun:
-                firstFun();
-                break;
-            case R.id.single:
-                single();
-                break;
-            case R.id.elementAt:
-                elementAt();
-                break;
-            case R.id.throttleFirst:
-                throttleFirst();
-                break;
-            case R.id.sample:
-                sample();
-                break;
-            case R.id.debounce:
-                debounce();
-                break;
-            case R.id.timeout:
-                timeout();
-                break;
-            case R.id.unsubscribe:
-                unsubscribe();
-                break;
-        }
+    //获取第一个符合条件的
+    private void firstFun() {
+        Observable.from(mApps)
+                //first(Func1),会取符合条件的第一个
+                //first:takeFirst(predicate).single()==filter(predicate).take(1).single()
+                .first(new Func1<AppInfo, Boolean>() {
+                    @Override
+                    public Boolean call(AppInfo appInfo) {
+                        return false;
+                    }
+                })
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment onError:" +
+                                e.getMessage());
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG",
+                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
     }
 
-    //开启定时任务，超时了发送onError
-    private void timeout() {
+    // takelast队列数量达到，直接扔掉，然后在代理subcriber onComplete发送队列的数据
+    private void last() {
+        Observable.from(mApps)
+                // last():takeLast(1).single()
+                .last()
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG",
+                                "TakeRepeatRangeDeferExampleFragment onNext:" + appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+
+    //skip(3)指定跳过数量后，才真正发送数据
+    //skipLast(3) 先入队列，队列的数量等于要跳过的数量时，还有数据发送过来，把队列的第一个发送出去
+    private void skip() {
+        Observable.from(mApps)
+                //跟take,takeLast相对应
+                .skip(3)
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment skip onNext:" +
+                                appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+
+    private void skipLast() {
+        Observable.from(mApps)
+                //跟take,takeLast相对应
+                .skipLast(2)
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment skip onNext:" +
+                                appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+
+    //到了指定索引才发送数据，接着发送onCompleted
+    private void elementAt() {
+        Observable.from(mApps)
+                .elementAt(3)
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment  elementAt onNext:" +
+                                        appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+
+    //sample是采样，时间到了，没有取消订阅，会发送最后一个（如果这段时间内被观察者没发送数据，观察者就不会收到数据）
+    private void sample() {
+        count = 0;
         Observable.create(new Observable.OnSubscribe<AppInfo>() {
 
             @Override
             public void call(Subscriber<? super AppInfo> subscriber) {
-                SystemClock.sleep(2000);
                 for (int i = 0; i < mApps.size(); i++) {
-                    if (i == 2) {
+                    Log.w("TAG",
+                            "FilterFirstSingleSampleTimeoutDebounceFragment  sample call onNext:" +
+                                    mApps.get(i));
+                    subscriber.onNext(mApps.get(i));
+                    if (i == 3) {
+                        SystemClock.sleep(1500);
+                    } else {
+                        SystemClock.sleep(400);
+                    }
+                }
+                //没有onComplete，不会停止
+//				subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                //sample是采样，如果这个时间段内没发送，不会发送最后一个
+                .sample(2, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment sample onNext:" +
+                                        appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+    //第一个数据会发送，时间到了，会发送接下来接收到的最近的数据，如果这时没数据，就不发送
+    private void throttleFirst() {
+        count = 0;
+        Observable.create(new Observable.OnSubscribe<AppInfo>() {
+
+            @Override
+            public void call(Subscriber<? super AppInfo> subscriber) {
+                for (int i = 0; i < mApps.size(); i++) {
+                    Log.d("TAG",
+                            "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst call onNext:" +
+                                    mApps.get(i));
+                    subscriber.onNext(mApps.get(i));
+                }
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG",
+                                "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst onNext 收到:" +
+                                        appInfo.getName() + " " + System.currentTimeMillis());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+    //开启定时任务，超时了发送onError
+    private void timeout() {
+        Observable.create(new Observable.OnSubscribe<AppInfo>() {
+            @Override
+            public void call(Subscriber<? super AppInfo> subscriber) {
+                // SystemClock.sleep(2000);
+                for (int i = 0; i < mApps.size(); i++) {
+                    if (i == 5) {
                         SystemClock.sleep(2000);
                         break;
+                    }else{
+                        SystemClock.sleep(1000);
                     }
                     Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call 发射:" +
                             mApps.get(i));
@@ -406,154 +635,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
     };
     private Subscriber<? super AppInfo> mSampleSubscriber;
 
-    //sample是采样，时间到了，没有取消订阅，会发送最后一个（如果这段时间内被观察者没发送数据，观察者就不会收到数据）
-    private void sample() {
-        count = 0;
-        Observable.create(new Observable.OnSubscribe<AppInfo>() {
 
-            @Override
-            public void call(Subscriber<? super AppInfo> subscriber) {
-                for (int i = 0; i < mApps.size(); i++) {
-                    Log.w("TAG",
-                            "FilterFirstSingleSampleTimeoutDebounceFragment  sample call onNext:" +
-                                    mApps.get(i));
-                    subscriber.onNext(mApps.get(i));
-                    if (i == 3) {
-                        SystemClock.sleep(1000);
-                    }
-                }
-//				subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-                //sample是采样，如果这个时间段内没法送，不会发送最后一个
-                .sample(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
-                                .show();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
 
-                    @Override
-                    public void onNext(AppInfo appInfo) {
-                        Log.e("TAG",
-                                "FilterFirstSingleSampleTimeoutDebounceFragment sample onNext:" +
-                                        appInfo.getName());
-                        mAddedApps.add(appInfo);
-                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-                    }
-                });
-    }
-
-    //第一个数据会发送，时间到了，会发送接下来接收到的最近的数据，如果这时没数据，就不发送
-    private void throttleFirst() {
-        count = 0;
-        Observable.create(new Observable.OnSubscribe<AppInfo>() {
-
-            @Override
-            public void call(Subscriber<? super AppInfo> subscriber) {
-                for (int i = 0; i < mApps.size(); i++) {
-                    Log.d("TAG",
-                            "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst call onNext:" +
-                                    mApps.get(i));
-                    subscriber.onNext(mApps.get(i));
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-                .throttleFirst(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something onError!", Toast.LENGTH_SHORT)
-                                .show();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onNext(AppInfo appInfo) {
-                        Log.e("TAG",
-                                "FilterFirstSingleSampleTimeoutDebounceFragment  throttleFirst onNext 收到:" +
-                                        appInfo.getName() + " " + System.currentTimeMillis());
-                        mAddedApps.add(appInfo);
-                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-                    }
-                });
-    }
-
-    //到了指定索引才发送数据，接着发送onCompleted
-    private void elementAt() {
-        Observable.from(mApps)
-                .elementAt(3)
-                .subscribe(new Observer<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
-                                .show();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onNext(AppInfo appInfo) {
-                        Log.e("TAG",
-                                "FilterFirstSingleSampleTimeoutDebounceFragment  elementAt onNext:" +
-                                        appInfo.getName());
-                        mAddedApps.add(appInfo);
-                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-                    }
-                });
-    }
-
-    @OnClick(R.id.skip)
-    public void onViewClicked() {
-        skip();
-    }
-
-    //skip(3)指定跳过数量后，才真正发送数据
-    //skipLast(3) 先入队列，队列的数量等于要跳过的数量时，还有数据发送过来，把队列的第一个发送出去
-    private void skip() {
-        Observable.from(mApps)
-                //跟take,takeLast相对应
-//				.skip(3)
-                .skipLast(2)
-                .subscribe(new Observer<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
-                                .show();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onNext(AppInfo appInfo) {
-                        Log.e("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment skip onNext:" +
-                                appInfo.getName());
-                        mAddedApps.add(appInfo);
-                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-                    }
-                });
-    }
 }

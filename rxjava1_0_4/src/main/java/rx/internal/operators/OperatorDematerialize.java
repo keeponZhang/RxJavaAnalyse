@@ -43,7 +43,7 @@ public final class OperatorDematerialize<T> implements Operator<T, Notification<
             boolean terminated;
             @Override
             public void onNext(Notification<T> t) {
-                //这里的child是OnSubscribeRedo workerSubscriber
+                //这里的child是OnSubscribeRedo workerSubscriber,onNext才可能触发重订阅
                 Log.e("TAG",getOnSubscribeRedoTag()+" OperatorDematerialize  2.2 OnSubscribeRedo onNext Notification<T> ="+t+" child=="+child+ " t.getKind()="+t.getKind());
                 switch (t.getKind()) {
                 case OnNext:

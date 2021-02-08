@@ -15,6 +15,8 @@
  */
 package rx.schedulers;
 
+import android.util.Log;
+
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -80,6 +82,7 @@ import rx.subscriptions.Subscriptions;
 
         @Override
         public void unsubscribe() {
+            Log.e("TAG", "EventLoopWorker unsubscribe innerSubscription:"+innerSubscription);
             innerSubscription.unsubscribe();
         }
 

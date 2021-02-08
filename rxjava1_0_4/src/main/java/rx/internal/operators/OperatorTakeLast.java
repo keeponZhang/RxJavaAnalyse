@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -55,6 +57,7 @@ public final class OperatorTakeLast<T> implements Operator<T, T> {
 
             @Override
             public void onCompleted() {
+                Log.e("TAG", "OperatorTakeLast  onCompleted:");
                 deque.offer(notification.completed());
                 //真正发射在这里，TakeLastQueueProducer也持有真正的subscriber
                 producer.startEmitting();
@@ -68,7 +71,7 @@ public final class OperatorTakeLast<T> implements Operator<T, T> {
 
             @Override
             public void onNext(T value) {
-                System.out.println("OperatorTakeLast onNext"+value+"  "+System.currentTimeMillis());
+                Log.w("TAG", "OperatorTakeLast收到的数据 onNext"+value+"  "+System.currentTimeMillis());
                 if (count == 0) {
                     // If count == 0, we do not need to put value into deque and
                     // remove it at once. We can ignore the value directly.

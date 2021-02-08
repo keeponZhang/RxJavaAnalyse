@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 import rx.Observable.Operator;
@@ -42,8 +44,10 @@ public final class OperatorDistinct<T, U> implements Operator<T, T> {
 
             @Override
             public void onNext(T t) {
+                Log.i("TAG", "OperatorDistinct onNext 变换前:"+t);
                 //有传fun，增加一个装换功能
                 U key = keySelector.call(t);
+                Log.i("TAG", "OperatorDistinct onNext key变换后:"+key);
                 boolean add = keyMemory.add(key);
                System.out.println("OperatorDistinct onNext key:"+key+"  add="+add);
                 if (add) {

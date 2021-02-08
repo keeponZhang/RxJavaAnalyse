@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,8 +15,11 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+
 import rx.Observable.Operator;
 import rx.Scheduler;
 import rx.Scheduler.Worker;
@@ -29,7 +32,7 @@ import rx.observers.SerializedSubscriber;
  * Observable at a specified time interval.
  * <p>
  * <img width="640" src="https://github.com/ReactiveX/RxJava/wiki/images/rx-operators/sample.png" alt="">
- * 
+ *
  * @param <T> the value type
  */
 public final class OperatorSampleWithTime<T> implements Operator<T, T> {
@@ -48,13 +51,14 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
         final SerializedSubscriber<T> s = new SerializedSubscriber<T>(child);
         final Worker worker = scheduler.createWorker();
         child.add(worker);
-        
+
         SamplerSubscriber<T> sampler = new SamplerSubscriber<T>(s);
         child.add(sampler);
         worker.schedulePeriodically(sampler, time, time, unit);
 
         return sampler;
     }
+
     /**
      * The source subscriber and sampler.
      */
@@ -67,19 +71,21 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
         /** Updater for the value field. */
         @SuppressWarnings("rawtypes")
         static final AtomicReferenceFieldUpdater<SamplerSubscriber, Object> VALUE_UPDATER
-                = AtomicReferenceFieldUpdater.newUpdater(SamplerSubscriber.class, Object.class, "value");
+                = AtomicReferenceFieldUpdater
+                .newUpdater(SamplerSubscriber.class, Object.class, "value");
+
         public SamplerSubscriber(Subscriber<? super T> subscriber) {
             this.subscriber = subscriber;
         }
-        
+
         @Override
         public void onStart() {
             request(Long.MAX_VALUE);
         }
-        
+
         @Override
         public void onNext(T t) {
-            System.out.println("OperatorSampleWithTime SamplerSubscriber   onNext "+t);
+            Log.e("TAG", "OperatorSampleWithTime SamplerSubscriber   onNext收到数据 " + t);
             value = t;
         }
 
@@ -98,22 +104,25 @@ public final class OperatorSampleWithTime<T> implements Operator<T, T> {
         //这个会定时回调,直到unsubscribe
         @Override
         public void call() {
-            //这里拿的其实就是value,并设置为EMPTY_TOKEN，一段时间内没新的数据去更新value，再次拿会等于EMPTY_TOKEN
+            //这里拿的其实就是value,并设置为EMPTY_TOKEN，一段时间内没新的数据去更新value，再次拿会等于EMPTY_TOKEN，除非又调用了onNext更新
             Object localValue = VALUE_UPDATER.getAndSet(this, EMPTY_TOKEN);
 //            value = "keepon";
 //            Object localValue2 = VALUE_UPDATER.getAndSet(this, EMPTY_TOKEN);
-            System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call localValue "+localValue+" time="+System.currentTimeMillis()+" -------------");
+            System.out.println(
+                    "----------OperatorSampleWithTime SamplerSubscriber   call localValue " +
+                            localValue + " time=" + System.currentTimeMillis() + " -------------");
 //            System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call localValue2 "+localValue2+" time="+System.currentTimeMillis()+" -------------");
             if (localValue != EMPTY_TOKEN) {
                 try {
                     @SuppressWarnings("unchecked")
-                    T v = (T)localValue;
+                    T v = (T) localValue;
                     subscriber.onNext(v);
                 } catch (Throwable e) {
                     onError(e);
                 }
-            }else{
-                System.out.println("----------OperatorSampleWithTime SamplerSubscriber   call 不发送-------------");
+            } else {
+                System.out.println(
+                        "----------OperatorSampleWithTime SamplerSubscriber   call 不发送-------------");
 
             }
         }

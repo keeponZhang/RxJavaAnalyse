@@ -34,163 +34,170 @@ import rx.functions.Func1;
 
 public class DistinctExampleFragment extends Fragment {
 
-	@BindView(R.id.fragment_first_example_list)
-	RecyclerView mRecyclerView;
+    @BindView(R.id.fragment_first_example_list)
+    RecyclerView mRecyclerView;
 
-	@BindView(R.id.fragment_first_example_swipe_container)
-	SwipeRefreshLayout mSwipeRefreshLayout;
-	@BindView(R.id.distinct)
-	Button             mDistinct;
-	@BindView(R.id.distinctFun)
-	Button             mDistinctFun;
-	@BindView(R.id.distinctUntilChanged)
-	Button             mDistinctUntilChanged;
-	@BindView(R.id.distinctUntilChangedfun)
-	Button             mDistinctUntilChangedfun;
-	Unbinder unbinder;
+    @BindView(R.id.fragment_first_example_swipe_container)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.distinct)
+    Button mDistinct;
+    @BindView(R.id.distinctFun)
+    Button mDistinctFun;
+    @BindView(R.id.distinctUntilChanged)
+    Button mDistinctUntilChanged;
+    @BindView(R.id.distinctUntilChangedfun)
+    Button mDistinctUntilChangedfun;
+    Unbinder unbinder;
 
-	private ApplicationAdapter mAdapter;
+    private ApplicationAdapter mAdapter;
 
-	private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
-	private List<AppInfo> mApps;
+    private ArrayList<AppInfo> mAddedApps = new ArrayList<>();
+    private List<AppInfo> mApps;
 
-	public DistinctExampleFragment() {
-	}
+    public DistinctExampleFragment() {
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_example_distinct, container, false);
-		unbinder = ButterKnife.bind(this, view);
-		return view;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_example_distinct, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		ButterKnife.bind(this, view);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
 
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-		mAdapter = new ApplicationAdapter(new ArrayList<>(), R.layout.applications_list_item);
-		mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new ApplicationAdapter(new ArrayList<>(), R.layout.applications_list_item);
+        mRecyclerView.setAdapter(mAdapter);
 
-		mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
-		mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
-		// Progress
-		distinct();
-	}
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
+        mSwipeRefreshLayout.setProgressViewOffset(false, 0,
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics()));
+        // Progress
+        distinct();
+    }
 
-	private void distinct() {
-		mSwipeRefreshLayout.setEnabled(false);
-		mSwipeRefreshLayout.setRefreshing(true);
-		mRecyclerView.setVisibility(View.GONE);
-		mApps = ApplicationsList.getInstance().getList();
-		loadList(mApps);
-	}
+    private void distinct() {
+        mSwipeRefreshLayout.setEnabled(false);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mRecyclerView.setVisibility(View.GONE);
+        mApps = ApplicationsList.getInstance().getList();
+        loadList(mApps);
+    }
 
-	private void loadList(List<AppInfo> apps) {
-		mRecyclerView.setVisibility(View.VISIBLE);
-		Observable<AppInfo> fullOfDuplicates = Observable.from(apps)
-				.take(3)
-				.repeat(3);
-		//distinct过滤重复的(distinct实现很简单，用HashSet去重)
-		fullOfDuplicates.distinct()
-				.subscribe(new Observer<AppInfo>() {
-					@Override
-					public void onCompleted() {
-						Log.e("TAG", "DistinctExampleFragment onCompleted:");
-						mSwipeRefreshLayout.setRefreshing(false);
-					}
+    private void loadList(List<AppInfo> apps) {
+        mRecyclerView.setVisibility(View.VISIBLE);
+        Observable<AppInfo> fullOfDuplicates = Observable.from(apps)
+                .take(3)
+                .repeat(3);
+        //distinct过滤重复的(distinct实现很简单，用HashSet去重)
+        fullOfDuplicates.distinct()
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.e("TAG", "DistinctExampleFragment onCompleted:");
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
 
-					@Override
-					public void onError(Throwable e) {
-						Log.e("TAG", "DistinctExampleFragment onError:");
-						Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
-						mSwipeRefreshLayout.setRefreshing(false);
-					}
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG", "DistinctExampleFragment onError:");
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
 
-					@Override
-					public void onNext(AppInfo appInfo) {
-						Log.e("TAG", "DistinctExampleFragment onNext:" + appInfo.getName());
-						mAddedApps.add(appInfo);
-						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-					}
-				});
-	}
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG", "DistinctExampleFragment onNext:" + appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		unbinder.unbind();
-	}
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
-	@OnClick({R.id.distinct, R.id.distinctFun, R.id.distinctUntilChanged, R.id.distinctUntilChangedfun})
-	public void onViewClicked(View view) {
-		switch (view.getId()) {
-			case R.id.distinct:
-				distinct();
-				break;
-			case R.id.distinctFun:
-				distinctFun();
-				break;
-			case R.id.distinctUntilChanged:
-				distinctUntilChanged();
-				break;
-			case R.id.distinctUntilChangedfun:
-				distinctUntilChangedfun();
-				break;
-		}
-	}
+    @OnClick({R.id.distinct, R.id.distinctFun, R.id.distinctUntilChanged,
+            R.id.distinctUntilChangedfun})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.distinct:
+                distinct();
+                break;
+            case R.id.distinctFun:
+                distinctFun();
+                break;
+            case R.id.distinctUntilChanged:
+                distinctUntilChanged();
+                break;
+            case R.id.distinctUntilChangedfun:
+                distinctUntilChangedfun();
+                break;
+        }
+    }
 
-	private void distinctUntilChangedfun() {
+    private void distinctUntilChangedfun() {
 
-	}
-	int index = 0;
-	private void distinctFun() {
-		index = 0;
-		Observable<AppInfo> fullOfDuplicates = Observable.from(mApps)
-				.take(1)
-				.repeat(2);
-		//distinct过滤重复的
-		fullOfDuplicates.distinct(new Func1<AppInfo, AppInfo>() {
-			@Override
-			public AppInfo call(AppInfo appInfo) {
-				appInfo.setName(appInfo.getName()+":change"+index);
-				index++;
-				return appInfo;
-			}
-		})
-				.subscribe(new Observer<AppInfo>() {
-					@Override
-					public void onCompleted() {
-						Log.e("TAG", "DistinctExampleFragment onCompleted:");
-						mSwipeRefreshLayout.setRefreshing(false);
-					}
+    }
 
-					@Override
-					public void onError(Throwable e) {
-						Log.e("TAG", "DistinctExampleFragment onError:");
-						Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
-						mSwipeRefreshLayout.setRefreshing(false);
-					}
+    int index = 0;
 
-					@Override
-					public void onNext(AppInfo appInfo) {
-						Log.e("TAG", "DistinctExampleFragment onNext:" + appInfo.getName());
-						mAddedApps.add(appInfo);
-						mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-					}
-				});
-	}
+    private void distinctFun() {
+        index = 0;
+        Observable<AppInfo> fullOfDuplicates = Observable.from(mApps).take(1)
+                .repeat(2);
+        //distinct过滤重复的
+        fullOfDuplicates.distinct(new Func1<AppInfo, AppInfo>() {
+            @Override
+            public AppInfo call(AppInfo appInfo) {
+                Log.e("TAG", "DistinctExampleFragment call appInfo:" + appInfo);
+                appInfo.setName(appInfo.getName() + ":change" + index);
+                index++;
+                return appInfo;
+            }
+        })
+                .subscribe(new Observer<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.e("TAG", "DistinctExampleFragment onCompleted:");
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
 
-	///实现很简单，记录上次发送的key，跟要发送的key对比，不同的话才发送
-	private void distinctUntilChanged() {
-				//去重，连续的，后面跟前面一样的
-			 Observable.interval(1, TimeUnit.SECONDS)
-					.map(new Func1<Long, AppInfo>() {
-						@Override
-						public AppInfo call(Long aLong) {
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG", "DistinctExampleFragment onError:");
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(AppInfo appInfo) {
+                        Log.e("TAG", "DistinctExampleFragment onNext:" + appInfo.getName());
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
+
+    ///实现很简单，记录上次发送的key，跟要发送的key对比，不同的话才发送
+    private void distinctUntilChanged() {
+        //去重，连续的，后面跟前面一样的
+        Observable.interval(1, TimeUnit.SECONDS)
+                .map(new Func1<Long, AppInfo>() {
+                    @Override
+                    public AppInfo call(Long aLong) {
 
 //							if (aLong.intValue() == mAddedApps.size() - 1) {
 //								if (!mDistinctInterval.isUnsubscribed()) {
@@ -198,23 +205,24 @@ public class DistinctExampleFragment extends Fragment {
 //								}
 //							}
 
-							if (aLong.intValue() % 3 == 0) {
-								Log.e("TAG", "DistinctExampleFragment call:"+mApps.get(aLong.intValue()).getName());
-								return mApps.get(aLong.intValue());
-							}
-							Log.e("TAG", "DistinctExampleFragment call:"+mApps.get(3).getName());
+                        if (aLong.intValue() % 3 == 0) {
+                            Log.e("TAG", "DistinctExampleFragment call:" +
+                                    mApps.get(aLong.intValue()).getName());
+                            return mApps.get(aLong.intValue());
+                        }
+                        Log.e("TAG", "DistinctExampleFragment call:" + mApps.get(3).getName());
 
-							return mApps.get(3);
-						}
-					})
-					.distinctUntilChanged()
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(new Action1<AppInfo>() {
-						@Override
-						public void call(AppInfo appInfo) {
-							mAddedApps.add(appInfo);
-							mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
-						}
-					});
-		}
+                        return mApps.get(3);
+                    }
+                })
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<AppInfo>() {
+                    @Override
+                    public void call(AppInfo appInfo) {
+                        mAddedApps.add(appInfo);
+                        mAdapter.addApplication(mAddedApps.size() - 1, appInfo);
+                    }
+                });
+    }
 }

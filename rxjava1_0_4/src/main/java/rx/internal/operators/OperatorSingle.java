@@ -72,6 +72,7 @@ public final class OperatorSingle<T> implements Operator<T, T> {
                 if (hasTooManyElements) {
                     // We have already sent an onError message
                 } else {
+                    //single没发送数据的时候会报错
                     if (isNonEmpty) {
                         subscriber.onNext(value);
                         subscriber.onCompleted();

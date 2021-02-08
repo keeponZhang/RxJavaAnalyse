@@ -20,6 +20,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/last"
+        android:textAllCaps="false"
+        android:text="last"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/skip"
+        android:textAllCaps="false"
+        android:text="skip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/skiplast"
+        android:textAllCaps="false"
+        android:text="skiplast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/single"
         android:textAllCaps="false"
         android:onClick="single"
@@ -48,13 +66,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/debounce"
-        android:textAllCaps="false"
-        android:onClick="debounce"
-        android:text="debounce"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
         android:id="@+id/timeout"
         android:textAllCaps="false"
         android:onClick="timeout"
@@ -62,17 +73,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/skip"
+        android:id="@+id/debounce"
         android:textAllCaps="false"
-        android:onClick="skip"
-        android:text="skip"
+        android:onClick="debounce"
+        android:text="debounce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+
     <Button
         android:id="@+id/unsubscribe"
         android:textAllCaps="false"
         android:onClick="unsubscribe"
         android:text="unsubscribe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/filter"
+        android:textAllCaps="false"
+        android:onClick="filter"
+        android:text="filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <android.support.v4.widget.SwipeRefreshLayout
