@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -45,6 +45,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         final SerialSubscription current = new SerialSubscription();
         child.add(current);
         ConcatSubscriber<T> cs = new ConcatSubscriber<T>(s, current);
+        //这里设置了producer
         ConcatProducer<T> cp = new ConcatProducer<T>(cs);
         child.setProducer(cp);
         return cs;
@@ -60,6 +61,10 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         @Override
         public void request(long n) {
             cs.requestFromChild(n);
+            Log.w("TAG",
+                    "<<看这里 ConcatProducer request  cs.requestFromChild(n):" + n + "  (n==Math" +
+                            ".max)=" +
+                            (n == Long.MAX_VALUE));
         }
 
     }
@@ -74,12 +79,14 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         volatile int wip;
         @SuppressWarnings("rawtypes")
-        static final AtomicIntegerFieldUpdater<ConcatSubscriber> WIP_UPDATER = AtomicIntegerFieldUpdater.newUpdater(ConcatSubscriber.class, "wip");
+        static final AtomicIntegerFieldUpdater<ConcatSubscriber> WIP_UPDATER =
+                AtomicIntegerFieldUpdater.newUpdater(ConcatSubscriber.class, "wip");
 
         // accessed by REQUESTED_UPDATER
         private volatile long requested;
         @SuppressWarnings("rawtypes")
-        private static final AtomicLongFieldUpdater<ConcatSubscriber> REQUESTED_UPDATER = AtomicLongFieldUpdater.newUpdater(ConcatSubscriber.class, "requested");
+        private static final AtomicLongFieldUpdater<ConcatSubscriber> REQUESTED_UPDATER =
+                AtomicLongFieldUpdater.newUpdater(ConcatSubscriber.class, "requested");
 
         public ConcatSubscriber(Subscriber<T> s, SerialSubscription current) {
             super(s);
@@ -98,16 +105,20 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         public void onStart() {
             // no need for more than 1 at a time since we concat 1 at a time, so we'll request 2 to start ...
             // 1 to be subscribed to, 1 in the queue, then we'll keep requesting 1 at a time after that
-            //把这里改成1，后面 request(1)注释掉不行
+            //把这里改成1，后面 request(1)注释掉不行,这里只是给requested赋值
             request(2);
-            Log.e("TAG", "OperatorConcat ConcatSubscriber onStart   request(2) ------------------:");
+            Log.e("TAG",
+                    "OperatorConcat ConcatSubscriber onStart   request(2) ------------------:");
         }
 
+        //订阅的时候就会设置为Long.MAX_VALUE
         private void requestFromChild(long n) {
             // we track 'requested' so we know whether we should subscribe the next or not
             long andAdd = REQUESTED_UPDATER.getAndAdd(this, n);
-            Log.e("TAG", "OperatorConcat ConcatSubscriber requestFromChild andAdd:"+andAdd+"  wip="+wip);
-            if ( andAdd == 0) {
+            Log.e("TAG",
+                    "OperatorConcat ConcatSubscriber requestFromChild andAdd:" + andAdd + "  wip=" +
+                            wip+" currentSubscriber="+currentSubscriber);
+            if (andAdd == 0) {
                 if (currentSubscriber == null && wip > 0) {
                     // this means we may be moving from one subscriber to another after having stopped processing
                     // so need to kick off the subscribe via this request notification
@@ -115,8 +126,8 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
                     // return here as we don't want to do the requestMore logic below (which would double request)
                     return;
                 }
-            } 
-                
+            }
+
             if (currentSubscriber != null) {
                 // otherwise we are just passing it through to the currentSubscriber
                 currentSubscriber.requestMore(n);
@@ -133,7 +144,9 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             //队列很重要，如果第一个observable没处理完，来了第二个observable,入队列，前面observable处理完，会调用subscribeNext从队列取出
             queue.add(nl.next(t));
             int andIncrement = WIP_UPDATER.getAndIncrement(this);
-            Log.w("TAG", "OperatorConcat ConcatSubscriber onNext Observable= "+t+"  andIncrement="+andIncrement);
+            Log.w("TAG",
+                    "OperatorConcat ConcatSubscriber onNext Observable= " + t + "  andIncrement=" +
+                            andIncrement);
             if (andIncrement == 0) {
                 subscribeNext();
             }
@@ -165,11 +178,13 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         void subscribeNext() {
             if (requested > 0) {
                 Object o = queue.poll();
+                //发送完成，直接回调给真正的观察者
                 if (nl.isCompleted(o)) {
                     child.onCompleted();
                 } else if (o != null) {
                     Observable<? extends T> obs = nl.getValue(o);
-                    Log.e("TAG", "OperatorConcat ConcatSubscriber subscribeNext Observable obs= "+obs);
+                    Log.e("TAG",
+                            "OperatorConcat ConcatSubscriber subscribeNext真正订阅 Observable obs= " + obs);
                     //child是下层真正的subscriber
                     currentSubscriber = new ConcatInnerSubscriber<T>(this, child, requested);
                     current.set(currentSubscriber);
@@ -178,6 +193,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             } else {
                 // requested == 0, so we'll peek to see if we are completed, otherwise wait until another request
                 Object o = queue.peek();
+                Log.e("TAG", "ConcatSubscriber subscribeNext 调用 queue.peek():" );
                 if (nl.isCompleted(o)) {
                     child.onCompleted();
                 }
@@ -192,23 +208,27 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         @SuppressWarnings("unused")
         private volatile int once = 0;
         @SuppressWarnings("rawtypes")
-        private final static AtomicIntegerFieldUpdater<ConcatInnerSubscriber> ONCE_UPDATER = AtomicIntegerFieldUpdater.newUpdater(ConcatInnerSubscriber.class, "once");
+        private final static AtomicIntegerFieldUpdater<ConcatInnerSubscriber> ONCE_UPDATER =
+                AtomicIntegerFieldUpdater.newUpdater(ConcatInnerSubscriber.class, "once");
 
-        public ConcatInnerSubscriber(ConcatSubscriber<T> parent, Subscriber<T> child, long initialRequest) {
+        public ConcatInnerSubscriber(ConcatSubscriber<T> parent, Subscriber<T> child,
+                                     long initialRequest) {
             this.parent = parent;
             this.child = child;
             request(initialRequest);
         }
 
         void requestMore(long n) {
-            Log.w("TAG", "OperatorConcat ConcatInnerSubscriber requestMore:"+n);
+            Log.w("TAG", "OperatorConcat ConcatInnerSubscriber requestMore:" + n);
             request(n);
         }
 
         @Override
         public void onNext(T t) {
             parent.decrementRequested();
-            Log.e("TAG", "OperatorConcat ConcatInnerSubscriber ConcatInnerSubscriber 发送给 child onNext:"+t);
+            Log.e("TAG",
+                    "OperatorConcat ConcatInnerSubscriber ConcatInnerSubscriber 发送给 child onNext:" +
+                            t);
             child.onNext(t);
         }
 

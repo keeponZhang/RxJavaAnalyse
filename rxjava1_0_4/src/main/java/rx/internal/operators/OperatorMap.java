@@ -64,6 +64,7 @@ public final class OperatorMap<T, R> implements Operator<R, T> {
                     Log.i("TAG", getOnSubscribeRedoTag()+"OperatorMap onNext 调用 transformer" +
                             ".call方法:");
                     R call = transformer.call(t);
+                    Log.e("TAG", "OperatorMap onNext 转换后call:"+call );
                     o.onNext(call);
                 } catch (Throwable e) {
                     Exceptions.throwIfFatal(e);

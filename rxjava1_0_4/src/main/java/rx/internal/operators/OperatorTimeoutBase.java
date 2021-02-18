@@ -142,6 +142,8 @@ class OperatorTimeoutBase<T> implements Operator<T, T> {
                 Log.e("TAG",
                         "TimeoutSubscriber onNext serial.set(timeoutStub.call(this, actual, value, inner) terminated:" +
                                 terminated + " actual=" + actual);
+                Log.e("TAG", "TimeoutSubscriber onNext-------解注册第一个超时action-----------:" );
+                //原来在这里
                 serial.set(timeoutStub.call(this, actual, value, inner));
             }
         }

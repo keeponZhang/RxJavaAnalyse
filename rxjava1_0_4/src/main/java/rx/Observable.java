@@ -57,7 +57,6 @@ import rx.internal.operators.OnSubscribeJoin;
 import rx.internal.operators.OnSubscribeMulticastSelector;
 import rx.internal.operators.OnSubscribeRange;
 import rx.internal.operators.OnSubscribeRedo;
-import rx.internal.operators.OnSubscribeRedo;
 import rx.internal.operators.OnSubscribeTimerOnce;
 import rx.internal.operators.OnSubscribeTimerPeriodically;
 import rx.internal.operators.OnSubscribeToObservableFuture;
@@ -4388,6 +4387,7 @@ public class Observable<T> {
     //flatMap lift两次
     public final <R> Observable<R> flatMap(
             Func1<? super T, ? extends Observable<? extends R>> func) {
+        // Func1<? super T, ? extends R>> func)这样会报错
         return merge(map(func));
     }
 

@@ -13,10 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/merge"
+        android:textAllCaps="false"
+        android:text="merge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/flatmap"
         android:textAllCaps="false"
         android:onClick="flatmap"
         android:text="flatmap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/concatmap"
+        android:textAllCaps="false"
+        android:text="concatmap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button

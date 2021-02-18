@@ -15,6 +15,8 @@
  */
 package rx.subscriptions;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import rx.Subscription;
@@ -54,6 +56,7 @@ public final class SerialSubscription implements Subscription {
 
     @Override
     public void unsubscribe() {
+        Log.e("TAG", "SerialSubscription 数据 unsubscribe:" );
         State oldState;
         State newState;
         do {

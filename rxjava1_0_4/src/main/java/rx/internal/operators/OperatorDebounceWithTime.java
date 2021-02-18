@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,7 +15,10 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
+
 import rx.Observable.Operator;
 import rx.Scheduler;
 import rx.Scheduler.Worker;
@@ -35,80 +38,96 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
     final long timeout;
     final TimeUnit unit;
     final Scheduler scheduler;
+
     /**
-     * @param timeout
-     *            How long each event has to be the 'last event' before it gets published.
-     * @param unit
-     *            The unit of time for the specified timeout.
-     * @param scheduler
-     *            The {@link Scheduler} to use internally to manage the timers which handle timeout for each event.
-     *
+     * @param timeout   How long each event has to be the 'last event' before it gets published.
+     * @param unit      The unit of time for the specified timeout.
+     * @param scheduler The {@link Scheduler} to use internally to manage the timers which handle timeout for each event.
      */
     public OperatorDebounceWithTime(long timeout, TimeUnit unit, Scheduler scheduler) {
         this.timeout = timeout;
         this.unit = unit;
         this.scheduler = scheduler;
     }
-    
+
     @Override
     public Subscriber<? super T> call(final Subscriber<? super T> child) {
         final Worker worker = scheduler.createWorker();
         final SerializedSubscriber<T> s = new SerializedSubscriber<T>(child);
         final SerialSubscription ssub = new SerialSubscription();
-        
+
         s.add(worker);
         s.add(ssub);
-        
+
         return new Subscriber<T>(child) {
             final DebounceState<T> state = new DebounceState<T>();
             final Subscriber<?> self = this;
+
             @Override
             public void onNext(final T t) {
                 //一段时间后发送最后一个数据
                 final int index = state.next(t);
+                Log.d("TAG", "OperatorDebounceWithTime onNext 收到的数据 t:" + t + "  index=" + index);
+                //开启下一个定时，暂停上一个定时，SafeSubscriber完成之后会解注册
                 ssub.set(worker.schedule(new Action0() {
                     @Override
                     public void call() {
+                        Log.e("TAG", "OperatorDebounceWithTime call 数据:");
                         state.emit(index, s, self);
                     }
                 }, timeout, unit));
             }
-            
+
             @Override
             public void onError(Throwable e) {
                 s.onError(e);
                 unsubscribe();
                 state.clear();
+                Log.e("TAG", "OperatorDebounceWithTime 数据onError:");
             }
-            
+
             @Override
             public void onCompleted() {
                 state.emitAndComplete(s, this);
             }
         };
     }
+
     /**
      * Tracks the last value to be emitted and manages completion.
+     *
      * @param <T> the value type
      */
     static final class DebounceState<T> {
-        /** Guarded by this. */
+        /**
+         * Guarded by this.
+         */
         int index;
-        /** Guarded by this. */
+        /**
+         * Guarded by this.
+         */
         T value;
-        /** Guarded by this. */
+        /**
+         * Guarded by this.
+         */
         boolean hasValue;
-        /** Guarded by this. */
+        /**
+         * Guarded by this.
+         */
         boolean terminate;
-        /** Guarded by this. */
+        /**
+         * Guarded by this.
+         */
         boolean emitting;
-        
+
         public synchronized int next(T value) {
             this.value = value;
             this.hasValue = true;
             return ++index;
         }
+
         public void emit(int index, Subscriber<T> onNextAndComplete, Subscriber<?> onError) {
+            Log.e("TAG", "------------------DebounceState 数据emit-----------------:");
             T localValue;
             boolean localHasValue;
             synchronized (this) {
@@ -117,14 +136,17 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
                 }
                 localValue = value;
                 localHasValue = hasValue;
-                
+
                 value = null;
                 hasValue = false;
                 emitting = true;
             }
 
-            if  (localHasValue) {
+            if (localHasValue) {
                 try {
+                    Log.e("TAG",
+                            "DebounceState-------- 真正发射的数据 emit localValue-----------:" +
+                                    localValue);
                     onNextAndComplete.onNext(localValue);
                 } catch (Throwable e) {
                     onError.onError(e);
@@ -139,13 +161,14 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
                     return;
                 }
             }
-            
+
             onNextAndComplete.onCompleted();
         }
+
         public void emitAndComplete(Subscriber<T> onNextAndComplete, Subscriber<?> onError) {
             T localValue;
             boolean localHasValue;
-            
+
             synchronized (this) {
                 if (emitting) {
                     terminate = true;
@@ -153,14 +176,14 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
                 }
                 localValue = value;
                 localHasValue = hasValue;
-                
+
                 value = null;
                 hasValue = false;
 
                 emitting = true;
             }
-
-            if  (localHasValue) {
+            Log.e("TAG", "DebounceState 数据 emitAndComplete onNextAndComplete:" + onNextAndComplete);
+            if (localHasValue) {
                 try {
                     onNextAndComplete.onNext(localValue);
                 } catch (Throwable e) {
@@ -170,6 +193,7 @@ public final class OperatorDebounceWithTime<T> implements Operator<T, T> {
             }
             onNextAndComplete.onCompleted();
         }
+
         public synchronized void clear() {
             ++index;
             value = null;

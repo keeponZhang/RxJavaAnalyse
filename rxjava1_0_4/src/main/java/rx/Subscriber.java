@@ -134,7 +134,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
 
             }
         }
-        Log.e("TAG", "Subscriber setProducer:" + producer+"  "+this+" setProducer="+setProducer+
+        Log.d("TAG", "Subscriber setProducer:" + producer+"  "+this+" setProducer="+setProducer+
                 " "+getName());
         // do after releasing lock
         if (setProducer) {

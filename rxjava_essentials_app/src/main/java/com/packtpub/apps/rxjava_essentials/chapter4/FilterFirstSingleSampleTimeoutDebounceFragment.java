@@ -196,6 +196,8 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
             case R.id.filter:
                 filter();
                 break;
+            default:
+                break;
         }
     }
 
@@ -453,6 +455,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                     }
                 });
     }
+
     //第一个数据会发送，时间到了，会发送接下来接收到的最近的数据，如果这时没数据，就不发送
     private void throttleFirst() {
         count = 0;
@@ -494,6 +497,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                     }
                 });
     }
+
     //开启定时任务，超时了发送onError
     private void timeout() {
         Observable.create(new Observable.OnSubscribe<AppInfo>() {
@@ -504,7 +508,7 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                     if (i == 5) {
                         SystemClock.sleep(2000);
                         break;
-                    }else{
+                    } else {
                         SystemClock.sleep(1000);
                     }
                     Log.w("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment call 发射:" +
@@ -627,15 +631,14 @@ public class FilterFirstSingleSampleTimeoutDebounceFragment extends Fragment {
                 return;
             }
             mSampleSubscriber.onNext(mApps.get(count));
-            Log.d("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment handleMessage onNext:" +
+            Log.d("TAG", "FilterFirstSingleSampleTimeoutDebounceFragment  真正收到数据handleMessage " +
+                    "onNext:" +
                     mApps.get(count) + "  " + System.currentTimeMillis());
             count++;
             mHandler.sendMessageDelayed(Message.obtain(), 200);
         }
     };
     private Subscriber<? super AppInfo> mSampleSubscriber;
-
-
 
 
 }

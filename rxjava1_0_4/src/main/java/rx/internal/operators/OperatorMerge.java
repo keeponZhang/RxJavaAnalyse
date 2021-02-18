@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -99,6 +101,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
 //        这个actual是merge下层的订阅者
         final Subscriber<? super T> actual;
         private final MergeProducer<T> mergeProducer;
+        //merge有几个Observable，wip就等于几
         private int wip;
         private boolean completed;
         private final boolean delayErrors;
@@ -579,7 +582,9 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
 
         @Override
         public void onCompleted() {
-            if (ONCE_TERMINATED.compareAndSet(this, 0, 1)) {
+            boolean isSuccessful = ONCE_TERMINATED.compareAndSet(this, 0, 1);
+            Log.e("TAG", "InnerSubscriber onCompleted isSuccessful:"+isSuccessful );
+            if (isSuccessful) {
                 emit(null, true);
             }
         }
@@ -638,6 +643,7 @@ public class OperatorMerge<T> implements Operator<T, Observable<? extends T>> {
                     if (producer == null) {
                         // no backpressure requested
                         if (complete) {
+                            //里面会做一些操作后调用子subscriber的onComplete
                             parentSubscriber.completeInner(this);
                         } else {
                             try {

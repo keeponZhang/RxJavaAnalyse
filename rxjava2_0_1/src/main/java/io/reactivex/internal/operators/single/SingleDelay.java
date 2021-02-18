@@ -40,7 +40,8 @@ public final class SingleDelay<T> extends Single<T> {
     protected void subscribeActual(final SingleObserver<? super T> s) {
 
         final SequentialDisposable sd = new SequentialDisposable();
-        Log.w("TAG", "SingleDelay subscribeActual SequentialDisposable sd:" +sd);
+        //sd.toString是null
+        Log.w("TAG", "SingleDelay subscribeActual SequentialDisposable sd:" +sd+"  "+(sd == null));
         //这个是传给下游的Disposable
         s.onSubscribe(sd);
         source.subscribe(new SingleObserver<T>() {
