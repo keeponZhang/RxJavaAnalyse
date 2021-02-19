@@ -15,6 +15,8 @@
  */
 package rx.internal.operators;
 
+import android.util.Log;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import rx.Observable.Operator;
@@ -107,6 +109,7 @@ public final class OperatorScan<R, T> implements Operator<R, T> {
                         child.onError(OnErrorThrowable.addValueAsLastCause(e, currentValue));
                     }
                 }
+                Log.e("TAG", "OperatorScan onNext:" + value);
                 child.onNext(this.value);
             }
 
@@ -126,6 +129,7 @@ public final class OperatorScan<R, T> implements Operator<R, T> {
                     initialized = true;
                     // we emit first time through if we have an initial value
                     if (initialValue != NO_INITIAL_VALUE) {
+                        Log.e("TAG", "OperatorScan emitInitialValueIfNeeded initialValue:"+initialValue);
                         child.onNext(initialValue);
                     }
                 }

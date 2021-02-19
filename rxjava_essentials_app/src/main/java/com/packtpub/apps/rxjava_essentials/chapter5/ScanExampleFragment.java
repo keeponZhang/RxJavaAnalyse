@@ -73,6 +73,7 @@ public class ScanExampleFragment extends Fragment {
 
     private void loadList(List<AppInfo> apps) {
         mRecyclerView.setVisibility(View.VISIBLE);
+        Log.e("TAG", "ScanExampleFragment loadList:" + apps.size());
         Observable.from(apps)
                 .scan(new Func2<AppInfo, AppInfo, AppInfo>() {
                     //返回值下次会作为appInfo1
@@ -86,7 +87,8 @@ public class ScanExampleFragment extends Fragment {
                         }
                     }
                 })
-                .distinct()
+                //这里是去重的
+                // .distinct()
                 .subscribe(new Observer<AppInfo>() {
                     @Override
                     public void onCompleted() {
