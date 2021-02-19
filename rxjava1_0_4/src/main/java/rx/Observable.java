@@ -277,6 +277,7 @@ public class Observable<T> {
 //                    System.out.println(getOnSubscribeRedoTag()+"  1.1--------- lift  call------------》》》》》onSubscribe=" + this);
                     //注意，这里是lift.call
                     //会创建对上层感兴趣的的Subscriber，让他做一层代理
+                    Log.i("TAG", "Observable call  准备调用lift.call方法 生成新的Subscriber ^^^^^^^^^^^^^:");
                     Subscriber<? super T> st = hook.onLift(lift).call(o);
                     Log.d("TAG",
                             getOnSubscribeRedoDebugTag() + "Observable call: 向上触发第一步--------- " +
@@ -288,7 +289,7 @@ public class Observable<T> {
                         //map又会往上订阅，map上层Observable正是Observable.this,其持有的OnSubscribe就是onSubscribe，但是两个感兴趣的subscriber不一定一样
                         //所以会经过一个lift变换，调用lift.call(originalSubscriber)创建一个新的Subscriber
                         Log.d("TAG", getOnSubscribeRedoDebugTag() +
-                                "Observable call 准备调用上一个Observable.onSubscribe 向上触发第二步 " +
+                                "Observable call 向上触发第二步 准备调用上一个Observable.onSubscribe  " +
                                 "传入新创建的Subscriber : " +
                                 st + " 上一层的Observable=" + this);
                         Observable.this.onSubscribe.call(st);
@@ -7149,9 +7150,11 @@ public class Observable<T> {
         // if not already wrapped
         if (!(subscriber instanceof SafeSubscriber)) {
             // assign to `observer` so we return the protected version
+            //这里会变成SafeSubscriber
             subscriber = new SafeSubscriber<T>(subscriber);
         }
 
+        Log.e("TAG", "Observable subscribe 包装成SafeSubscriber 启动订阅:");
         // The code below is exactly the same an unsafeSubscribe but not used because it would add a sigificent depth to alreay huge call stacks.
         try {
             // allow the hook to intercept and/or decorate

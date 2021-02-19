@@ -30,6 +30,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.functions.Func1;
+import rx.internal.operators.OperatorConcat;
 import rx.schedulers.Schedulers;
 
 public class MapFlatMapCastSwitchMapFragment extends Fragment {
@@ -93,7 +94,8 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.map, R.id.merge, R.id.flatmap, R.id.concatmap, R.id.cast, R.id.switchmap})
+    @OnClick({R.id.map, R.id.merge, R.id.flatmap, R.id.concatmap, R.id.concatmap2, R.id.cast,
+            R.id.switchmap})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.map:
@@ -107,6 +109,9 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
                 break;
             case R.id.concatmap:
                 concatmap();
+                break;
+            case R.id.concatmap2:
+                concatmap2();
                 break;
             case R.id.switchmap:
                 swithcmap();
@@ -214,8 +219,8 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 for (int i = 0; i < 2; i++) {
+                    Log.e("TAG", "MapFlatMapCastSwitchMapFragment 发射 concatmap call:" + i);
                     subscriber.onNext(i);
-                    Log.e("TAG", "MapFlatMapCastSwitchMapFragment concatmap call:" + i);
                 }
             }
         }).concatMap(new Func1<Integer, Observable<String>>() {
@@ -238,6 +243,90 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
             @Override
             public void onNext(String s) {
                 Log.e("TAG", "MapFlatMapCastSwitchMapFragment 收到 onNext:" + s);
+            }
+
+            @Override
+            public String getName() {
+                return "keepon";
+            }
+        });
+
+    }
+
+    private void concatmap2() {
+        Observable.concat(Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                for (int i = 0; i < 2; i++) {
+                    Log.e("TAG", "MapFlatMapCastSwitchMapFragment 发射 concatmap call:" + i);
+                    subscriber.onNext(i);
+
+                }
+            }
+        }).map(new Func1<Integer, Observable<String>>() {
+            //这里为什么要是Observable呢，因为一会这里要调用merge，merge接收的是observable
+            @Override
+            public Observable<String> call(Integer integer) {
+                return getObservable1(integer);
+            }
+        })).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment  concatmap onCompleted:");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment concatmap onError:");
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment 收到 onNext:" + s);
+            }
+
+            @Override
+            public String getName() {
+                return "keepon";
+            }
+        });
+
+    }
+
+    private void concatmap3() {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                for (int i = 0; i < 2; i++) {
+                    Log.e("TAG", "MapFlatMapCastSwitchMapFragment 发射 concatmap call:" + i);
+                    subscriber.onNext(i);
+                }
+            }
+        }).map(new Func1<Integer, Observable<String>>() {
+            //这里为什么要是Observable呢，因为一会这里要调用merge，merge接收的是observable
+            @Override
+            public Observable<String> call(Integer integer) {
+                return getObservable1(integer);
+            }
+        }).lift(new OperatorConcat<String>()).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment  concatmap onCompleted:");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment concatmap onError:");
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment 收到 onNext:" + s);
+            }
+
+            @Override
+            public String getName() {
+                return "keepon";
             }
         });
 
@@ -341,21 +430,32 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
     }
 
     private Observable<String> getObservable1(Integer integer) {
+        //真正发射的话要触发订阅
         Observable<String> stringObservable =
                 Observable.create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
-                        if (integer == 0) {
-                            SystemClock.sleep(2000);
-                        }
-                        subscriber.onNext("keepon index " + integer + "  Thread.name=" +
-                                Thread.currentThread().getName());
-                        Log.w("TAG",
-                                "MapFlatMapCastSwitchMapFragment MapFlatMapCastSwitchMapFragment call:" +
-                                        integer);
-                        subscriber.onCompleted();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (integer == 0) {
+                                    SystemClock.sleep(2000);
+                                }
+                                subscriber.onNext("keepon index " + integer + "  Thread.name=" +
+                                        Thread.currentThread().getName());
+                                Log.w("TAG",
+                                        "MapFlatMapCastSwitchMapFragment getObservable1里面 " +
+                                                "MapFlatMapCastSwitchMapFragment" +
+                                                " call:" +
+                                                integer);
+                                subscriber.onCompleted();
+                            }
+                        }).start();
+
                     }
-                }).subscribeOn(Schedulers.newThread());
+                });
+
+        Log.i("TAG", "MapFlatMapCastSwitchMapFragment getObservable1 这里转换:");
         return stringObservable;
     }
 }

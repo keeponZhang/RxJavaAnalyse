@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import rx.internal.util.SubscriptionList;
  * {@link Observable} calls the Subscriber's {@link #onNext} method to emit items. A well-behaved
  * {@link Observable} will call a Subscriber's {@link #onCompleted} method exactly once or the Subscriber's
  * {@link #onError} method exactly once.
- * 
+ *
  * @see <a href="https://github.com/ReactiveX/RxJava/wiki/Observable">RxJava Wiki: Observable</a>
  * @param <T>
  *          the type of items the Subscriber expects to observe
@@ -70,7 +70,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
 
     /**
      * Indicates whether this Subscriber has unsubscribed from its list of subscriptions.
-     * 
+     *
      * @return {@code true} if this Subscriber has unsubscribed from its subscriptions, {@code false} otherwise
      */
     @Override
@@ -86,7 +86,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
     public void onStart() {
         // do nothing by default
     }
-    
+
     /**
      * Request a certain maximum number of emitted items from the Observable this Subscriber is subscribed to.
      * This is a way of requesting backpressure. To disable backpressure, pass {@code Long.MAX_VALUE} to this
@@ -96,7 +96,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
      *           {@code Long.MAX_VALUE} if you want the Observable to emit items at its own pace
      */
     protected final void request(long n) {
-        Log.e("TAG", "Subscriber request:");
+        Log.e("TAG", "Subscriber request (p==null)=:" + (p == null) + " this=" + this);
         Producer shouldRequest = null;
         synchronized (this) {
             if (p != null) {
@@ -134,8 +134,9 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
 
             }
         }
-        Log.d("TAG", "Subscriber setProducer:" + producer+"  "+this+" setProducer="+setProducer+
-                " "+getName());
+        Log.d("TAG",
+                "Subscriber setProducer:" + producer + "  " + this + " setProducer=" + setProducer +
+                        " " + getName());
         // do after releasing lock
         if (setProducer) {
             op.setProducer(p);
@@ -149,7 +150,7 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
         }
     }
 
-    public String getName(){
+    public String getName() {
         return "";
     }
 }

@@ -35,8 +35,7 @@ import rx.subscriptions.Subscriptions;
  * <p>
  * <img width="640" src="https://github.com/ReactiveX/RxJava/wiki/images/rx-operators/concat.png" alt="">
  *
- * @param <T>
- *            the source and result value type
+ * @param <T> the source and result value type
  */
 public final class OperatorConcat<T> implements Operator<T, Observable<? extends T>> {
     @Override
@@ -45,8 +44,9 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
         final SerialSubscription current = new SerialSubscription();
         child.add(current);
         ConcatSubscriber<T> cs = new ConcatSubscriber<T>(s, current);
-        //这里设置了producer
+        //这里child设置了producer
         ConcatProducer<T> cp = new ConcatProducer<T>(cs);
+        Log.e("TAG", "OperatorConcat call 调用 child设置ConcatProducer:"+child.getName());
         child.setProducer(cp);
         return cs;
     }
@@ -60,9 +60,11 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         @Override
         public void request(long n) {
+            Log.e("TAG", "ConcatProducer 准备开始request---------:");
             cs.requestFromChild(n);
             Log.w("TAG",
-                    "<<看这里 ConcatProducer request  cs.requestFromChild(n):" + n + "  (n==Math" +
+                    "<<看这里 ConcatProducer request后--------  cs.requestFromChild(n):" + n + "  " +
+                            "(n==Math" +
                             ".max)=" +
                             (n == Long.MAX_VALUE));
         }
@@ -107,8 +109,9 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             // 1 to be subscribed to, 1 in the queue, then we'll keep requesting 1 at a time after that
             //把这里改成1，后面 request(1)注释掉不行,这里只是给requested赋值
             request(2);
-            Log.e("TAG",
-                    "OperatorConcat ConcatSubscriber onStart   request(2) ------------------:");
+
+            Log.e("TAG", "OperatorConcat ConcatSubscriber  onStart(lif call里面调用)   request(2) " +
+                    "------------------:");
         }
 
         //订阅的时候就会设置为Long.MAX_VALUE
@@ -116,8 +119,9 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             // we track 'requested' so we know whether we should subscribe the next or not
             long andAdd = REQUESTED_UPDATER.getAndAdd(this, n);
             Log.e("TAG",
-                    "OperatorConcat ConcatSubscriber requestFromChild andAdd:" + andAdd + "  wip=" +
-                            wip+" currentSubscriber="+currentSubscriber);
+                    "OperatorConcat ConcatSubscriber requestFromChild andAdd:" + andAdd + "  " +
+                            "wip=" + wip + "  (currentSubscriber == null)=" +
+                            (currentSubscriber == null));
             if (andAdd == 0) {
                 if (currentSubscriber == null && wip > 0) {
                     // this means we may be moving from one subscriber to another after having stopped processing
@@ -144,9 +148,16 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             //队列很重要，如果第一个observable没处理完，来了第二个observable,入队列，前面observable处理完，会调用subscribeNext从队列取出
             queue.add(nl.next(t));
             int andIncrement = WIP_UPDATER.getAndIncrement(this);
+            String subscribeNext = "";
+            if (andIncrement == 0) {
+                subscribeNext = "准备调用subscribeNext方法";
+            }
             Log.w("TAG",
-                    "OperatorConcat ConcatSubscriber onNext Observable= " + t + "  andIncrement=" +
-                            andIncrement);
+                    "！！！！！！！！！！！OperatorConcat ConcatSubscriber onNext 重点 收到了 Observable= " + t +
+                            "  " +
+                            "andIncrement" +
+                            "=" +
+                            andIncrement + "  " + subscribeNext);
             if (andIncrement == 0) {
                 subscribeNext();
             }
@@ -168,9 +179,12 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
 
         void completeInner() {
             //其实这里全部注释掉，第二个observable也会发送到ConcatSubscriber的onNext方法，只是无法继续向下分发，两个observable是用Observable.from封装成集合按顺序发送的
+            Log.d("TAG", "ConcatSubscriber completeInner 准备发送下一个:");
             request(1);
             currentSubscriber = null;
-            if (WIP_UPDATER.decrementAndGet(this) > 0) {
+            int i = WIP_UPDATER.decrementAndGet(this);
+            Log.e("TAG", "ConcatSubscriber completeInner i:" + i);
+            if (i > 0) {
                 subscribeNext();
             }
         }
@@ -183,8 +197,14 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
                     child.onCompleted();
                 } else if (o != null) {
                     Observable<? extends T> obs = nl.getValue(o);
-                    Log.e("TAG",
-                            "OperatorConcat ConcatSubscriber subscribeNext真正订阅 Observable obs= " + obs);
+
+                    Log.e("TAG", "********OperatorConcat ConcatSubscriber 真正下层订阅(unsafeSubscribe)" +
+                            "(既会触发request方法，又会触发订阅)" +
+                            "subscribeNext" +
+                            " " +
+                            " " +
+                            "obs（Observable）=" +
+                            " " + obs);
                     //child是下层真正的subscriber
                     currentSubscriber = new ConcatInnerSubscriber<T>(this, child, requested);
                     current.set(currentSubscriber);
@@ -193,7 +213,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             } else {
                 // requested == 0, so we'll peek to see if we are completed, otherwise wait until another request
                 Object o = queue.peek();
-                Log.e("TAG", "ConcatSubscriber subscribeNext 调用 queue.peek():" );
+                Log.e("TAG", "ConcatSubscriber subscribeNext 调用 queue.peek():");
                 if (nl.isCompleted(o)) {
                     child.onCompleted();
                 }
@@ -249,5 +269,7 @@ public final class OperatorConcat<T> implements Operator<T, Observable<? extends
             }
         }
 
-    };
+    }
+
+    ;
 }
