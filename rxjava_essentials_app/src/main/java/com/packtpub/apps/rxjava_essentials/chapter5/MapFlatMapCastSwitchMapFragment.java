@@ -20,6 +20,7 @@ import com.packtpub.apps.rxjava_essentials.apps.ApplicationAdapter;
 import com.packtpub.apps.rxjava_essentials.apps.ApplicationsList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,7 +30,9 @@ import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.internal.operators.OperatorConcat;
 import rx.schedulers.Schedulers;
 
@@ -94,7 +97,8 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.map, R.id.merge, R.id.flatmap, R.id.concatmap, R.id.concatmap2, R.id.cast,
+    @OnClick({R.id.map, R.id.merge, R.id.flatmap, R.id.concatmap, R.id.concatmap2, R.id.concatmap3,
+            R.id.flatmapInterable, R.id.cast,
             R.id.switchmap})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -112,6 +116,12 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
                 break;
             case R.id.concatmap2:
                 concatmap2();
+                break;
+            case R.id.concatmap3:
+                concatmap3();
+                break;
+            case R.id.flatmapInterable:
+                flatmapInterable();
                 break;
             case R.id.switchmap:
                 swithcmap();
@@ -267,6 +277,8 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
             //这里为什么要是Observable呢，因为一会这里要调用merge，merge接收的是observable
             @Override
             public Observable<String> call(Integer integer) {
+                //这里要注意的是，生成的Observerabel，会发送到ConcatSubscriber，需要被ConcatInnerSubscriber
+                // 再次订阅，getObservable1里面的subscriber才能开始发送
                 return getObservable1(integer);
             }
         })).subscribe(new Subscriber<String>() {
@@ -332,6 +344,31 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
 
     }
 
+    //其实跟flatmap一样，Iterable<String>会包装成Observable
+    private void flatmapInterable() {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                for (int i = 0; i < 2; i++) {
+                    subscriber.onNext(i);
+                }
+            }
+        }).flatMapIterable(new Func1<Integer, Iterable<String>>() {
+            @Override
+            public Iterable<String> call(Integer integer) {
+                return Arrays.asList(String.valueOf("a"+integer), String.valueOf("b"+integer), String.valueOf("c"+integer));
+            }
+        }).subscribe(new Action1<String>() {
+            @Override
+            public void call(String str) {
+                Log.e("TAG", "MapFlatMapCastSwitchMapFragment call:"+str);
+            }
+        });
+
+
+
+    }
+
     //其实就是转换类型，不能转回报错
     private void cast() {
         Observable.create(new Observable.OnSubscribe<Float>() {
@@ -364,14 +401,28 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
         Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
-                for (int i = 1; i < 4; i++) {
-                    subscriber.onNext(i);
+                //像这种，Observable只会订阅最后一种
+                // for (int i = 1; i <3; i++) {
+                //     subscriber.onNext(i);
+                // }
+                for (int i = 1; i <3; i++) {
+                    if(i == 1){
+                        int finalI = i;
+                        mSwipeRefreshLayout.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                subscriber.onNext(finalI);
+                            }
+                        }, 100);
+                    }else{
+                        subscriber.onNext(i);
+                    }
                 }
             }
         }).switchMap(new Func1<Integer, Observable<String>>() {
             @Override
             public Observable<String> call(Integer integer) {
-                return getObservable(integer);
+                return getObservable1(integer);
             }
         }).subscribe(new Subscriber<String>() {
             @Override
@@ -438,9 +489,9 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                if (integer == 0) {
-                                    SystemClock.sleep(2000);
-                                }
+                                // if (integer == 0) {
+                                //     SystemClock.sleep(2000);
+                                // }
                                 subscriber.onNext("keepon index " + integer + "  Thread.name=" +
                                         Thread.currentThread().getName());
                                 Log.w("TAG",
@@ -452,6 +503,26 @@ public class MapFlatMapCastSwitchMapFragment extends Fragment {
                             }
                         }).start();
 
+                    }
+                });
+
+        Log.i("TAG", "MapFlatMapCastSwitchMapFragment getObservable1 这里转换:");
+        return stringObservable;
+    }
+    private Observable<String> getObservable2(Integer integer) {
+        //真正发射的话要触发订阅
+        Observable<String> stringObservable =
+                Observable.create(new Observable.OnSubscribe<String>() {
+                    @Override
+                    public void call(Subscriber<? super String> subscriber) {
+                        subscriber.onNext("keepon index " + integer + "  Thread.name=" +
+                                Thread.currentThread().getName());
+                        Log.w("TAG",
+                                "MapFlatMapCastSwitchMapFragment getObservable1里面 " +
+                                        "MapFlatMapCastSwitchMapFragment" +
+                                        " call:" +
+                                        integer);
+                        subscriber.onCompleted();
                     }
                 });
 

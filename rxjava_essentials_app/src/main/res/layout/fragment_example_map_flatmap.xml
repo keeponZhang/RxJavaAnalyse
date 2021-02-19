@@ -38,6 +38,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/concatmap3"
+        android:textAllCaps="false"
+        android:text="concatmap3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/flatmapInterable"
+        android:textAllCaps="false"
+        android:text="flatmapInterable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/switchmap"
         android:textAllCaps="false"
         android:onClick="switchmap"

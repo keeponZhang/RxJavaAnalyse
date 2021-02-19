@@ -75,11 +75,12 @@ public class ScanExampleFragment extends Fragment {
         mRecyclerView.setVisibility(View.VISIBLE);
         Observable.from(apps)
                 .scan(new Func2<AppInfo, AppInfo, AppInfo>() {
+                    //返回值下次会作为appInfo1
                     @Override
-                    public AppInfo call(AppInfo appInfo, AppInfo appInfo2) {
-                        Log.e("TAG", "ScanExampleFragment call appInfo:"+appInfo.getName()+"  appInfo2="+appInfo2.getName());
-                        if (appInfo.getName().length() > appInfo2.getName().length()) {
-                            return appInfo;
+                    public AppInfo call(AppInfo appInfo1, AppInfo appInfo2) {
+                        Log.e("TAG", "ScanExampleFragment call appInfo:"+appInfo1.getName()+"  appInfo2="+appInfo2.getName());
+                        if (appInfo1.getName().length() > appInfo2.getName().length()) {
+                            return appInfo1;
                         } else {
                             return appInfo2;
                         }
