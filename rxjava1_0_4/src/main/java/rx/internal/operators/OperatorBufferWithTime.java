@@ -85,7 +85,9 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
         InexactSubscriber bsub = new InexactSubscriber(serialized, inner);
         bsub.add(inner);
         child.add(bsub);
+        //真正的方法还是startNewChunk
         bsub.startNewChunk();
+        //这个是延迟，周期操作
         bsub.scheduleChunk();
         return bsub;
     }
@@ -279,6 +281,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             child.onCompleted();
             unsubscribe();
         }
+        //延迟，然后间隙也是timespan发送一次
         void scheduleExact() {
             inner.schedulePeriodically(new Action0() {
                 @Override

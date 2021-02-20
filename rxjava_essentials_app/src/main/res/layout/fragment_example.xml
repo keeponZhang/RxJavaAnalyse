@@ -3,8 +3,13 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="com.packtpub.apps.rxjava_essentials.example1.CreateFragment">
-
+    <Button
+        android:text="scan"
+        android:id="@+id/scan"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"></Button>
     <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_marginTop="50dp"
             android:id="@+id/fragment_first_example_swipe_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.packtpub.apps.rxjava_essentials.R;
@@ -22,6 +23,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -34,6 +37,9 @@ public class ScanExampleFragment extends Fragment {
 
     @BindView(R.id.fragment_first_example_swipe_container)
     SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.scan)
+    Button mScan;
+    Unbinder unbinder;
 
     private ApplicationAdapter mAdapter;
 
@@ -43,8 +49,11 @@ public class ScanExampleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_example, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_example, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -59,7 +68,8 @@ public class ScanExampleFragment extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
         mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics()));
 
         // Progress
         mSwipeRefreshLayout.setEnabled(false);
@@ -74,15 +84,22 @@ public class ScanExampleFragment extends Fragment {
     private void loadList(List<AppInfo> apps) {
         mRecyclerView.setVisibility(View.VISIBLE);
         Log.e("TAG", "ScanExampleFragment loadList:" + apps.size());
+        //那个例子其实是有问题的，正确来说应该是第一个名称为基准，递增
         Observable.from(apps)
                 .scan(new Func2<AppInfo, AppInfo, AppInfo>() {
                     //返回值下次会作为appInfo1
                     @Override
                     public AppInfo call(AppInfo appInfo1, AppInfo appInfo2) {
-                        Log.e("TAG", "ScanExampleFragment call appInfo:"+appInfo1.getName()+"  appInfo2="+appInfo2.getName());
+
                         if (appInfo1.getName().length() > appInfo2.getName().length()) {
+                            Log.e("TAG",
+                                    "ScanExampleFragment call  返回 appInfo1:" + appInfo1.getName() +
+                                    "  appInfo2=" + appInfo2.getName());
                             return appInfo1;
                         } else {
+                            Log.e("TAG",
+                                    "ScanExampleFragment call  appInfo1:" + appInfo1.getName() +
+                                            "  返回 appInfo2=" + appInfo2.getName());
                             return appInfo2;
                         }
                     }
@@ -97,7 +114,8 @@ public class ScanExampleFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went south!", Toast.LENGTH_SHORT)
+                                .show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -108,16 +126,16 @@ public class ScanExampleFragment extends Fragment {
                     }
                 });
 
-        scan();
+        // scan();
     }
 
     private void scan() {
         //scan可以实现累加
-        Observable.just(1,2,3,4,5)
+        Observable.just(1, 2, 3, 4, 5)
                 .scan(new Func2<Integer, Integer, Integer>() {
                     @Override
                     public Integer call(Integer sum, Integer item) {
-                        Log.e("TAG", "ScanExampleFragment call sum:"+sum);
+                        Log.e("TAG", "ScanExampleFragment call sum:" + sum);
                         return sum + item;
                     }
                 })
@@ -126,13 +144,15 @@ public class ScanExampleFragment extends Fragment {
                     public void onCompleted() {
                         Log.d("RXJAVA", "Sequence completed.");
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         Log.e("RXJAVA", "Something went south!");
                     }
+
                     @Override
                     public void onNext(Integer item) {
-                        Log.e("TAG", "ScanExampleFragment onNext    :"+item);
+                        Log.e("TAG", "ScanExampleFragment onNext    :" + item);
                         Log.d("RXJAVA", "item is: " + item);
                     }
                 });
@@ -143,5 +163,16 @@ public class ScanExampleFragment extends Fragment {
 //        RXJAVA: item is: 10
 //        RXJAVA: item is: 15
 //        RXJAVA: Sequence completed.
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @OnClick(R.id.scan)
+    public void onViewClicked() {
+        scan();
     }
 }

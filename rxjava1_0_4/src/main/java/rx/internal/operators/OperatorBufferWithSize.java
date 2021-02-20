@@ -195,9 +195,10 @@ public final class OperatorBufferWithSize<T> implements Operator<List<T>, T> {
             @Override
             public void onNext(T t) {
                 //先取余，后加
+                Log.e("TAG", "OperatorBufferWithSize index++ % skip == 0:"+t+"  index="+index+"  " +
+                        "skip="+skip);
                 if (index++ % skip == 0) {
                     chunks.add(new ArrayList<T>(count));
-                    Log.e("TAG", "OperatorBufferWithSize index++ % skip == 0:"+t);
                 }
                 
                 Iterator<List<T>> it = chunks.iterator();
@@ -205,6 +206,7 @@ public final class OperatorBufferWithSize<T> implements Operator<List<T>, T> {
                     List<T> chunk = it.next();
                     Log.w("TAG", "OperatorBufferWithSize  chunk.add :"+t+"  index="+index+"  chunks.size="+chunks.size());
                     chunk.add(t);
+                    //满了，就发送一个集合
                     if (chunk.size() == count) {
                         it.remove();
                         child.onNext(chunk);

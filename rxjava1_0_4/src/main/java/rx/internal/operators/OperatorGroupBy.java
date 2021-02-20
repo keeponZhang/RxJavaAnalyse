@@ -67,6 +67,7 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         this.valueSelector = valueSelector;
     }
 
+    //这里表示下层接收的是Observable，上层发送的确实T
     @Override
     public Subscriber<? super T> call(final Subscriber<? super GroupedObservable<K, R>> child) {
         return new GroupBySubscriber<K, T, R>(keySelector, valueSelector, child);
@@ -111,6 +112,16 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
             private final AtomicLong requested = new AtomicLong();
             private final AtomicLong count = new AtomicLong();
             private final Queue<Object> buffer = new ConcurrentLinkedQueue<Object>(); // TODO should this be lazily created?
+
+            private Object key = "";
+
+            public Object getKey() {
+                return key;
+            }
+
+            public void setKey(Object key) {
+                this.key = key;
+            }
 
             public Observable<T> getObservable() {
                 return s;
@@ -196,7 +207,8 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         // If we already have items queued when a request comes in we vend those and decrement the outstanding request count
 
         void requestFromGroupedObservable(long n, GroupState<K, T> group) {
-            Log.e("TAG", "######GroupByConcatExampleFragment GroupBySubscriber 被下层观察者订阅，requested赋值 requestFromGroupedObservable ##### n:"+n);
+            Log.e("TAG", "######GroupByConcatExampleFragment GroupBySubscriber " +
+                    "被下层观察者订阅，requested赋值 requestFromGroupedObservable ##### n:"+n+" key="+group.getKey());
             group.requested.getAndAdd(n);
             if (group.count.getAndIncrement() == 0) {
                 pollQueue(group);
@@ -236,11 +248,12 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
         private GroupState<K, T> createNewGroup(final Object key) {
             Log.e("TAG", "GroupByConcatExampleFragment GroupBySubscriber createNewGroup --------:"+key);
             final GroupState<K, T> groupState = new GroupState<K, T>();
-
+            groupState.setKey(key);
             GroupedObservable<K, R> go = GroupedObservable.create(getKey(key), new OnSubscribe<R>() {
 
                 @Override
                 public void call(final Subscriber<? super R> o) {
+                    //setProducer里面就会调用Producer的request方法（记住，触发了才会调用OnSubscribe的call方法）
                     o.setProducer(new Producer() {
 
                         @Override
@@ -343,11 +356,14 @@ public class OperatorGroupBy<T, K, R> implements Operator<GroupedObservable<K, R
                 @SuppressWarnings("unchecked")
                 Observer<Object> obs = (Observer<Object>)groupState.getObserver();
                 //groupState.getObserver() =s ，是一个subject，这里充当observer,这里发送的数据通过Subject，然后发送到给下层的观察者
-                Log.w("TAG", "GroupByConcatExampleFragment GroupBySubscriber emitItem  -->>:"+item+" keyRequestedCount="+keyRequestedCount);
+                Log.w("TAG",
+                        "!!GroupByConcatExampleFragment GroupBySubscriber emitItem  -->>:"+item+
+                                " keyRequestedCount="+keyRequestedCount+"  key="+groupState.getKey());
                 nl.accept(obs, item);
                 keyRequested.decrementAndGet();
             } else {
-                Log.w("TAG", "GroupByConcatExampleFragment GroupBySubscriber q.add(item)  -->>:"+item+" keyRequestedCount="+keyRequestedCount);
+                Log.d("TAG",
+                        "!!GroupByConcatExampleFragment GroupBySubscriber q.add(item)  -->>:"+item+" keyRequestedCount="+keyRequestedCount+"  key="+groupState.getKey());
                 q.add(item);
                 BUFFERED_COUNT.incrementAndGet(this);
 

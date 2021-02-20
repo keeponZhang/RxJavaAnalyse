@@ -5,13 +5,6 @@
               android:orientation="vertical"
              tools:context="com.packtpub.apps.rxjava_essentials.example1.CreateFragment">
 
-    <Button
-        android:id="@+id/zip"
-        android:textAllCaps="false"
-        android:onClick="zip"
-        android:text="zip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
 
     <Button
@@ -26,6 +19,19 @@
         android:textAllCaps="false"
         android:onClick="bufferskip"
         android:text="bufferskip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/bufferTimeSpan"
+        android:textAllCaps="false"
+        android:text="bufferTimeSpan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/zip"
+        android:textAllCaps="false"
+        android:onClick="zip"
+        android:text="zip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button

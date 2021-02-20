@@ -1,8 +1,8 @@
 package com.packtpub.apps.rxjava_essentials.chapter6;
 
-
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +18,11 @@ import com.packtpub.apps.rxjava_essentials.R;
 import com.packtpub.apps.rxjava_essentials.apps.AppInfo;
 import com.packtpub.apps.rxjava_essentials.apps.ApplicationAdapter;
 import com.packtpub.apps.rxjava_essentials.apps.ApplicationsList;
+import com.packtpub.apps.rxjava_essentials.chapter8.api.openweathermap.models.Sys;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -32,7 +34,6 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
-
 
 public class ZipBufferWindowExampleFragment extends Fragment {
 
@@ -58,7 +59,8 @@ public class ZipBufferWindowExampleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_example_zip, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
@@ -76,7 +78,8 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.myPrimaryColor));
         mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics()));
 
         // Progress
         mSwipeRefreshLayout.setEnabled(false);
@@ -114,13 +117,15 @@ public class ZipBufferWindowExampleFragment extends Fragment {
                 .subscribe(new Observer<AppInfo>() {
                     @Override
                     public void onCompleted() {
-                        Toast.makeText(getActivity(), "Here is the list!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Here is the list!", Toast.LENGTH_LONG)
+                                .show();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT)
+                                .show();
                     }
 
                     @Override
@@ -147,23 +152,29 @@ public class ZipBufferWindowExampleFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.zip, R.id.buffer, R.id.window, R.id.bufferskip})
+    @OnClick({R.id.zip, R.id.buffer, R.id.window, R.id.bufferskip, R.id.bufferTimeSpan})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.zip:
-                zip();
-                break;
             case R.id.buffer:
                 buffer();
-                break;
-            case R.id.window:
-                window();
                 break;
             case R.id.bufferskip:
                 bufferskip();
                 break;
+            case R.id.bufferTimeSpan:
+                bufferTimeSpan();
+                break;
+            case R.id.zip:
+                zip();
+                break;
+            case R.id.window:
+                window();
+                break;
+
+
         }
     }
+
     //window() 函数和 buffer() 很像，但是它发射的是Observable而不是列表
     private void window() {
         Observable<AppInfo> observableApp = Observable.from(mApps.subList(0, 6));
@@ -184,7 +195,9 @@ public class ZipBufferWindowExampleFragment extends Fragment {
                 appInfoObservable.subscribe(new Subscriber<AppInfo>() {
                     @Override
                     public void onCompleted() {
-                        Log.w("TAG", "ZipBufferWindowExampleFragment window appInfoObservable onCompleted:" + appInfoObservable);
+                        Log.w("TAG",
+                                "ZipBufferWindowExampleFragment window appInfoObservable onCompleted:" +
+                                        appInfoObservable);
                     }
 
                     @Override
@@ -194,7 +207,9 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 
                     @Override
                     public void onNext(AppInfo appInfo) {
-                        Log.w("TAG", "ZipBufferWindowExampleFragment OperatorWindowWithSize window appInfoObservable onNext:" + appInfo+"  appInfoObservable="+appInfoObservable);
+                        Log.w("TAG",
+                                "ZipBufferWindowExampleFragment OperatorWindowWithSize window appInfoObservable onNext:" +
+                                        appInfo + "  appInfoObservable=" + appInfoObservable);
                     }
                 });
             }
@@ -242,6 +257,39 @@ public class ZipBufferWindowExampleFragment extends Fragment {
             @Override
             public void onNext(List<AppInfo> appInfos) {
                 Log.e("TAG", "ZipBufferWindowExampleFragment bufferskip onNext:" + appInfos);
+            }
+        });
+    }
+
+    private void bufferTimeSpan() {
+        Observable<AppInfo> observableApp = Observable.create(
+                new Observable.OnSubscribe<AppInfo>() {
+                    @Override
+                    public void call(Subscriber<? super AppInfo> subscriber) {
+                        for (int i = 0; i < mApps.size(); i++) {
+                            int i1 = new Random().nextInt(1000);
+                            Log.d("TAG", "ZipBufferWindowExampleFragment call 睡眠:"+i1);
+                            SystemClock.sleep(i1);
+                            subscriber.onNext(mApps.get(i));
+                        }
+                        subscriber.onCompleted();
+                    }
+                });
+        observableApp.buffer(12, 1, TimeUnit.SECONDS).subscribe(new Subscriber<List<AppInfo>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<AppInfo> appInfos) {
+                Log.e("TAG", "ZipBufferWindowExampleFragment bufferTimeSpan onNext:" + appInfos + "  " +
+                        "time=" + System.currentTimeMillis());
             }
         });
     }
