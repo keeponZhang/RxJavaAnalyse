@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,11 +15,15 @@
  */
 package rx.internal.operators;
 
+import android.os.SystemClock;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.Observable.Operator;
 import rx.Scheduler;
@@ -39,7 +43,7 @@ import rx.observers.SerializedSubscriber;
  * Note that this operation can produce <strong>non-connected, or overlapping chunks</strong> depending
  * on the input parameters.
  * </p>
- * 
+ *
  * @param <T> the buffered value type
  */
 public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
@@ -61,7 +65,8 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
      * @param scheduler
      *            the {@link Scheduler} to use for timing chunks
      */
-    public OperatorBufferWithTime(long timespan, long timeshift, TimeUnit unit, int count, Scheduler scheduler) {
+    public OperatorBufferWithTime(long timespan, long timeshift, TimeUnit unit, int count,
+                                  Scheduler scheduler) {
         this.timespan = timespan;
         this.timeshift = timeshift;
         this.unit = unit;
@@ -73,7 +78,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
     public Subscriber<? super T> call(final Subscriber<? super List<T>> child) {
         final Worker inner = scheduler.createWorker();
         SerializedSubscriber<List<T>> serialized = new SerializedSubscriber<List<T>>(child);
-        
+
         if (timespan == timeshift) {
             ExactSubscriber bsub = new ExactSubscriber(serialized, inner);
             bsub.add(inner);
@@ -81,7 +86,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             bsub.scheduleExact();
             return bsub;
         }
-        
+
         InexactSubscriber bsub = new InexactSubscriber(serialized, inner);
         bsub.add(inner);
         child.add(bsub);
@@ -91,6 +96,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
         bsub.scheduleChunk();
         return bsub;
     }
+
     /** Subscriber when the buffer chunking time and lenght differ. */
     final class InexactSubscriber extends Subscriber<T> {
         final Subscriber<? super List<T>> child;
@@ -99,6 +105,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
         final List<List<T>> chunks;
         /** Guarded by this. */
         boolean done;
+
         public InexactSubscriber(Subscriber<? super List<T>> child, Worker inner) {
             this.child = child;
             this.inner = inner;
@@ -112,6 +119,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
                 if (done) {
                     return;
                 }
+                Log.e("TAG", "InexactSubscriber onNext chunks.size:"+chunks.size()+"  count="+count);
                 Iterator<List<T>> it = chunks.iterator();
                 while (it.hasNext()) {
                     List<T> chunk = it.next();
@@ -167,15 +175,21 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             child.onCompleted();
             unsubscribe();
         }
+
         void scheduleChunk() {
+            Log.e("TAG", "InexactSubscriber scheduleChunk:");
             inner.schedulePeriodically(new Action0() {
                 @Override
                 public void call() {
+                    Log.w("TAG", "InexactSubscriber scheduleChunk call 相隔一秒:" +
+                            System.currentTimeMillis());
                     startNewChunk();
                 }
             }, timeshift, timeshift, unit);
         }
+
         void startNewChunk() {
+            Log.e("TAG", "InexactSubscriber startNewChunk:" + System.currentTimeMillis());
             final List<T> chunk = new ArrayList<T>();
             synchronized (this) {
                 if (done) {
@@ -186,10 +200,13 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             inner.schedule(new Action0() {
                 @Override
                 public void call() {
+                    Log.e("TAG", "InexactSubscriber call 延迟12秒--------------:" +
+                            System.currentTimeMillis());
                     emitChunk(chunk);
                 }
             }, timespan, unit);
         }
+
         void emitChunk(List<T> chunkToEmit) {
             boolean emit = false;
             synchronized (this) {
@@ -215,6 +232,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             }
         }
     }
+
     /** Subscriber when exact timed chunking is required. */
     final class ExactSubscriber extends Subscriber<T> {
         final Subscriber<? super List<T>> child;
@@ -223,6 +241,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
         List<T> chunk;
         /** Guarded by this. */
         boolean done;
+
         public ExactSubscriber(Subscriber<? super List<T>> child, Worker inner) {
             this.child = child;
             this.inner = inner;
@@ -281,6 +300,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
             child.onCompleted();
             unsubscribe();
         }
+
         //延迟，然后间隙也是timespan发送一次
         void scheduleExact() {
             inner.schedulePeriodically(new Action0() {
@@ -290,6 +310,7 @@ public final class OperatorBufferWithTime<T> implements Operator<List<T>, T> {
                 }
             }, timespan, timespan, unit);
         }
+
         void emit() {
             List<T> toEmit;
             synchronized (this) {

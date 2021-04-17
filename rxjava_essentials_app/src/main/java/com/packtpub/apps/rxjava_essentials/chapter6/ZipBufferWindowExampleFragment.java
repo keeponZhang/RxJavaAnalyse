@@ -275,6 +275,7 @@ public class ZipBufferWindowExampleFragment extends Fragment {
                         subscriber.onCompleted();
                     }
                 });
+        //timeSpan表示第一次延迟多久发送,timeshift表示发送第一个后（实现原理是周期性延迟，等待第一个发送后，就造成间隙的效果），间隙是多少
         observableApp.buffer(12, 1, TimeUnit.SECONDS).subscribe(new Subscriber<List<AppInfo>>() {
             @Override
             public void onCompleted() {
@@ -288,7 +289,8 @@ public class ZipBufferWindowExampleFragment extends Fragment {
 
             @Override
             public void onNext(List<AppInfo> appInfos) {
-                Log.e("TAG", "ZipBufferWindowExampleFragment bufferTimeSpan onNext:" + appInfos + "  " +
+                Log.e("TAG",
+                        "ZipBufferWindowExampleFragment InexactSubscriber bufferTimeSpan onNext:" + appInfos + "  " +
                         "time=" + System.currentTimeMillis());
             }
         });
