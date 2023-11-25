@@ -3,21 +3,12 @@
 buildscript {
 
     repositories {
-    	maven {
-            url "http://repo.yypm.com:8181/nexus/content/groups/public"
+        maven {
+            url "https://nexus-android.duowan.com/nexus/content/groups/public"
         }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
-        maven { url 'https://maven.google.com' }
-        mavenCentral()
-        maven { url "https://github.com/alter-ego/advanced-android-logger/raw/develop/releases/" }
-        jcenter()
-        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
@@ -30,18 +21,9 @@ buildscript {
 
 allprojects {
     repositories {
-    	maven {
-            url "http://repo.yypm.com:8181/nexus/content/groups/public"
+        maven {
+            url "https://nexus-android.duowan.com/nexus/content/groups/public"
         }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
-        mavenCentral()
-        maven { url "https://github.com/alter-ego/advanced-android-logger/raw/develop/releases/" }
-        jcenter()
-        maven { url 'https://maven.google.com' }
-        google()
     }
 }
 
