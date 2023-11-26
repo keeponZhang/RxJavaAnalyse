@@ -1,6 +1,6 @@
 package com.darren.architect_day31;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 /**

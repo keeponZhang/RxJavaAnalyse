@@ -16,7 +16,8 @@ android {
 
 dependencies {
     compile project(':rxjava2_0_1')
-    compile "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_LIBRARY_VERSION}"
+        implementation "androidx.appcompat:appcompat:$appcompat_version"
+
     compile 'com.google.code.findbugs:jsr305:2.0.1'
 
 }

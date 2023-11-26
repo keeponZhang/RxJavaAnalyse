@@ -15,12 +15,13 @@
 package com.tbruyelle.rxpermissions;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +36,16 @@ public class RxPermissions {
 
     RxPermissionsFragment mRxPermissionsFragment;
 
-    public RxPermissions(@NonNull Activity activity) {
+    public RxPermissions(@NonNull AppCompatActivity activity) {
         mRxPermissionsFragment = getRxPermissionsFragment(activity);
     }
 
-    private RxPermissionsFragment getRxPermissionsFragment(Activity activity) {
+    private RxPermissionsFragment getRxPermissionsFragment(AppCompatActivity activity) {
         RxPermissionsFragment rxPermissionsFragment = findRxPermissionsFragment(activity);
         boolean isNewInstance = rxPermissionsFragment == null;
         if (isNewInstance) {
             rxPermissionsFragment = new RxPermissionsFragment();
-            FragmentManager fragmentManager = activity.getFragmentManager();
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager
                     .beginTransaction()
                     .add(rxPermissionsFragment, TAG)
@@ -54,8 +55,8 @@ public class RxPermissions {
         return rxPermissionsFragment;
     }
 
-    private RxPermissionsFragment findRxPermissionsFragment(Activity activity) {
-        return (RxPermissionsFragment) activity.getFragmentManager().findFragmentByTag(TAG);
+    private RxPermissionsFragment findRxPermissionsFragment(AppCompatActivity activity) {
+        return (RxPermissionsFragment) activity.getSupportFragmentManager().findFragmentByTag(TAG);
     }
 
     public void setLogging(boolean logging) {
@@ -230,7 +231,7 @@ public class RxPermissions {
      * For SDK &lt; 23, the observable will always emit false.
      */
     @SuppressWarnings("WeakerAccess")
-    public Observable<Boolean> shouldShowRequestPermissionRationale(final Activity activity, final String... permissions) {
+    public Observable<Boolean> shouldShowRequestPermissionRationale(final AppCompatActivity activity, final String... permissions) {
         if (!isMarshmallow()) {
             return Observable.just(false);
         }
@@ -238,7 +239,7 @@ public class RxPermissions {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean shouldShowRequestPermissionRationaleImplementation(final Activity activity, final String... permissions) {
+    private boolean shouldShowRequestPermissionRationaleImplementation(final AppCompatActivity activity, final String... permissions) {
         for (String p : permissions) {
             if (!isGranted(p) && !activity.shouldShowRequestPermissionRationale(p)) {
                 return false;

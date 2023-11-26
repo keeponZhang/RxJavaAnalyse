@@ -1,6 +1,5 @@
 package com.packtpub.apps.rxjava_essentials;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -8,6 +7,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+
+import androidx.fragment.app.FragmentManager;
 
 import com.packtpub.apps.rxjava_essentials.chapter4.DistinctExampleFragment;
 import com.packtpub.apps.rxjava_essentials.chapter4.FilterFirstSingleSampleTimeoutDebounceFragment;

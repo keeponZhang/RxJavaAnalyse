@@ -15,7 +15,7 @@
 package com.trello.rxlifecycle2.android;
 
 import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import com.trello.rxlifecycle2.LifecycleTransformer;

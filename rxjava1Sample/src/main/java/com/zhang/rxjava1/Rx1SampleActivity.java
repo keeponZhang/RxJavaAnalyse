@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,6 +26,7 @@ import rx.functions.Func1;
 import rx.internal.operators.OperatorMap;
 import rx.internal.operators.OperatorMerge;
 import rx.schedulers.Schedulers;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class Rx1SampleActivity extends AppCompatActivity {
 

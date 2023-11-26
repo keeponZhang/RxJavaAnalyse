@@ -1,11 +1,12 @@
 package com.packtpub.apps.rxjava_essentials.example1;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.packtpub.apps.rxjava_essentials.R;
 
@@ -15,7 +16,6 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
-import rx.internal.operators.OperatorDoOnEach;
 import rx.subjects.AsyncSubject;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;

@@ -1,6 +1,8 @@
 package com.darren.architect_day31;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by hcDarren on 2017/12/3.

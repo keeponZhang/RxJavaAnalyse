@@ -14,15 +14,17 @@
 
 package com.trello.rxlifecycle2;
 
-import android.app.Activity;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +34,10 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -207,7 +211,7 @@ public class RxLifecycleTest {
 
     @Test
     public void testBindView() {
-        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        AppCompatActivity activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
         View view = new View(activity);
         CopyOnWriteArrayList<View.OnAttachStateChangeListener> listeners = TestUtil.getAttachStateChangeListeners(view);
 

@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="RxJavaAnalyse.app" target="1.8" />
-      <module name="RxJavaAnalyse.atomiclearn" target="1.8" />
-      <module name="RxJavaAnalyse.rx2Sample" target="1.8" />
-      <module name="RxJavaAnalyse.rxandroid1_0_1" target="1.8" />
-      <module name="RxJavaAnalyse.rxjava1_0_4" target="1.8" />
-      <module name="RxJavaAnalyse.rxjava1Sample" target="1.8" />
-      <module name="RxJavaAnalyse.rxjava_essentials_app" target="1.8" />
-      <module name="RxJavaAnalyse.rxJavaJoins_22" target="1.8" />
-      <module name="RxJavaAnalyse.rxlifecycle-android2" target="1.8" />
-      <module name="RxJavaAnalyse.rxlifecycle-components2" target="1.8" />
-      <module name="RxJavaAnalyse.rxlifecycle-sample2.0" target="1.8" />
-      <module name="RxJavaAnalyse.rxlifecycle2" target="1.8" />
-      <module name="RxJavaAnalyse.rxpermissions" target="1.8" />
-      <module name="RxJavaAnalyse.RxpermissionSample" target="1.8" />
-      <module name="RxJavaAnalyse.shouxie_rxjava" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8" />
   </component>
 </project>

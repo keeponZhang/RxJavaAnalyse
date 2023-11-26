@@ -32,7 +32,7 @@ dependencies {
     //    compile 'org.reactivestreams:reactive-streams:1.0.0'
     def jdkPath = System.getProperty('java.home') + "\\lib\\rt.jar"
     println("------------------ $jdkPath")
-    implementation files("$jdkPath")
+    compileOnly files("$jdkPath")
 }
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"

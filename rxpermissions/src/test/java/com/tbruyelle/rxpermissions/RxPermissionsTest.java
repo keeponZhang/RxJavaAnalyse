@@ -14,11 +14,25 @@
 
 package com.tbruyelle.rxpermissions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static java.util.Collections.singletonList;
+
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,30 +52,17 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.subjects.PublishSubject;
 
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.M)
 public class RxPermissionsTest {
 
-    private Activity mActivity;
+    private AppCompatActivity mActivity;
 
     private RxPermissions mRxPermissions;
 
     @Before
     public void setup() {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
+        ActivityController<AppCompatActivity> activityController = Robolectric.buildActivity(AppCompatActivity.class);
         mActivity = spy(activityController.setup().get());
         mRxPermissions = spy(new RxPermissions(mActivity));
         mRxPermissions.mRxPermissionsFragment = spy(mRxPermissions.mRxPermissionsFragment);
@@ -400,7 +401,7 @@ public class RxPermissionsTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void shouldShowRequestPermissionRationale_allDenied_allRationale() {
         when(mRxPermissions.isMarshmallow()).thenReturn(true);
-        Activity activity = mock(Activity.class);
+        AppCompatActivity activity = mock(AppCompatActivity.class);
         when(activity.shouldShowRequestPermissionRationale(anyString())).thenReturn(true);
 
         TestSubscriber<Boolean> sub = new TestSubscriber<>();
@@ -416,7 +417,7 @@ public class RxPermissionsTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void shouldShowRequestPermissionRationale_allDenied_oneRationale() {
         when(mRxPermissions.isMarshmallow()).thenReturn(true);
-        Activity activity = mock(Activity.class);
+        AppCompatActivity activity = mock(AppCompatActivity.class);
         when(activity.shouldShowRequestPermissionRationale("p1")).thenReturn(true);
 
         TestSubscriber<Boolean> sub = new TestSubscriber<>();
@@ -432,7 +433,7 @@ public class RxPermissionsTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void shouldShowRequestPermissionRationale_allDenied_noRationale() {
         when(mRxPermissions.isMarshmallow()).thenReturn(true);
-        Activity activity = mock(Activity.class);
+        AppCompatActivity activity = mock(AppCompatActivity.class);
 
         TestSubscriber<Boolean> sub = new TestSubscriber<>();
         mRxPermissions.shouldShowRequestPermissionRationale(activity, new String[]{"p1", "p2"})
@@ -447,7 +448,7 @@ public class RxPermissionsTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void shouldShowRequestPermissionRationale_oneDeniedRationale() {
         when(mRxPermissions.isMarshmallow()).thenReturn(true);
-        Activity activity = mock(Activity.class);
+        AppCompatActivity activity = mock(AppCompatActivity.class);
         when(mRxPermissions.isGranted("p1")).thenReturn(true);
         when(activity.shouldShowRequestPermissionRationale("p2")).thenReturn(true);
 
@@ -464,7 +465,7 @@ public class RxPermissionsTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void shouldShowRequestPermissionRationale_oneDeniedNotRationale() {
         when(mRxPermissions.isMarshmallow()).thenReturn(true);
-        Activity activity = mock(Activity.class);
+        AppCompatActivity activity = mock(AppCompatActivity.class);
         when(mRxPermissions.isGranted("p2")).thenReturn(true);
 
         TestSubscriber<Boolean> sub = new TestSubscriber<>();
